@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- MAIN ACTIVITY ICONS -->
+    
+    <style name="main_icon_container">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <style name="icon_main">
+        <item name="android:layout_width">68dp</item>
+        <item name="android:layout_height">68dp</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">4dp</item>
+    </style>
+
+    <style name="icon_main_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        
+        <item name="android:layout_gravity">center_horizontal</item>
+		<item name="android:gravity">center</item>
+		<item name="android:paddingTop">1dip</item>
+		<item name="android:paddingBottom">1dip</item>
+		<item name="android:paddingLeft">5dip</item>
+		<item name="android:paddingRight">5dip</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:lines">1</item>
+		<item name="android:ellipsize">end</item>
+		<item name="android:textSize">13dip</item>
+		<item name="android:textColor">@color/main_icon_text</item>
+		<item name="android:background">@drawable/main_gray_background</item>
+    </style>
+    
+    <!-- MAIN ACTIVITY INFO TABLE -->
+    
+    <style name="main_table_label">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15dip</item>
+		<item name="android:textColor">@color/main_icon_text</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:padding">5dp</item>
+		<item name="android:layout_gravity">center_vertical</item>
+    </style>
+    
+    <style name="main_table_value">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14dip</item>
+		<item name="android:textColor">@color/main_icon_text</item>
+		<item name="android:padding">5dp</item>
+		<item name="android:layout_gravity">center_vertical</item>
+<!-- 		<item name="android:gravity">right</item> -->
+		<item name="android:ellipsize">end</item>
+    </style>
+    
+</resources>
