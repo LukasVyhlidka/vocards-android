@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/mainIconFirstLine"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal" >
+
+        <LinearLayout
+            android:id="@+id/train"
+            style="@style/main_icon_container"
+            android:orientation="vertical" >
+
+            <View
+                style="@style/icon_main"
+                android:background="@drawable/main_practise" />
+
+            <TextView
+                style="@style/icon_main_text"
+                android:text="@string/main_practise" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/learn"
+            style="@style/main_icon_container"
+            android:orientation="vertical" >
+
+            <View
+                style="@style/icon_main"
+                android:background="@drawable/main_learn" />
+
+            <TextView
+                style="@style/icon_main_text"
+                android:text="@string/main_learn" />
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/wordList"
+            style="@style/main_icon_container"
+            android:orientation="vertical" >
+
+            <View
+                style="@style/icon_main"
+                android:background="@drawable/main_word_list" />
+
+            <TextView
+                style="@style/icon_main_text"
+                android:text="@string/main_wordList" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/setDict"
+            style="@style/main_icon_container"
+            android:orientation="vertical" >
+
+            <View
+                style="@style/icon_main"
+                android:background="@drawable/main_set_dict" />
+
+            <TextView
+                style="@style/icon_main_text"
+                android:text="@string/main_set_dict" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TableLayout
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainIconFirstLine"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/main_gray_background"
+        android:stretchColumns="1">
+
+        <TableRow>
+            <TextView
+                style="@style/main_table_label"
+                android:text="@string/main_active_dict_label" />
+
+            <TextView
+                style="@style/main_table_value"
+                android:text="Blabla" />
+        </TableRow>
+        
+        <TableRow>
+            <TextView
+                style="@style/main_table_label"
+                android:text="@string/main_active_dict_word_count_label" />
+
+            <TextView
+                style="@style/main_table_value"
+                android:text="100" />
+        </TableRow>
+        
+        <TableRow>
+            <TextView
+                style="@style/main_table_label"
+                android:text="@string/main_factor_label" />
+
+            <TextView
+                style="@style/main_table_value"
+                android:text="0.8" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
