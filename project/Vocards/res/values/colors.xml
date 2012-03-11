@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <color name="main_icon_text">#FFFFFFFF</color>
+
+    <color name="background">#FF000000</color>
+    <color name="main_icon_text">#FFFFFFFF</color>
+
 </resources>

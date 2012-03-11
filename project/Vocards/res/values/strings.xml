@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- MAIN ACTIVITY -->
     <string name="hello">Hello World, VocardsActivity!</string>
     <string name="app_name">Vocards</string>
     <string name="main_practise">Practise</string>
@@ -11,5 +12,15 @@
     <string name="main_active_dict_label">Active Dictionary</string>
     <string name="main_active_dict_word_count_label">Word Count</string>
     <string name="main_factor_label">Learn Factor</string>
+    <string name="main_no_active_dict">No active dictionary</string>
+    <string name="main_unknown_value">Unknown</string>
+    
+    <!-- COMMON -->
+    <string name="done_button">Done</string>
+    <string name="add_button">Add</string>
+    
+    <!-- Word List -->
+    <string name="word_list">Word List</string>
+    <string name="word_list_new_word_hint">Word in Native Language</string>
 
 </resources>

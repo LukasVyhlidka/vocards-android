@@ -14,7 +14,8 @@
         <LinearLayout
             android:id="@+id/train"
             style="@style/main_icon_container"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:clickable="true" >
 
             <View
                 style="@style/icon_main"
@@ -50,7 +51,7 @@
         <LinearLayout
             android:id="@+id/wordList"
             style="@style/main_icon_container"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <View
                 style="@style/icon_main"
@@ -92,7 +93,7 @@
 
             <TextView
                 style="@style/main_table_value"
-                android:text="Blabla" />
+                android:text="@string/main_no_active_dict" />
         </TableRow>
         
         <TableRow>
@@ -102,7 +103,7 @@
 
             <TextView
                 style="@style/main_table_value"
-                android:text="100" />
+                android:text="@string/main_unknown_value" />
         </TableRow>
         
         <TableRow>
@@ -112,7 +113,7 @@
 
             <TextView
                 style="@style/main_table_value"
-                android:text="0.8" />
+                android:text="@string/main_unknown_value" />
         </TableRow>
     </TableLayout>
 

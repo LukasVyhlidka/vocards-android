@@ -84,7 +84,7 @@
 
             <TextView
                 style="@style/main_table_value"
-                android:text="Blabla" />
+                android:text="@string/main_no_active_dict" />
         </TableRow>
         
         <TableRow>
@@ -94,7 +94,7 @@
 
             <TextView
                 style="@style/main_table_value"
-                android:text="100" />
+                android:text="@string/main_unknown_value" />
         </TableRow>
         
         <TableRow>
@@ -104,7 +104,7 @@
 
             <TextView
                 style="@style/main_table_value"
-                android:text="0.8" />
+                android:text="@string/main_unknown_value" />
         </TableRow>
     </TableLayout>
 
