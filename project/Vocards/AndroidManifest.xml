@@ -20,10 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name=".WordListActivity"
             android:label="@string/word_list" >
+        </activity>
+        <activity
+            android:name=".DictListActivity"
+            android:label="@string/dict_list" >
         </activity>
     </application>
 

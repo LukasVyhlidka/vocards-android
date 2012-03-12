@@ -22,5 +22,9 @@
     <!-- Word List -->
     <string name="word_list">Word List</string>
     <string name="word_list_new_word_hint">Word in Native Language</string>
+    
+    <!-- Dict List -->
+    <string name="dict_list">Dict List</string>
+    <string name="dict_list_new_dict_hint">New Dictionary Name</string>
 
 </resources>
