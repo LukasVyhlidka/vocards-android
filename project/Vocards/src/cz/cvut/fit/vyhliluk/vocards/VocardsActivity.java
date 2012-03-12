@@ -14,6 +14,7 @@ public class VocardsActivity extends Activity {
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	private View wordListIcon = null;
+	private View learnIcon = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -34,14 +35,22 @@ public class VocardsActivity extends Activity {
 	
 	private void init() {
 		this.wordListIcon = findViewById(R.id.wordList);
-		this.wordListIcon.setClickable(true);
+		this.learnIcon = findViewById(R.id.learn);
+		
 		
 		this.wordListIcon.setOnClickListener(this.wordListClickListener);
+		this.learnIcon.setOnClickListener(this.learnClickListener);
 	}
 
 	// ================= GETTERS/SETTERS ========================
 
 	// ================= VIEW HANDLERS ==========================
+	
+	OnClickListener learnClickListener = new OnClickListener() {
+		public void onClick(View v) {
+			v.setPressed(true);
+		}
+	};
 	
 	OnClickListener wordListClickListener = new OnClickListener() {
 		

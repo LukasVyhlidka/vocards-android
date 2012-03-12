@@ -12,12 +12,11 @@
         android:gravity="center_horizontal" >
 
         <LinearLayout
-            android:id="@+id/train"
             style="@style/main_icon_container"
-            android:orientation="vertical"
-            android:clickable="true" >
+            android:orientation="vertical">
 
             <View
+                android:id="@+id/train"
                 style="@style/icon_main"
                 android:background="@drawable/main_practise" />
 
@@ -27,11 +26,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/learn"
             style="@style/main_icon_container"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <View
+                android:id="@+id/learn"
                 style="@style/icon_main"
                 android:background="@drawable/main_learn" />
 
@@ -49,11 +48,11 @@
         android:gravity="center_horizontal" >
 
         <LinearLayout
-            android:id="@+id/wordList"
             style="@style/main_icon_container"
             android:orientation="vertical">
 
             <View
+                android:id="@+id/wordList"
                 style="@style/icon_main"
                 android:background="@drawable/main_word_list" />
 
@@ -63,11 +62,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/setDict"
             style="@style/main_icon_container"
             android:orientation="vertical" >
 
             <View
+                android:id="@+id/setDict"
                 style="@style/icon_main"
                 android:background="@drawable/main_set_dict" />
 
