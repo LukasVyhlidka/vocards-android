@@ -16,7 +16,7 @@
             android:orientation="vertical">
 
             <View
-                android:id="@+id/train"
+                android:id="@+id/practise"
                 style="@style/icon_main"
                 android:background="@drawable/main_practise" />
 

@@ -20,6 +20,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+         <activity
+            android:name=".PractiseActivity"
+            android:label="@string/practise" >
+        </activity>
+        <activity
+            android:name=".LearnActivity"
+            android:label="@string/learn" >
+        </activity>
         <activity
             android:name=".WordListActivity"
             android:label="@string/word_list" >

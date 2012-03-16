@@ -2,16 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/background"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true" >
 
+    <EditText
+        android:id="@+id/filterEdit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:inputType="textFilter"
+        android:hint="@string/dict_list_filter_hint"
+        android:visibility="gone" />
+    
     <ListView
         android:id="@+id/wordList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonAdd"
-        android:layout_alignParentTop="true"/>
+        android:layout_below="@id/filterEdit"/>
 
     <EditText
         android:id="@+id/editNewWord"
