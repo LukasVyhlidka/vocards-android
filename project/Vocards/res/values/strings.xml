@@ -17,6 +17,10 @@
     <!-- COMMON -->
     <string name="done_button">Done</string>
     <string name="add_button">Add</string>
+    <string name="lang_none">None</string>
+    <string name="lang_cz">CZ</string>
+    <string name="lang_en">EN</string>
+    <string name="lang_fr">FR</string>
     
     <!-- Practise -->
     <string name="practise">Practise</string>
@@ -43,5 +47,12 @@
     <string name="dict_list_menu_hide_filter">Hide Filter</string>
     <string name="dict_list_menu_new_dict">Create Dictionary</string>
     <string name="dict_list_filter_hint">Filter Dictionaries</string>
+    
+    <!-- Add Dict Form -->
+    <string name="add_dict">New Dictionary</string>
+    <string name="add_dict_name">Name</string>
+    <string name="add_dict_native">Native Language</string>
+    <string name="add_dict_foreign">Foreign Language</string>
+    <string name="add_dict_create">Create Dictionary</string>
 
 </resources>

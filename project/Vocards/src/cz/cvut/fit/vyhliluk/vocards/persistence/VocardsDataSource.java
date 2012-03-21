@@ -1,6 +1,8 @@
 package cz.cvut.fit.vyhliluk.vocards.persistence;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -68,6 +70,18 @@ public class VocardsDataSource {
 
 	public void close() {
 		this.db.close();
+	}
+
+	public Cursor query(String table, String[] columns, String selection, String[] args, String orderBy) {
+		return this.db.query(table, columns, selection, args, null, null, orderBy);
+	}
+
+	public Cursor query(String table, String[] columns, String selection, String[] args, String orderBy, String limit) {
+		return this.db.query(table, columns, selection, args, null, null, orderBy, limit);
+	}
+	
+	public long insert(String table, ContentValues val) {
+		return this.db.insert(table, null, val);
 	}
 
 	// ================= PRIVATE METHODS ========================

@@ -1,5 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,7 +17,7 @@ import android.widget.ListView;
  */
 public class DictListActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
-	
+
 	public static final int MENU_SHOW_HIDE_FILTER = 0;
 	public static final int MENU_NEW_DICT = 1;
 
@@ -24,7 +25,7 @@ public class DictListActivity extends AbstractActivity {
 
 	private ListView dictList = null;
 	private EditText filterEdit = null;
-	
+
 	private MenuItem menuFilter = null;
 
 	// ================= CONSTRUCTORS ===========================
@@ -43,26 +44,29 @@ public class DictListActivity extends AbstractActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int none = Menu.NONE;
-		
+
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, res.getString(R.string.dict_list_menu_show_filter));
 		menu.add(none, MENU_NEW_DICT, none, res.getString(R.string.dict_list_menu_new_dict));
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_SHOW_HIDE_FILTER:
 				this.showHideFilter();
 				break;
+			case MENU_NEW_DICT:
+				this.addDictActivity();
+				break;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -86,13 +90,13 @@ public class DictListActivity extends AbstractActivity {
 
 		this.dictList.setAdapter(adapter);
 	}
-	
+
 	/**
 	 * Hides or Show a filter
 	 */
 	private void showHideFilter() {
 		Resources res = this.getResources();
-		
+
 		if (this.filterEdit.getVisibility() == EditText.GONE) {
 			this.filterEdit.setVisibility(EditText.VISIBLE);
 			this.menuFilter.setTitle(res.getString(R.string.dict_list_menu_hide_filter));
@@ -100,6 +104,11 @@ public class DictListActivity extends AbstractActivity {
 			this.filterEdit.setVisibility(EditText.GONE);
 			this.menuFilter.setTitle(res.getString(R.string.dict_list_menu_show_filter));
 		}
+	}
+	
+	private void addDictActivity() {
+		Intent i = new Intent(this, DictAddActivity.class);
+		startActivity(i);
 	}
 
 	// ================= GETTERS/SETTERS ========================

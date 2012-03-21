@@ -56,8 +56,16 @@
 		<item name="android:textColor">@color/main_icon_text</item>
 		<item name="android:padding">5dp</item>
 		<item name="android:layout_gravity">center_vertical</item>
-<!-- 		<item name="android:gravity">right</item> -->
 		<item name="android:ellipsize">end</item>
+    </style>
+    
+    <!-- FORMS -->
+    <style name="form_label">
+        <item name="android:textSize">14dip</item>
+		<item name="android:textColor">@color/main_icon_text</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:padding">5dp</item>
+		<item name="android:layout_gravity">center_vertical</item>
     </style>
     
 </resources>

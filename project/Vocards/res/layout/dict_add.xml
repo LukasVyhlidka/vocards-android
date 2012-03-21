@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:layout_width="fill_parent"
+    a:layout_height="fill_parent" >
+
+    <TextView
+        style="@style/form_label"
+        a:id="@+id/nameLabel"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentTop="true"
+        a:layout_alignParentLeft="true"
+        a:text="@string/add_dict_name"/>
+    
+    <EditText
+        a:id="@+id/nameEdit"
+        a:layout_width="fill_parent"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/nameLabel"
+        a:inputType="text" />
+    
+    <TextView
+        style="@style/form_label"
+        a:id="@+id/nativeLabel"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/nameEdit"
+        a:text="@string/add_dict_native"/>
+    
+    <Spinner 
+        a:id="@+id/nativeSpinner"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/nativeLabel" />
+    
+    <TextView
+        style="@style/form_label"
+        a:id="@+id/foreignLabel"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/nativeSpinner"
+        a:text="@string/add_dict_foreign"/>
+    
+    <Spinner 
+        a:id="@+id/foreignSpinner"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/foreignLabel" />
+    
+    <Button 
+        a:id="@+id/buttonAdd"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentBottom="true"
+        a:layout_alignParentRight="true"
+        a:text="@string/add_dict_create" />
+
+</RelativeLayout>
