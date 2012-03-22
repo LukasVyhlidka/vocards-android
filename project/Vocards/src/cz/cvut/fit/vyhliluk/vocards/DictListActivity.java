@@ -2,12 +2,18 @@ package cz.cvut.fit.vyhliluk.vocards;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
+import android.widget.SimpleCursorAdapter.ViewBinder;
+import cz.cvut.fit.vyhliluk.vocards.enums.Language;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 
 /**
  * Activity class
@@ -25,7 +31,6 @@ public class DictListActivity extends AbstractActivity {
 
 	private ListView dictList = null;
 	private EditText filterEdit = null;
-
 	private MenuItem menuFilter = null;
 
 	// ================= CONSTRUCTORS ===========================
@@ -42,18 +47,19 @@ public class DictListActivity extends AbstractActivity {
 	}
 
 	@Override
+	protected void onResume() {
+		super.onResume();
+
+		this.refreshListAdapter();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int none = Menu.NONE;
 
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, res.getString(R.string.dict_list_menu_show_filter));
 		menu.add(none, MENU_NEW_DICT, none, res.getString(R.string.dict_list_menu_new_dict));
 		return super.onCreateOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
-		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -81,14 +87,36 @@ public class DictListActivity extends AbstractActivity {
 		this.dictList = (ListView) findViewById(R.id.dictList);
 		this.filterEdit = (EditText) findViewById(R.id.filterEdit);
 
-		String[] values = new String[] { "Dict 1", "Dict 2", "Dict 3",
-				"Dict 4", "Dict 5", "Dict 6", "Dict 7", "Dict 8", "Dict 9",
-				"Dict 10", "Dict 11", "Dict 12", "Dict 13", "Dict 14",
-				"Dict 15", "Dict 16", "Dict 17", "Dict 18", "Dict 19",
-				"Dict 20" };
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
+		SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
+				this,
+				R.layout.inf_dictionary_item,
+				null,
+				new String[] {
+						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
+						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG,
+						VocardsDataSource.DICTIONARY_COLUMN_NAME
+				},
+				new int[] {
+						R.id.nativeLangIcon,
+						R.id.foreignLangIcon,
+						R.id.languageText
+				});
+		listAdapter.setViewBinder(new ViewBinder() {
 
-		this.dictList.setAdapter(adapter);
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				String colName = cursor.getColumnName(columnIndex);
+				if (VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG.equals(colName)
+						|| VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG.equals(colName)) {
+					ImageView img = (ImageView) view;
+					Language lang = Language.getById(cursor.getInt(columnIndex));
+					img.setImageResource(lang.getIconId());
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		this.dictList.setAdapter(listAdapter);
 	}
 
 	/**
@@ -105,7 +133,21 @@ public class DictListActivity extends AbstractActivity {
 			this.menuFilter.setTitle(res.getString(R.string.dict_list_menu_show_filter));
 		}
 	}
-	
+
+	private void refreshListAdapter() {
+		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.dictList.getAdapter();
+		Cursor c = this.db.query(VocardsDataSource.DICTIONARY_TABLE,
+				new String[] {
+						VocardsDataSource.DICTIONARY_COLUMN_ID,
+						VocardsDataSource.DICTIONARY_COLUMN_NAME,
+						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
+						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG },
+				null,
+				null,
+				VocardsDataSource.DICTIONARY_COLUMN_NAME);
+		adapter.changeCursor(c);
+	}
+
 	private void addDictActivity() {
 		Intent i = new Intent(this, DictAddActivity.class);
 		startActivity(i);

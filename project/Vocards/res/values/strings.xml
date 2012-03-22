@@ -21,6 +21,9 @@
     <string name="lang_cz">CZ</string>
     <string name="lang_en">EN</string>
     <string name="lang_fr">FR</string>
+    <string name="lang_sk">SK</string>
+    <string name="lang_de">DE</string>
+    <string name="lang_flag_description">Language flag</string>
     
     <!-- Practise -->
     <string name="practise">Practise</string>
@@ -54,5 +57,6 @@
     <string name="add_dict_native">Native Language</string>
     <string name="add_dict_foreign">Foreign Language</string>
     <string name="add_dict_create">Create Dictionary</string>
+    <string name="add_dict_created_toast">Dictionary created.</string>
 
 </resources>

@@ -53,6 +53,7 @@ public abstract class AbstractActivity extends Activity {
 	private void closeDb() {
 		if (this.db != null) {
 			this.db.close();
+			this.db = null;
 		}
 	}
 

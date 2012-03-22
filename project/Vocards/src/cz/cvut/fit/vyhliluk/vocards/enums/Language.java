@@ -11,10 +11,21 @@ import cz.cvut.fit.vyhliluk.vocards.util.Const;
  */
 public enum Language {
 	
-	NONE(Const.LANGUAGE_NONE, R.string.lang_none, 0),
-	CZECH(Const.LANGUAGE_CZ, R.string.lang_cz, 0),
-	ENGLISH(Const.LANGUAGE_EN, R.string.lang_en, 0),
-	FRENCH(Const.LANGUAGE_FR, R.string.lang_fr, 0);
+	NONE(Const.LANGUAGE_NONE, R.string.lang_none, R.drawable.lang_cz),
+	CZECH(Const.LANGUAGE_CZ, R.string.lang_cz, R.drawable.lang_cz),
+	SLOVAK(Const.LANGUAGE_SK, R.string.lang_sk, R.drawable.lang_cz),
+	ENGLISH(Const.LANGUAGE_EN, R.string.lang_en, R.drawable.lang_cz),
+	FRENCH(Const.LANGUAGE_FR, R.string.lang_fr, R.drawable.lang_cz),
+	GERMAN(Const.LANGUAGE_DE, R.string.lang_de, R.drawable.lang_cz);
+	
+	public static Language getById(int id) {
+		for (Language l : Language.values()) {
+			if (l.getId() == id) {
+				return l;
+			}
+		}
+		return null;
+	}
 	
 	private final int id;
 	private final int stringId;
