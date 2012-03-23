@@ -84,6 +84,7 @@
 
             <TextView
                 style="@style/main_table_value"
+                android:id="@+id/active_dict_name"
                 android:text="@string/main_no_active_dict" />
         </TableRow>
         
@@ -94,6 +95,7 @@
 
             <TextView
                 style="@style/main_table_value"
+                android:id="@+id/word_count"
                 android:text="@string/main_unknown_value" />
         </TableRow>
         
@@ -104,6 +106,7 @@
 
             <TextView
                 style="@style/main_table_value"
+                android:id="@+id/learn_factor"
                 android:text="@string/main_unknown_value" />
         </TableRow>
     </TableLayout>

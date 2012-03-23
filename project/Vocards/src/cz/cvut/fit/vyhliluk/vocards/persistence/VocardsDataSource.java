@@ -74,6 +74,10 @@ public class VocardsDataSource {
 		this.db.close();
 	}
 
+	public Cursor query(String table, String[] columns, String selection, String[] args) {
+		return this.db.query(table, columns, selection, args, null, null, null);
+	}
+	
 	public Cursor query(String table, String[] columns, String selection, String[] args, String orderBy) {
 		return this.db.query(table, columns, selection, args, null, null, orderBy);
 	}
@@ -88,6 +92,10 @@ public class VocardsDataSource {
 	
 	public int delete(String table, String whereClause, String[] whereArgs) {
 		return this.db.delete(table, whereClause, whereArgs);
+	}
+	
+	public Cursor rawQuery(String sql, String[] args) {
+		return this.db.rawQuery(sql, args);
 	}
 	
 	/**

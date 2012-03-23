@@ -31,6 +31,10 @@ public class Settings {
 	public static void setActiveDictionaryId(long id) {
 		putLong(KEY_ACTIVE_DICT_ID, id);
 	}
+	
+	public static void removeActiveDictionary() {
+		removeLong(KEY_ACTIVE_DICT_ID);
+	}
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -47,6 +51,13 @@ public class Settings {
 	private static void putLong(String key, Long value) {
 		Editor e = getEditor();
 		e.putLong(key, value);
+		e.commit();
+	}
+	
+	private static void removeLong(String key) {
+		Editor e = getEditor();
+		e.remove(key);
+		e.commit();
 	}
 	
 	private static Editor getEditor() {
