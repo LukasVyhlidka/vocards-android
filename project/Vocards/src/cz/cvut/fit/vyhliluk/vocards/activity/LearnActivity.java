@@ -1,8 +1,9 @@
-package cz.cvut.fit.vyhliluk.vocards;
+package cz.cvut.fit.vyhliluk.vocards.activity;
 
-import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import cz.cvut.fit.vyhliluk.vocards.R;
+import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 
 public class LearnActivity extends AbstractActivity {
 	//================= STATIC ATTRIBUTES ======================

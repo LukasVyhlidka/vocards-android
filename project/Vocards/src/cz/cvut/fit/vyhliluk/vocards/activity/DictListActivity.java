@@ -1,4 +1,4 @@
-package cz.cvut.fit.vyhliluk.vocards;
+package cz.cvut.fit.vyhliluk.vocards.activity;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -16,7 +16,8 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.Toast;
-import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractListActivity;
+import cz.cvut.fit.vyhliluk.vocards.R;
+import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 

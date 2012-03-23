@@ -1,12 +1,7 @@
-package cz.cvut.fit.vyhliluk.vocards;
+package cz.cvut.fit.vyhliluk.vocards.activity;
 
 import java.util.Arrays;
 import java.util.List;
-
-import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractActivity;
-import cz.cvut.fit.vyhliluk.vocards.adapter.LanguageAdapter;
-import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -18,6 +13,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import cz.cvut.fit.vyhliluk.vocards.R;
+import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
+import cz.cvut.fit.vyhliluk.vocards.adapter.LanguageAdapter;
+import cz.cvut.fit.vyhliluk.vocards.enums.Language;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 
 public class DictAddActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================

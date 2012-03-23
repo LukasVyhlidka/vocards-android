@@ -1,11 +1,12 @@
-package cz.cvut.fit.vyhliluk.vocards;
+package cz.cvut.fit.vyhliluk.vocards.activity;
 
-import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import cz.cvut.fit.vyhliluk.vocards.R;
+import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 
 public class VocardsActivity extends AbstractActivity {
 

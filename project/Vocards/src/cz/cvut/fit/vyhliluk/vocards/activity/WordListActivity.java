@@ -1,6 +1,5 @@
-package cz.cvut.fit.vyhliluk.vocards;
+package cz.cvut.fit.vyhliluk.vocards.activity;
 
-import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractActivity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +7,8 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import cz.cvut.fit.vyhliluk.vocards.R;
+import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 
 public class WordListActivity extends AbstractActivity {
 

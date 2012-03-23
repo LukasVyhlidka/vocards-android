@@ -1,4 +1,4 @@
-package cz.cvut.fit.vyhliluk.vocards.abstr;
+package cz.cvut.fit.vyhliluk.vocards.activity.abstr;
 
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import android.app.ListActivity;
