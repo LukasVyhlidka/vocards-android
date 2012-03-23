@@ -1,11 +1,11 @@
-package cz.cvut.fit.vyhliluk.vocards;
+package cz.cvut.fit.vyhliluk.vocards.abstr;
 
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.res.Resources;
 import android.os.Bundle;
 
-public abstract class AbstractActivity extends Activity {
+public class AbstractListActivity extends ListActivity {
 	// ================= STATIC ATTRIBUTES ======================
 
 	// ================= INSTANCE ATTRIBUTES ====================
@@ -24,18 +24,18 @@ public abstract class AbstractActivity extends Activity {
 		this.res = this.getResources();
 		this.initDb();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		this.closeDb();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		this.initDb();
 	}
 
@@ -49,7 +49,7 @@ public abstract class AbstractActivity extends Activity {
 			this.db.open();
 		}
 	}
-	
+
 	private void closeDb() {
 		if (this.db != null) {
 			this.db.close();

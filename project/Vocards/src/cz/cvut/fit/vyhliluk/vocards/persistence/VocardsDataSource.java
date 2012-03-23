@@ -12,19 +12,21 @@ public class VocardsDataSource {
 	public static final String DB_NAME = "vocards";
 	public static final int DB_VERSION = 1;
 
+	public static final String DB_DEFAULT_ID = "_id";
+	
 	public static final String DICTIONARY_TABLE = "dictionary";
-	public static final String DICTIONARY_COLUMN_ID = "_id";
+	public static final String DICTIONARY_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String DICTIONARY_COLUMN_NAME = "name";
 	public static final String DICTIONARY_COLUMN_NATIVE_LANG = "native_lang";
 	public static final String DICTIONARY_COLUMN_FOREIGN_LANG = "foreign_lang";
 
 	public static final String CARD_TABLE = "card";
-	public static final String CARD_COLUMN_ID = "_id";
+	public static final String CARD_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String CARD_COLUMN_FACTOR = "factor";
 	public static final String CARD_COLUMN_DICTIONARY = "dict_id";
 
 	public static final String WORD_TABLE = "word";
-	public static final String WORD_COLUMN_ID = "_id";
+	public static final String WORD_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String WORD_COLUMN_TEXT = "text";
 	public static final String WORD_COLUMN_CARD = "card_id";
 
@@ -82,6 +84,20 @@ public class VocardsDataSource {
 	
 	public long insert(String table, ContentValues val) {
 		return this.db.insert(table, null, val);
+	}
+	
+	public int delete(String table, String whereClause, String[] whereArgs) {
+		return this.db.delete(table, whereClause, whereArgs);
+	}
+	
+	/**
+	 * Works only if table has primary key named "_id"
+	 * @param table
+	 * @param id
+	 * @return
+	 */
+	public int delete(String table, long id) {
+		return this.db.delete(table, DB_DEFAULT_ID +"=?", new String[]{id+""});
 	}
 
 	// ================= PRIVATE METHODS ========================

@@ -49,7 +49,9 @@
     <string name="dict_list_menu_show_filter">Show Filter</string>
     <string name="dict_list_menu_hide_filter">Hide Filter</string>
     <string name="dict_list_menu_new_dict">Create Dictionary</string>
+    <string name="dict_list_ctx_delete_dict">Delete</string>
     <string name="dict_list_filter_hint">Filter Dictionaries</string>
+    <string name="dict_list_dict_deleted_toast">Dictionary was successfully deleted.</string>
     
     <!-- Add Dict Form -->
     <string name="add_dict">New Dictionary</string>

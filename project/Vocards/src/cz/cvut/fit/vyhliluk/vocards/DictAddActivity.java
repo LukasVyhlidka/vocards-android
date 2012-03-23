@@ -3,6 +3,7 @@ package cz.cvut.fit.vyhliluk.vocards;
 import java.util.Arrays;
 import java.util.List;
 
+import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.adapter.LanguageAdapter;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;

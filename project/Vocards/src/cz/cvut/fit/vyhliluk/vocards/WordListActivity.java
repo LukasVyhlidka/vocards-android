@@ -1,5 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards;
 
+import cz.cvut.fit.vyhliluk.vocards.abstr.AbstractActivity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
