@@ -122,6 +122,7 @@ public class VocardsActivity extends AbstractActivity {
 			Context ctx = VocardsActivity.this;
 			Intent i = new Intent(ctx, PractiseActivity.class);
 			startActivity(i);
+			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		}
 	};
 
@@ -130,6 +131,7 @@ public class VocardsActivity extends AbstractActivity {
 			Context ctx = VocardsActivity.this;
 			Intent i = new Intent(ctx, LearnActivity.class);
 			startActivity(i);
+			overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 		}
 	};
 

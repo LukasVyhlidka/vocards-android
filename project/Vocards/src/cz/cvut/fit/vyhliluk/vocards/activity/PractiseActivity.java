@@ -6,16 +6,16 @@ import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 
 public class PractiseActivity extends AbstractActivity {
-	//================= STATIC ATTRIBUTES ======================
+	// ================= STATIC ATTRIBUTES ======================
 
-	//================= INSTANCE ATTRIBUTES ====================
-	
+	// ================= INSTANCE ATTRIBUTES ====================
+
 	private TextView wordCardText = null;
 
-	//================= CONSTRUCTORS ===========================
+	// ================= CONSTRUCTORS ===========================
 
-	//================= OVERRIDEN METHODS ======================
-	
+	// ================= OVERRIDEN METHODS ======================
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,10 +25,16 @@ public class PractiseActivity extends AbstractActivity {
 		this.init();
 	}
 
-	//================= INSTANCE METHODS =======================
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+	}
 
-	//================= PRIVATE METHODS ========================
-	
+	// ================= INSTANCE METHODS =======================
+
+	// ================= PRIVATE METHODS ========================
+
 	/**
 	 * Activity initialization
 	 */
@@ -36,8 +42,8 @@ public class PractiseActivity extends AbstractActivity {
 		this.wordCardText = (TextView) findViewById(R.id.wordCardText);
 	}
 
-	//================= GETTERS/SETTERS ========================
+	// ================= GETTERS/SETTERS ========================
 
-	//================= INNER CLASSES ==========================
+	// ================= INNER CLASSES ==========================
 
 }
