@@ -1,16 +1,18 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import cz.cvut.fit.vyhliluk.vocards.R;
-import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
+import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
+import cz.cvut.fit.vyhliluk.vocards.util.Settings;
+import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
-public class WordListActivity extends AbstractActivity {
+public class WordListActivity extends AbstractListActivity {
 
 	// ================= STATIC ATTRIBUTES ======================
 	
@@ -19,10 +21,11 @@ public class WordListActivity extends AbstractActivity {
 
 	// ================= INSTANCE ATTRIBUTES ====================
 	
-	private ListView wordList = null;
 	private EditText filterEdit = null;
 	
 	private MenuItem menuFilter = null;
+	
+	private long selectedDictId;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -35,6 +38,19 @@ public class WordListActivity extends AbstractActivity {
 		setContentView(R.layout.word_list);
 		
 		this.init();
+	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		this.refreshListAdapter();
 	}
 	
 	@Override
@@ -62,17 +78,31 @@ public class WordListActivity extends AbstractActivity {
 	// ================= PRIVATE METHODS ========================
 
 	private void init() {
-		this.wordList = (ListView)findViewById(R.id.wordList);
 		this.filterEdit = (EditText) findViewById(R.id.filterEdit);
 		
-		String[] values = new String[] { "Item 1", "Item 2", "Item 3",
-				"Item 4", "Item 5", "Item 6", "Item 7", "Item 8", "Item 9",
-				"Item 10", "Item 11", "Item 12", "Item 13", "Item 14",
-				"Item 15", "Item 16", "Item 17", "Item 18", "Item 19",
-				"Item 20" };
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
+		this.selectedDictId = Settings.getActiveDictionaryId();
 		
-		this.wordList.setAdapter(adapter);
+		SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
+				this,
+				R.layout.inf_word_item,
+				null,
+				new String[] {
+						WordDS.NATIVE_WORD,
+						WordDS.FOREIGN_WORD
+				},
+				new int[] {
+						R.id.nativeWord,
+						R.id.foreignWord
+				});
+
+		this.setListAdapter(listAdapter);
+	}
+	
+	private void refreshListAdapter() {
+		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		
+		Cursor c = WordDS.getWordsByDictId(this.db, this.selectedDictId);
+		adapter.changeCursor(c);
 	}
 	
 	/**

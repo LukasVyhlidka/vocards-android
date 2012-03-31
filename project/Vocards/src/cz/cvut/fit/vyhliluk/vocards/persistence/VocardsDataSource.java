@@ -29,6 +29,11 @@ public class VocardsDataSource {
 	public static final String WORD_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String WORD_COLUMN_TEXT = "text";
 	public static final String WORD_COLUMN_CARD = "card_id";
+	public static final String WORD_COLUMN_TYPE = "type";
+	
+	public static final int WORD_TYPE_NATIVE = 1;
+	public static final int WORD_TYPE_FOREIGN = 2;
+	
 
 	private static final String CREATE_DICTIONARY = "CREATE TABLE " + DICTIONARY_TABLE + "("
 			+ DICTIONARY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -48,6 +53,7 @@ public class VocardsDataSource {
 			+ WORD_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ WORD_COLUMN_TEXT + " TEXT,"
 			+ WORD_COLUMN_CARD + " INTEGER NOT NULL,"
+			+ WORD_COLUMN_TYPE + " INTEGER NOT NULL,"
 			+ "FOREIGN KEY (" + WORD_COLUMN_CARD + ") REFERENCES " + CARD_TABLE + "(" + CARD_COLUMN_ID + ")"
 			+ ")";
 

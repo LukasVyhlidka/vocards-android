@@ -122,7 +122,7 @@ public class VocardsActivity extends AbstractActivity {
 			Context ctx = VocardsActivity.this;
 			Intent i = new Intent(ctx, PractiseActivity.class);
 			startActivity(i);
-			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+			overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 		}
 	};
 
@@ -140,6 +140,7 @@ public class VocardsActivity extends AbstractActivity {
 			Context ctx = VocardsActivity.this;
 			Intent i = new Intent(ctx, WordListActivity.class);
 			startActivity(i);
+			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		}
 	};
 
@@ -148,6 +149,7 @@ public class VocardsActivity extends AbstractActivity {
 			Context ctx = VocardsActivity.this;
 			Intent i = new Intent(ctx, DictListActivity.class);
 			startActivity(i);
+			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		}
 	};
 }

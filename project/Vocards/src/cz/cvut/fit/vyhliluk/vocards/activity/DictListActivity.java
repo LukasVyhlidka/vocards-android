@@ -55,6 +55,12 @@ public class DictListActivity extends AbstractListActivity {
 
 		this.init();
 	}
+	
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+	}
 
 	@Override
 	protected void onResume() {

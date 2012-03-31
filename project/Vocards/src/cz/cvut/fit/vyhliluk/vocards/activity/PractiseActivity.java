@@ -28,7 +28,7 @@ public class PractiseActivity extends AbstractActivity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+		overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 	}
 
 	// ================= INSTANCE METHODS =======================
