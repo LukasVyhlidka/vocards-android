@@ -24,6 +24,7 @@ public class VocardsDataSource {
 	public static final String CARD_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String CARD_COLUMN_FACTOR = "factor";
 	public static final String CARD_COLUMN_DICTIONARY = "dict_id";
+	public static final int CARD_FACTOR_DEFAULT = 0;
 
 	public static final String WORD_TABLE = "word";
 	public static final String WORD_COLUMN_ID = DB_DEFAULT_ID;
@@ -102,6 +103,19 @@ public class VocardsDataSource {
 	
 	public Cursor rawQuery(String sql, String[] args) {
 		return this.db.rawQuery(sql, args);
+	}
+	
+	public void begin() {
+		this.db.beginTransaction();
+	}
+	
+	public void commit() {
+		this.db.setTransactionSuccessful();
+		this.db.endTransaction();
+	}
+	
+	public void rollback() {
+		this.db.endTransaction();
 	}
 	
 	/**

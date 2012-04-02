@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:a="http://schemas.android.com/apk/res/android"
+    a:layout_width="fill_parent"
+    a:layout_height="fill_parent" >
+    
+    <TextView
+        style="@style/form_label"
+        a:id="@+id/nativeLabel"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentTop="true"
+        a:layout_alignParentLeft="true"
+        a:text="@string/add_word_native"/>
+    
+    <EditText
+        a:id="@+id/nativeEdit"
+        a:layout_width="fill_parent"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/nativeLabel"
+        a:inputType="text" />
+    
+    <TextView
+        style="@style/form_label"
+        a:id="@+id/foreignLabel"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentLeft="true"
+        a:layout_below="@id/nativeEdit"
+        a:text="@string/add_word_foreign"/>
+    
+    <EditText
+        a:id="@+id/foreignEdit"
+        a:layout_width="fill_parent"
+        a:layout_height="wrap_content"
+        a:layout_below="@id/foreignLabel"
+        a:inputType="text" />
+    
+    <Button 
+        a:id="@+id/buttonAdd"
+        a:layout_width="wrap_content"
+        a:layout_height="wrap_content"
+        a:layout_alignParentBottom="true"
+        a:layout_alignParentRight="true"
+        a:text="@string/add_word_create" />
+    
+
+</RelativeLayout>

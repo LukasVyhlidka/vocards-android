@@ -1,5 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -58,7 +59,7 @@ public class WordListActivity extends AbstractListActivity {
 		int none = Menu.NONE;
 		
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, res.getString(R.string.word_list_menu_show_filter));
-		menu.add(none, MENU_NEW_WORD, none, res.getString(R.string.word_list_new_word_hint));
+		menu.add(none, MENU_NEW_WORD, none, res.getString(R.string.word_list_new_word));
 		
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -68,6 +69,9 @@ public class WordListActivity extends AbstractListActivity {
 		switch (item.getItemId()) {
 			case MENU_SHOW_HIDE_FILTER:
 				this.showHideFilter();
+				break;
+			case MENU_NEW_WORD:
+				this.createWord();
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -118,6 +122,11 @@ public class WordListActivity extends AbstractListActivity {
 			this.filterEdit.setVisibility(EditText.GONE);
 			this.menuFilter.setTitle(res.getString(R.string.word_list_menu_show_filter));
 		}
+	}
+	
+	private void createWord() {
+		Intent i = new Intent(this, WordAddActivity.class);
+		startActivity(i);
 	}
 
 	// ================= GETTERS/SETTERS ========================

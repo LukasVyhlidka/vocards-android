@@ -1,6 +1,8 @@
 package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 
 public class WordDS {
@@ -32,6 +34,38 @@ public class WordDS {
 	public static Cursor getWordsByDictId(VocardsDataSource db, long id) {
 		return db.rawQuery(QUERY_WORDS, new String[] { id + "" });
 	}
+	
+	public static long createCard(VocardsDataSource db, String natWord, String forWord, long dictId) {
+		db.begin();
+		
+		ContentValues cardValues = new ContentValues();
+		cardValues.put(VocardsDataSource.CARD_COLUMN_DICTIONARY, dictId);
+		cardValues.put(VocardsDataSource.CARD_COLUMN_FACTOR, VocardsDataSource.CARD_FACTOR_DEFAULT);
+		long cardId = db.insert(VocardsDataSource.CARD_TABLE, cardValues);
+		
+		ContentValues forWordVal = new ContentValues();
+		forWordVal.put(VocardsDataSource.WORD_COLUMN_CARD, cardId);
+		forWordVal.put(VocardsDataSource.WORD_COLUMN_TYPE, VocardsDataSource.WORD_TYPE_FOREIGN);
+		forWordVal.put(VocardsDataSource.WORD_COLUMN_TEXT, forWord);
+		long forWordId = db.insert(VocardsDataSource.WORD_TABLE, forWordVal);
+		
+		ContentValues natWordVal = new ContentValues();
+		natWordVal.put(VocardsDataSource.WORD_COLUMN_CARD, cardId);
+		natWordVal.put(VocardsDataSource.WORD_COLUMN_TYPE, VocardsDataSource.WORD_TYPE_NATIVE);
+		natWordVal.put(VocardsDataSource.WORD_COLUMN_TEXT, natWord);
+		long natWordId = db.insert(VocardsDataSource.WORD_TABLE, natWordVal);
+		
+		if (natWordId != -1 && forWordId != -1 && cardId != -1) {
+			db.commit();
+			Log.d("OK", "OK");
+			return cardId;
+		} else {
+			db.rollback();
+			Log.d("ROLBACK", "ROLBACK");
+			return -1;
+		}
+	}
+	
 	// ================= CONSTRUCTORS ===========================
 
 	// ================= OVERRIDEN METHODS ======================

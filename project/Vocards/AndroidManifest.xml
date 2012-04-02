@@ -34,6 +34,10 @@
             android:label="@string/word_list" >
         </activity>
         <activity
+			android:name=".activity.WordAddActivity"
+            android:label="@string/add_word" >
+        </activity>
+        <activity
             android:name=".activity.DictListActivity"
             android:label="@string/dict_list" >
         </activity>
