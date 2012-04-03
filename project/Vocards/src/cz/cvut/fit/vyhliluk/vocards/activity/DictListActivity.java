@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -202,7 +201,6 @@ public class DictListActivity extends AbstractListActivity {
 		this.db.delete(VocardsDataSource.DICTIONARY_TABLE, id);
 		
 		Toast.makeText(this, R.string.dict_list_dict_deleted_toast, Toast.LENGTH_SHORT).show();
-		Log.d("xxx", "id: "+ id);
 		this.refreshListAdapter();
 	}
 

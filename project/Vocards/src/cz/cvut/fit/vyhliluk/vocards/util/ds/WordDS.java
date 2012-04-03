@@ -15,7 +15,8 @@ public class WordDS {
 	private static final String QUERY_WORDS = "SELECT " +
 			"c." + VocardsDataSource.CARD_COLUMN_ID + ", " +
 			"nat." + VocardsDataSource.WORD_COLUMN_TEXT + " as " + NATIVE_WORD + ", " +
-			"for." + VocardsDataSource.WORD_COLUMN_TEXT + " as " + FOREIGN_WORD + " " +
+			"for." + VocardsDataSource.WORD_COLUMN_TEXT + " as " + FOREIGN_WORD + ", " +
+			"c."+ VocardsDataSource.CARD_COLUMN_FACTOR + " " +
 			"FROM " +
 			VocardsDataSource.CARD_TABLE + " c, " +
 			VocardsDataSource.WORD_TABLE + " nat, " +
@@ -64,6 +65,18 @@ public class WordDS {
 			Log.d("ROLBACK", "ROLBACK");
 			return -1;
 		}
+	}
+	
+	public static int removeCard(VocardsDataSource db, long cardId) {
+		db.begin();
+		
+		int res = 0;
+		res += db.delete(VocardsDataSource.WORD_TABLE, VocardsDataSource.WORD_COLUMN_CARD+"=?", new String[]{cardId+""});
+		res += db.delete(VocardsDataSource.CARD_TABLE, cardId);
+		
+		db.commit();
+		
+		return res;
 	}
 	
 	// ================= CONSTRUCTORS ===========================

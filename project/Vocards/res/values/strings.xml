@@ -43,6 +43,8 @@
     <string name="word_list_menu_new_word">Create Word</string>
     <string name="word_list_filter_hint">Filter Words</string>
     <string name="word_list_new_word">New Word</string>
+    <string name="word_list_ctx_delete">Delete</string>
+    <string name="word_list_deleted_toast">Word was successfully deleted.</string>
     
     <!-- Add Word -->
     <string name="add_word">New Word</string>

@@ -75,4 +75,11 @@
 		<item name="android:layout_gravity">center_vertical</item>
     </style>
     
+    <style name="list_item_flag_image">
+        <item name="android:layout_width">34dp</item>
+		<item name="android:layout_height">28dp</item>
+		<item name="android:layout_marginTop">10dp</item>
+		<item name="android:layout_marginBottom">10dp</item>
+    </style>
+    
 </resources>
