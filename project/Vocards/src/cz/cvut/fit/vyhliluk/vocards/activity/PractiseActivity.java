@@ -27,12 +27,13 @@ public class PractiseActivity extends AbstractActivity {
 	private Button knowBtn = null;
 	private Button dontKnowBtn = null;
 
-	private String nativeWord = null;
-	private String foreignWord = null;
+	private String firstWord = null;
+	private String secondWord = null;
 	private long cardId = -1;
 	private int factor = -1;
-
 	private long dictId = -1;
+
+	private int practiseDirection = -1;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -80,6 +81,7 @@ public class PractiseActivity extends AbstractActivity {
 		this.dontKnowBtn = (Button) findViewById(R.id.dontknowButton);
 
 		this.dictId = Settings.getActiveDictionaryId();
+		this.practiseDirection = Settings.getPractiseDirection();
 
 		this.otherSideBtn.setOnClickListener(this.otherSideClickListener);
 		this.knowBtn.setOnClickListener(this.knowClickListener);
@@ -110,12 +112,34 @@ public class PractiseActivity extends AbstractActivity {
 	private void fetchCursor(Cursor c) {
 		c.moveToFirst();
 		this.cardId = c.getLong(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID));
-		this.nativeWord = c.getString(c.getColumnIndex(WordDS.NATIVE_WORD)) + "\u00A0";
-		this.foreignWord = c.getString(c.getColumnIndex(WordDS.FOREIGN_WORD))  + "\u00A0";
 		this.factor = c.getInt(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR));
+		String natWord = c.getString(c.getColumnIndex(WordDS.NATIVE_WORD)) + "\u00A0";
+		String forWord = c.getString(c.getColumnIndex(WordDS.FOREIGN_WORD)) + "\u00A0";
 		c.close();
 
+		this.setWordsByDirection(natWord, forWord);
 		this.loadDictFactor();
+	}
+	
+	private void setWordsByDirection(String natWord, String forWord) {
+		switch (this.practiseDirection) {
+			case Settings.PRACTISE_DIRECTION_NATIVE_TO_FOREIGN:
+				this.firstWord = natWord;
+				this.secondWord = forWord;
+				break;
+			case Settings.PRACTISE_DIRECTION_FOREIGN_TO_NATIVE:
+				this.firstWord = forWord;
+				this.secondWord = natWord;
+			case Settings.PRACTISE_DIRECTION_BOTH:
+				double rand = Math.random();
+				if (rand >= 0.5) {
+					this.firstWord = natWord;
+					this.secondWord = forWord;
+				} else {
+					this.firstWord = forWord;
+					this.secondWord = natWord;
+				}
+		}
 	}
 
 	private void loadDictFactor() {
@@ -124,14 +148,15 @@ public class PractiseActivity extends AbstractActivity {
 	}
 
 	private void loadOneSide() {
-		this.wordCardNat.setText(this.nativeWord);
-		this.wordCardFor.setText("");
+		this.wordCardNat.setText(this.firstWord);
+		this.wordCardFor.setText(this.secondWord);
+		this.wordCardFor.setVisibility(View.INVISIBLE);
 
 		this.visibleOtherSideBtn();
 	}
 
 	private void loadOtherSide() {
-		this.wordCardFor.setText(this.foreignWord);
+		this.wordCardFor.setVisibility(View.VISIBLE);
 
 		this.visibleKnowledgeBtn();
 	}
@@ -148,6 +173,9 @@ public class PractiseActivity extends AbstractActivity {
 		this.dontKnowBtn.setVisibility(View.GONE);
 	}
 
+	/**
+	 * Action when user know the card
+	 */
 	private void know() {
 		int newFactor = CardUtil.getNewFactor(true, this.factor);
 		WordDS.updateFactor(this.db, this.cardId, newFactor);
@@ -155,6 +183,9 @@ public class PractiseActivity extends AbstractActivity {
 		this.loadNextWord();
 	}
 
+	/**
+	 * Action when user don't know the card
+	 */
 	private void dontKnow() {
 		int newFactor = CardUtil.getNewFactor(false, this.factor);
 		WordDS.updateFactor(this.db, this.cardId, newFactor);

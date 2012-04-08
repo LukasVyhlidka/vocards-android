@@ -18,14 +18,20 @@ public class Settings {
 	public static final String PREF_NAME = "vocards.settings";
 	
 	public static final String KEY_ACTIVE_DICT_ID = "active_dict_id";
+	public static final String KEY_PRACTISE_DIRECTION = "practise_direction";
+	
 	public static final long UNDEFINED_ACTIVE_DICT_ID = -1;
+	
+	public static final int PRACTISE_DIRECTION_NATIVE_TO_FOREIGN = 0;
+	public static final int PRACTISE_DIRECTION_FOREIGN_TO_NATIVE = 1;
+	public static final int PRACTISE_DIRECTION_BOTH = 2;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	// ================= STATIC METHODS =========================
 	
 	public static long getActiveDictionaryId() {
-		return getLong(KEY_ACTIVE_DICT_ID);
+		return getLong(KEY_ACTIVE_DICT_ID, UNDEFINED_ACTIVE_DICT_ID);
 	}
 	
 	public static void setActiveDictionaryId(long id) {
@@ -34,6 +40,10 @@ public class Settings {
 	
 	public static void removeActiveDictionary() {
 		removeLong(KEY_ACTIVE_DICT_ID);
+	}
+	
+	public static int getPractiseDirection() {
+		return getInt(KEY_PRACTISE_DIRECTION, PRACTISE_DIRECTION_BOTH);
 	}
 
 	// ================= CONSTRUCTORS ===========================
@@ -44,8 +54,12 @@ public class Settings {
 
 	// ================= PRIVATE METHODS ========================
 	
-	private static long getLong(String key) {
-		return getSharedPreferences().getLong(key, UNDEFINED_ACTIVE_DICT_ID);
+	private static long getLong(String key, long defVal) {
+		return getSharedPreferences().getLong(key, defVal);
+	}
+	
+	private static int getInt(String key, int defVal) {
+		return getSharedPreferences().getInt(key, defVal);
 	}
 	
 	private static void putLong(String key, Long value) {
