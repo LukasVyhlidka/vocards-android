@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
+
+    <TextView
+        style="@style/card_factor_label"
+        android:id="@+id/factorLabel"
+        android:text="@string/learn_factor" />
     
+    <TextView
+        android:id="@+id/factor"
+        style="@style/card_factor_value"
+        android:layout_alignTop="@id/factorLabel"
+        android:layout_toRightOf="@id/factorLabel" />
+    
+    <TextView
+        style="@style/card_position_label"
+        android:layout_alignTop="@+id/position"
+        android:layout_toLeftOf="@id/position"
+        android:text="@string/learn_position" />
+    
+    <TextView
+        android:id="@id/position"
+        style="@style/card_position_value" />
+
     <include layout="@layout/inc_word_card" />
     
+
     <LinearLayout
         android:id="@+id/learnBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-        
+        android:orientation="horizontal" >
+
         <Button
+            android:id="@+id/buttonPrev"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/learn_next_btn"
-            android:layout_weight="1" />
-        
+            android:layout_weight="1"
+            android:text="@string/learn_prev_btn" />
+
+        <Button
+            android:id="@+id/buttonNext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/learn_next_btn" />
     </LinearLayout>
-    
 
 </RelativeLayout>

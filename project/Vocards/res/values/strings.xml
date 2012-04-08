@@ -27,12 +27,16 @@
     
     <!-- Practise -->
     <string name="practise">Practise</string>
+    <string name="practose_factor">Dictionary Factor:</string>
     <string name="practise_show">Show Other Side</string>
     <string name="practise_know">Know</string>
     <string name="practise_dont_know">Don\'t Know</string>
     
     <!-- Learn -->
     <string name="learn">Learn</string>
+    <string name="learn_factor">Factor:</string>
+    <string name="learn_position">Position:</string>
+    <string name="learn_prev_btn">Previous</string>
     <string name="learn_next_btn">Next</string>
     
     <!-- Word List -->
@@ -44,13 +48,18 @@
     <string name="word_list_filter_hint">Filter Words</string>
     <string name="word_list_new_word">New Word</string>
     <string name="word_list_ctx_delete">Delete</string>
+    <string name="word_list_ctx_edit">Edit</string>
     <string name="word_list_deleted_toast">Word was successfully deleted.</string>
+    <string name="word_list_empty_word_toast">Please, enter a native word text.</string>
     
     <!-- Add Word -->
     <string name="add_word">New Word</string>
+    <string name="add_word_edit_title">Edit Word</string>
     <string name="add_word_native">Native</string>
     <string name="add_word_foreign">Foreign</string>
     <string name="add_word_create">Create Word</string>
+    <string name="add_word_edit">Edit Word</string>
+    <string name="add_word_empty_word_toast">Please, fill the native and foreign word.</string>
     
     <!-- Dict List -->
     <string name="dict_list">Dict List</string>
@@ -69,5 +78,6 @@
     <string name="add_dict_foreign">Foreign Language</string>
     <string name="add_dict_create">Create Dictionary</string>
     <string name="add_dict_created_toast">Dictionary created.</string>
+    <string name="add_dict_empty_name_toast">Please, fill the dictionary name.</string>
 
 </resources>

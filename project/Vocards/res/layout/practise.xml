@@ -1,23 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
     
+    <TextView
+        style="@style/card_factor_label"
+        android:id="@+id/factorLabel"
+        android:text="@string/practose_factor" />
+    
+    <TextView
+        android:id="@+id/factor"
+        style="@style/card_factor_value"
+        android:layout_alignTop="@id/factorLabel"
+        android:layout_toRightOf="@id/factorLabel" />
+
     <include layout="@layout/inc_word_card" />
-    
+
     <LinearLayout
         android:id="@+id/learnBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal">
-        
+        android:orientation="horizontal" >
+
         <Button
+            android:id="@+id/showOtherSide"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/practise_show"
-            android:layout_weight="1" />
-        
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/dontknowButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/practise_dont_know"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/knowButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/practise_know"
+            android:visibility="gone" />
     </LinearLayout>
 
 </RelativeLayout>

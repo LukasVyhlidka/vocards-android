@@ -97,6 +97,10 @@ public class VocardsDataSource {
 		return this.db.insert(table, null, val);
 	}
 	
+	public int update(String table, ContentValues val, String selection, String[] args) {
+		return this.db.update(table, val, selection, args);
+	}
+	
 	public int delete(String table, String whereClause, String[] whereArgs) {
 		return this.db.delete(table, whereClause, whereArgs);
 	}

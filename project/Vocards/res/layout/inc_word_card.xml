@@ -2,20 +2,18 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/word_card"
+        style="@style/card_container"
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/wordCardText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="a word"
-            android:textColor="@color/black" />
+            style="@style/card_container_native"
+            android:id="@+id/wordCardNative"
+            android:text="a wordddd" />
+        
+        <TextView
+            style="@style/card_container_foreign"
+            android:id="@+id/wordCardForeign"
+            android:text="a trans"/>
     </LinearLayout>
 
 </merge>

@@ -27,7 +27,7 @@
         android:id="@+id/factor"
         android:layout_gravity="right|center_vertical"
         android:paddingLeft="10dp"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

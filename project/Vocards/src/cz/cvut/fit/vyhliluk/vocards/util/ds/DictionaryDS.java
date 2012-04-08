@@ -35,11 +35,21 @@ public class DictionaryDS {
 	
 	public static int getWordCount(VocardsDataSource db, long dictId) {
 		Cursor c = db.query(CARD_TABLE, new String[]{CARD_COLUMN_ID}, CARD_COLUMN_DICTIONARY +"=?", new String[]{dictId+""});
-		return c.getCount();
+		int count = c.getCount();
+		c.close();
+		return count;
 	}
 	
 	public static Cursor getDictionaryStats(VocardsDataSource db, long dictId) {
 		return db.rawQuery(QUERY_STATS, new String[]{dictId+""});
+	}
+	
+	public static double getDictFactor(VocardsDataSource db, long dictId) {
+		Cursor c = getDictionaryStats(db, dictId);
+		c.moveToFirst();
+		double res = c.getDouble(c.getColumnIndex(LEARN_FACTOR));
+		c.close();
+		return res;
 	}
 
 	// ================= CONSTRUCTORS ===========================

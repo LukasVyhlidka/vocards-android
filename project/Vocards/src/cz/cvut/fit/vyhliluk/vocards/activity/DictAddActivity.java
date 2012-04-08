@@ -18,6 +18,7 @@ import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.adapter.LanguageAdapter;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
 
 public class DictAddActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
@@ -54,6 +55,11 @@ public class DictAddActivity extends AbstractActivity {
 			String name = nameEdit.getText().toString();
 			Language nativeLang = (Language)nativeSpinner.getSelectedItem();
 			Language foreignLang = (Language)foreignSpinner.getSelectedItem();
+			
+			if (StringUtil.isEmpty(name)) {
+				Toast.makeText(DictAddActivity.this, R.string.add_dict_empty_name_toast, Toast.LENGTH_SHORT);
+				return;
+			}
 			
 			saveDictionary(name, nativeLang, foreignLang);
 		}

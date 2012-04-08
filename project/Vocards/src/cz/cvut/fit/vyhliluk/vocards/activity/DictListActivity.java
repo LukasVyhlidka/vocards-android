@@ -20,6 +20,7 @@ import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 
 /**
@@ -66,6 +67,14 @@ public class DictListActivity extends AbstractListActivity {
 		super.onResume();
 
 		this.refreshListAdapter();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		adapter.getCursor().close();
 	}
 
 	@Override
@@ -185,6 +194,7 @@ public class DictListActivity extends AbstractListActivity {
 
 	private void refreshListAdapter() {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		DBUtil.closeExistingCursor(adapter.getCursor());
 		Cursor c = this.db.query(VocardsDataSource.DICTIONARY_TABLE,
 				new String[] {
 						VocardsDataSource.DICTIONARY_COLUMN_ID,

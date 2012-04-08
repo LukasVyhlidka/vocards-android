@@ -9,14 +9,21 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
+import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
+import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
 public class WordListActivity extends AbstractListActivity {
@@ -27,10 +34,14 @@ public class WordListActivity extends AbstractListActivity {
 	public static final int MENU_NEW_WORD = 1;
 
 	public static final int CTX_DELETE_WORD = 0;
+	public static final int CTX_EDIT_WORD = 1;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	private EditText filterEdit = null;
+	private EditText newWordEdit = null;
+
+	private Button addWordBtn = null;
 
 	private MenuItem menuFilter = null;
 
@@ -61,6 +72,14 @@ public class WordListActivity extends AbstractListActivity {
 
 		this.refreshListAdapter();
 	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		adapter.getCursor().close();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,7 +98,7 @@ public class WordListActivity extends AbstractListActivity {
 				this.showHideFilter();
 				break;
 			case MENU_NEW_WORD:
-				this.createWord();
+				this.createWord(null);
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -90,6 +109,7 @@ public class WordListActivity extends AbstractListActivity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
 		int none = Menu.NONE;
+		menu.add(none, CTX_EDIT_WORD, none, R.string.word_list_ctx_edit);
 		menu.add(none, CTX_DELETE_WORD, none, R.string.word_list_ctx_delete);
 	}
 
@@ -99,6 +119,9 @@ public class WordListActivity extends AbstractListActivity {
 		switch (item.getItemId()) {
 			case CTX_DELETE_WORD:
 				this.deleteCard(info.id);
+				break;
+			case CTX_EDIT_WORD:
+				this.editCard(info.id);
 				break;
 		}
 
@@ -111,6 +134,8 @@ public class WordListActivity extends AbstractListActivity {
 
 	private void init() {
 		this.filterEdit = (EditText) findViewById(R.id.filterEdit);
+		this.newWordEdit = (EditText) findViewById(R.id.editNewWord);
+		this.addWordBtn = (Button) findViewById(R.id.buttonAdd);
 
 		this.selectedDictId = Settings.getActiveDictionaryId();
 
@@ -129,12 +154,16 @@ public class WordListActivity extends AbstractListActivity {
 						R.id.factor
 				});
 
+		listAdapter.setViewBinder(this.wordListBinder);
 		this.setListAdapter(listAdapter);
 		this.registerForContextMenu(this.getListView());
+
+		this.addWordBtn.setOnClickListener(this.addWordClickListener);
 	}
 
 	private void refreshListAdapter() {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		DBUtil.closeExistingCursor(adapter.getCursor());
 
 		Cursor c = WordDS.getWordsByDictId(this.db, this.selectedDictId);
 		adapter.changeCursor(c);
@@ -142,9 +171,15 @@ public class WordListActivity extends AbstractListActivity {
 
 	private void deleteCard(long id) {
 		WordDS.removeCard(this.db, id);
-		
+
 		Toast.makeText(this, R.string.word_list_deleted_toast, Toast.LENGTH_SHORT).show();
 		this.refreshListAdapter();
+	}
+	
+	private void editCard(long id) {
+		Intent i = new Intent(this, WordAddActivity.class);
+		i.putExtra(WordAddActivity.EXTRAS_CARD_ID, id);
+		startActivity(i);
 	}
 
 	/**
@@ -162,13 +197,43 @@ public class WordListActivity extends AbstractListActivity {
 		}
 	}
 
-	private void createWord() {
+	private void createWord(String natWord) {
 		Intent i = new Intent(this, WordAddActivity.class);
+		if (natWord != null) {
+			i.putExtra(WordAddActivity.EXTRAS_NATIVE_WORD, natWord);
+		}
 		startActivity(i);
 	}
 
 	// ================= GETTERS/SETTERS ========================
 
 	// ================= INNER CLASSES ==========================
+
+	ViewBinder wordListBinder = new ViewBinder() {
+
+		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+			String colName = cursor.getColumnName(columnIndex);
+			if (VocardsDataSource.CARD_COLUMN_FACTOR.equals(colName)) {
+				TextView v = (TextView) view;
+				int factor = cursor.getInt(columnIndex);
+				v.setText(CardUtil.cardFactorPercent(factor));
+				return true;
+			}
+			return false;
+		}
+	};
+
+	OnClickListener addWordClickListener = new OnClickListener() {
+
+		public void onClick(View v) {
+			String natWord = newWordEdit.getText().toString();
+			if (StringUtil.isEmpty(natWord)) {
+				Toast.makeText(WordListActivity.this, R.string.word_list_empty_word_toast, Toast.LENGTH_SHORT).show();
+				return;
+			}
+
+			createWord(natWord);
+		}
+	};
 
 }

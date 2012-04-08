@@ -21,7 +21,7 @@
         android:layout_above="@+id/buttonAdd"
         android:layout_below="@id/filterEdit" />
 
-    <EditText
+    <!--<EditText
         android:id="@+id/editNewDict"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -36,6 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="@string/add_button" />
+        android:text="@string/add_button" />-->
 
 </RelativeLayout>

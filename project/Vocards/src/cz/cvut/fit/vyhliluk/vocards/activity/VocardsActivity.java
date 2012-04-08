@@ -10,6 +10,7 @@ import android.widget.TextView;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
@@ -79,10 +80,6 @@ public class VocardsActivity extends AbstractActivity {
 	}
 
 	private void dictionarySelected(long id) {
-		this.wordListIcon.setEnabled(true);
-		this.practiseIcon.setEnabled(true);
-		this.learnIcon.setEnabled(true);
-
 		Cursor c = DictionaryDS.getById(this.db, id);
 		if (c.getCount() != 1) { // selected dictionary is not in db
 			Settings.removeActiveDictionary();
@@ -96,11 +93,15 @@ public class VocardsActivity extends AbstractActivity {
 		c = DictionaryDS.getDictionaryStats(this.db, id);
 		c.moveToFirst();
 		int wc = c.getInt(c.getColumnIndex(DictionaryDS.WORD_COUNT));
-		String factor = c.getString(c.getColumnIndex(DictionaryDS.LEARN_FACTOR));
+		double factor = c.getDouble(c.getColumnIndex(DictionaryDS.LEARN_FACTOR));
 
 		this.dictNameText.setText(name);
 		this.wordCountText.setText(wc + "");
-		this.learnFactorText.setText(factor);
+		this.learnFactorText.setText(CardUtil.dictFactorPercent(factor));
+		
+		this.wordListIcon.setEnabled(true);
+		this.practiseIcon.setEnabled(wc > 0);
+		this.learnIcon.setEnabled(wc > 0);
 	}
 
 	private void dictionaryUnselected() {
