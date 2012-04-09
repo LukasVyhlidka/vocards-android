@@ -10,14 +10,14 @@ import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.*;
 
 public class DictionaryDS {
 	// ================= STATIC ATTRIBUTES ======================
-	
+
 	public static final String WORD_COUNT = "word_count";
 	public static final String LEARN_FACTOR = "learn_factor";
-	
+
 	private static final String QUERY_STATS = "SELECT " +
-			"COUNT("+ VocardsDataSource.CARD_COLUMN_ID +") as "+ WORD_COUNT +"," +
-			"AVG("+ VocardsDataSource.CARD_COLUMN_FACTOR +") as "+ LEARN_FACTOR +
-			" FROM "+ CARD_TABLE +" WHERE "+ CARD_COLUMN_DICTIONARY +"=?";
+			"COUNT(" + VocardsDataSource.CARD_COLUMN_ID + ") as " + WORD_COUNT + "," +
+			"AVG(" + VocardsDataSource.CARD_COLUMN_FACTOR + ") as " + LEARN_FACTOR +
+			" FROM " + CARD_TABLE + " WHERE " + CARD_COLUMN_DICTIONARY + "=?";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -27,29 +27,42 @@ public class DictionaryDS {
 		return db.query(
 				VocardsDataSource.DICTIONARY_TABLE,
 				new String[] { DICTIONARY_COLUMN_ID, DICTIONARY_COLUMN_NAME, DICTIONARY_COLUMN_NATIVE_LANG, DICTIONARY_COLUMN_FOREIGN_LANG },
-				DICTIONARY_COLUMN_ID +"=?",
-				new String[]{id+""},
+				DICTIONARY_COLUMN_ID + "=?",
+				new String[] { id + "" },
 				null,
 				"1");
 	}
-	
+
 	public static int getWordCount(VocardsDataSource db, long dictId) {
-		Cursor c = db.query(CARD_TABLE, new String[]{CARD_COLUMN_ID}, CARD_COLUMN_DICTIONARY +"=?", new String[]{dictId+""});
+		Cursor c = db.query(CARD_TABLE, new String[] { CARD_COLUMN_ID }, CARD_COLUMN_DICTIONARY + "=?", new String[] { dictId + "" });
 		int count = c.getCount();
 		c.close();
 		return count;
 	}
-	
+
 	public static Cursor getDictionaryStats(VocardsDataSource db, long dictId) {
-		return db.rawQuery(QUERY_STATS, new String[]{dictId+""});
+		return db.rawQuery(QUERY_STATS, new String[] { dictId + "" });
 	}
-	
+
 	public static double getDictFactor(VocardsDataSource db, long dictId) {
 		Cursor c = getDictionaryStats(db, dictId);
 		c.moveToFirst();
 		double res = c.getDouble(c.getColumnIndex(LEARN_FACTOR));
 		c.close();
 		return res;
+	}
+
+	public static Cursor getDictionaries(VocardsDataSource db) {
+		Cursor c = db.query(VocardsDataSource.DICTIONARY_TABLE,
+				new String[] {
+						VocardsDataSource.DICTIONARY_COLUMN_ID,
+						VocardsDataSource.DICTIONARY_COLUMN_NAME,
+						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
+						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG },
+				null,
+				null,
+				VocardsDataSource.DICTIONARY_COLUMN_NAME);
+		return c;
 	}
 
 	// ================= CONSTRUCTORS ===========================

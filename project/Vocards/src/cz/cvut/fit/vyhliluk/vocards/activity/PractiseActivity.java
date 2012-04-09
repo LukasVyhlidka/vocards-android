@@ -86,6 +86,10 @@ public class PractiseActivity extends AbstractActivity {
 		this.otherSideBtn.setOnClickListener(this.otherSideClickListener);
 		this.knowBtn.setOnClickListener(this.knowClickListener);
 		this.dontKnowBtn.setOnClickListener(this.dontKnowClickListener);
+		
+		int fontSize = Settings.getCardFontSize();
+		this.wordCardNat.setTextSize(fontSize);
+		this.wordCardFor.setTextSize(fontSize);
 	}
 
 	private void loadWord(long id) {
@@ -130,6 +134,7 @@ public class PractiseActivity extends AbstractActivity {
 			case Settings.PRACTISE_DIRECTION_FOREIGN_TO_NATIVE:
 				this.firstWord = forWord;
 				this.secondWord = natWord;
+				break;
 			case Settings.PRACTISE_DIRECTION_BOTH:
 				double rand = Math.random();
 				if (rand >= 0.5) {
@@ -139,6 +144,7 @@ public class PractiseActivity extends AbstractActivity {
 					this.firstWord = forWord;
 					this.secondWord = natWord;
 				}
+				break;
 		}
 	}
 

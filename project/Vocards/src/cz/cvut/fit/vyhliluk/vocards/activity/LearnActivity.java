@@ -82,6 +82,10 @@ public class LearnActivity extends AbstractActivity {
 
 		this.nextBtn.setOnClickListener(this.nextBtnListener);
 		this.prevBtn.setOnClickListener(this.prevBtnListener);
+		
+		int fontSize = Settings.getCardFontSize();
+		this.wordCardNat.setTextSize(fontSize);
+		this.wordCardFor.setTextSize(fontSize);
 	}
 
 	private void showCurrentWord() {

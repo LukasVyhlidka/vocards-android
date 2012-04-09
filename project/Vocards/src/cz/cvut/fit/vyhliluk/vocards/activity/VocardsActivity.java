@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -17,6 +19,9 @@ import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 public class VocardsActivity extends AbstractActivity {
 
 	// ================= STATIC ATTRIBUTES ======================
+	
+	private static final int OPTIONS_SETTINGS = 0;
+	private static final int OPTIONS_EXPORT = 1;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -47,6 +52,30 @@ public class VocardsActivity extends AbstractActivity {
 		super.onResume();
 
 		this.refreshState();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		int none = Menu.NONE;
+
+		menu.add(none, OPTIONS_SETTINGS, none, R.string.main_options_settings);
+		menu.add(none, OPTIONS_EXPORT, none, R.string.main_options_export);
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case OPTIONS_SETTINGS:
+				startActivity(new Intent(this, SettingsActivity.class));
+				break;
+			case OPTIONS_EXPORT:
+				startActivity(new Intent(this, DictMultiListActivity.class));
+				break;
+		}
+		
+		return super.onOptionsItemSelected(item);
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -94,6 +123,7 @@ public class VocardsActivity extends AbstractActivity {
 		c.moveToFirst();
 		int wc = c.getInt(c.getColumnIndex(DictionaryDS.WORD_COUNT));
 		double factor = c.getDouble(c.getColumnIndex(DictionaryDS.LEARN_FACTOR));
+		c.close();
 
 		this.dictNameText.setText(name);
 		this.wordCountText.setText(wc + "");

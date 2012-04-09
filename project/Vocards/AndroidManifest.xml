@@ -21,6 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity 
+            android:name=".activity.SettingsActivity"/>
          <activity
             android:name=".activity.PractiseActivity"
             android:label="@string/practise" >
@@ -44,6 +46,9 @@
         <activity			android:name=".activity.DictAddActivity"
             android:label="@string/add_dict" >
         </activity>
+        <activity 
+            android:name=".activity.DictMultiListActivity"
+            android:label="@string/dict_multilist" />
     </application>
 
 </manifest>

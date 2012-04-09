@@ -11,17 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
-import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
+import cz.cvut.fit.vyhliluk.vocards.util.DictUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
+import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 /**
  * Activity class
@@ -129,6 +128,7 @@ public class DictListActivity extends AbstractListActivity {
 		Intent i = new Intent(this, VocardsActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
+		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -143,38 +143,7 @@ public class DictListActivity extends AbstractListActivity {
 		
 		this.registerForContextMenu(this.getListView());
 
-		SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
-				this,
-				R.layout.inf_dictionary_item,
-				null,
-				new String[] {
-						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
-						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG,
-						VocardsDataSource.DICTIONARY_COLUMN_NAME
-				},
-				new int[] {
-						R.id.nativeLangIcon,
-						R.id.foreignLangIcon,
-						R.id.languageText
-				});
-
-		ViewBinder listViewBinder = new ViewBinder() {
-			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				String colName = cursor.getColumnName(columnIndex);
-				if (VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG.equals(colName)
-						|| VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG.equals(colName)) {
-					ImageView img = (ImageView) view;
-					Language lang = Language.getById(cursor.getInt(columnIndex));
-					img.setImageResource(lang.getIconId());
-					return true;
-				} else {
-					return false;
-				}
-			}
-		};
-		
-		listAdapter.setViewBinder(listViewBinder);
-		this.setListAdapter(listAdapter);
+		this.setListAdapter(DictUtil.createDictListAdapter(this));
 	}
 
 	/**
@@ -195,15 +164,7 @@ public class DictListActivity extends AbstractListActivity {
 	private void refreshListAdapter() {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		DBUtil.closeExistingCursor(adapter.getCursor());
-		Cursor c = this.db.query(VocardsDataSource.DICTIONARY_TABLE,
-				new String[] {
-						VocardsDataSource.DICTIONARY_COLUMN_ID,
-						VocardsDataSource.DICTIONARY_COLUMN_NAME,
-						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
-						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG },
-				null,
-				null,
-				VocardsDataSource.DICTIONARY_COLUMN_NAME);
+		Cursor c = DictionaryDS.getDictionaries(this.db);
 		adapter.changeCursor(c);
 	}
 	
