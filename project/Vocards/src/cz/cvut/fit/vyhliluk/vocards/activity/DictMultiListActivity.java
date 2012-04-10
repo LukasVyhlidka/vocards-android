@@ -1,30 +1,35 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
-import cz.cvut.fit.vyhliluk.vocards.util.DictUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 public class DictMultiListActivity extends AbstractListActivity {
-	//================= STATIC ATTRIBUTES ======================
-
-	//================= INSTANCE ATTRIBUTES ====================
+	// ================= STATIC ATTRIBUTES ======================
 	
+	public static final int REQUEST_DICT_LIST = 0;
+	public static final String KEY_RESULT_LIST = "result_list";
+
+	// ================= INSTANCE ATTRIBUTES ====================
+
 	private Button okBtn = null;
 	private Button cancelBtn = null;
 
-	//================= STATIC METHODS =========================
+	// ================= STATIC METHODS =========================
 
-	//================= CONSTRUCTORS ===========================
+	// ================= CONSTRUCTORS ===========================
 
-	//================= OVERRIDEN METHODS ======================
-	
+	// ================= OVERRIDEN METHODS ======================
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,7 +37,7 @@ public class DictMultiListActivity extends AbstractListActivity {
 
 		this.init();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -43,22 +48,36 @@ public class DictMultiListActivity extends AbstractListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		adapter.getCursor().close();
 	}
 
-	//================= INSTANCE METHODS =======================
+	// ================= INSTANCE METHODS =======================
 
-	//================= PRIVATE METHODS ========================
-	
+	// ================= PRIVATE METHODS ========================
+
 	private void init() {
 		this.okBtn = (Button) findViewById(R.id.okButton);
 		this.cancelBtn = (Button) findViewById(R.id.cancelButton);
 
-		this.setListAdapter(DictUtil.createDictListAdapter(this));
+		SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
+				this,
+				android.R.layout.simple_list_item_multiple_choice,
+				null,
+				new String[] {
+						VocardsDataSource.DICTIONARY_COLUMN_NAME
+				},
+				new int[] {
+						android.R.id.text1
+				});
+
+		this.setListAdapter(listAdapter);
+		
+		this.okBtn.setOnClickListener(okClickListener);
+		this.cancelBtn.setOnClickListener(cancelClickListener);
 	}
-	
+
 	private void refreshListAdapter() {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		DBUtil.closeExistingCursor(adapter.getCursor());
@@ -66,8 +85,28 @@ public class DictMultiListActivity extends AbstractListActivity {
 		adapter.changeCursor(c);
 	}
 
-	//================= GETTERS/SETTERS ========================
+	// ================= GETTERS/SETTERS ========================
 
-	//================= INNER CLASSES ==========================
+	// ================= INNER CLASSES ==========================
+	
+	OnClickListener okClickListener = new OnClickListener() {
+		
+		public void onClick(View v) {
+			long[] checkedIds = getListView().getCheckItemIds();
+			Intent i = getIntent();
+			i.putExtra(KEY_RESULT_LIST, checkedIds);
+			
+			setResult(RESULT_OK, i);
+			finish();
+		}
+	};
+	
+	OnClickListener cancelClickListener = new OnClickListener() {
+		
+		public void onClick(View v) {
+			setResult(RESULT_CANCELED);
+			finish();
+		}
+	};
 
 }
