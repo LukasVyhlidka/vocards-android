@@ -4,7 +4,9 @@ import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTION
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_ID;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_NAME;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG;
+import android.content.ContentValues;
 import android.database.Cursor;
+import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.*;
 
@@ -22,6 +24,14 @@ public class DictionaryDS {
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	// ================= STATIC METHODS =========================
+
+	public static Cursor getByName(VocardsDataSource db, String name) {
+		return db.query(
+				VocardsDataSource.DICTIONARY_TABLE,
+				null,
+				DICTIONARY_COLUMN_NAME + "=?",
+				new String[] { name });
+	}
 
 	public static Cursor getById(VocardsDataSource db, long id) {
 		return db.query(
@@ -63,6 +73,25 @@ public class DictionaryDS {
 				null,
 				VocardsDataSource.DICTIONARY_COLUMN_NAME);
 		return c;
+	}
+
+	public static long createDictionary(VocardsDataSource db, String name, Language nativeLang, Language foreignLang) {
+		ContentValues val = new ContentValues();
+		val.put(VocardsDataSource.DICTIONARY_COLUMN_NAME, name);
+		val.put(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG, nativeLang.getId());
+		val.put(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG, foreignLang.getId());
+		return db.insert(VocardsDataSource.DICTIONARY_TABLE, val);
+	}
+
+	public static int deleteDict(VocardsDataSource db, long dictId) {
+		int res = 0;
+		
+		db.begin();
+		res += WordDS.removeCardsByDict(db, dictId);
+		res += db.delete(VocardsDataSource.DICTIONARY_TABLE, dictId);
+		db.commit();
+		
+		return res;
 	}
 
 	// ================= CONSTRUCTORS ===========================

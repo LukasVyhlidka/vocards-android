@@ -5,14 +5,14 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="7" />
-    
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".VocardsApp"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Black"
-        android:name=".VocardsApp">
+        android:theme="@android:style/Theme.Black" >
         <activity
             android:name=".activity.VocardsActivity"
             android:label="@string/app_name"
@@ -23,9 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:name=".activity.SettingsActivity"/>
-         <activity
+        <activity android:name=".activity.SettingsActivity" />
+        <activity
             android:name=".activity.PractiseActivity"
             android:label="@string/practise" >
         </activity>
@@ -38,19 +37,33 @@
             android:label="@string/word_list" >
         </activity>
         <activity
-			android:name=".activity.WordAddActivity"
+            android:name=".activity.WordAddActivity"
             android:label="@string/add_word" >
         </activity>
         <activity
             android:name=".activity.DictListActivity"
             android:label="@string/dict_list" >
         </activity>
-        <activity			android:name=".activity.DictAddActivity"
+        <activity
+            android:name=".activity.DictAddActivity"
             android:label="@string/add_dict" >
         </activity>
-        <activity 
+        <activity
             android:name=".activity.DictMultiListActivity"
             android:label="@string/dict_multilist" />
+        <activity
+            android:name=".activity.ImportActivity"
+            android:label="@string/import_activity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data
+                    android:mimeType="application/vnd.cz.cvut.fit.vyhliluk.vocards"
+                    android:scheme="file" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

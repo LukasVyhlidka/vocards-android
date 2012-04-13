@@ -3,7 +3,6 @@ package cz.cvut.fit.vyhliluk.vocards.activity;
 import java.util.Arrays;
 import java.util.List;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,8 +16,8 @@ import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.adapter.LanguageAdapter;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
+import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 public class DictAddActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
@@ -88,11 +87,7 @@ public class DictAddActivity extends AbstractActivity {
 	}
 	
 	private void saveDictionary(String name, Language nativeLang, Language foreignLang) {
-		ContentValues val = new ContentValues();
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_NAME, name);
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG, nativeLang.getId());
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG, foreignLang.getId());
-		this.db.insert(VocardsDataSource.DICTIONARY_TABLE, val);
+		DictionaryDS.createDictionary(this.db, name, nativeLang, foreignLang);
 		
 		Toast.makeText(this, res.getString(R.string.add_dict_created_toast), Toast.LENGTH_SHORT).show();
 		

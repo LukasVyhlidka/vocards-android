@@ -9,5 +9,4 @@ public class Const {
 	public static final int LANGUAGE_EN = 3;
 	public static final int LANGUAGE_FR = 4;
 	public static final int LANGUAGE_DE = 5;
-
 }

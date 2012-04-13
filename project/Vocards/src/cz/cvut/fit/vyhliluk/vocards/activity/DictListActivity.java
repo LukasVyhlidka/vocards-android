@@ -1,23 +1,9 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -29,14 +15,13 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
-import cz.cvut.fit.vyhliluk.vocards.VocardsApp;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
+import cz.cvut.fit.vyhliluk.vocards.activity.task.ExportTask;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DictUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
-import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionarySerialization;
 
 /**
  * Activity class
@@ -99,7 +84,7 @@ public class DictListActivity extends AbstractListActivity {
 
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, R.string.dict_list_menu_show_filter);
 		menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict);
-		menu.add(none, MENU_EXPORT, none, R.string.dict_list_menu_export);
+		menu.add(none, MENU_EXPORT, none, R.string.export_menu_export);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -200,7 +185,7 @@ public class DictListActivity extends AbstractListActivity {
 	}
 
 	private void deleteDict(long id) {
-		this.db.delete(VocardsDataSource.DICTIONARY_TABLE, id);
+		DictionaryDS.deleteDict(db, id);
 
 		Toast.makeText(this, R.string.dict_list_dict_deleted_toast, Toast.LENGTH_SHORT).show();
 		this.refreshListAdapter();
@@ -212,12 +197,6 @@ public class DictListActivity extends AbstractListActivity {
 	}
 
 	private void export(long[] dictIds) {
-		// StringBuilder sb = new StringBuilder();
-		// for (long id: dictIds) {
-		// sb.append(id).append(", ");
-		// }
-		// Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG).show();
-
 		Long[] ids = new Long[dictIds.length];
 		for (int i = 0; i < dictIds.length; i++) {
 			ids[i] = dictIds[i];
@@ -230,91 +209,5 @@ public class DictListActivity extends AbstractListActivity {
 
 	// ================= INNER CLASSES ==========================
 
-	private class ExportTask extends AsyncTask<Long, String, JSONObject> {
-
-		private Context ctx;
-		private ProgressDialog pd;
-
-		public ExportTask(Context ctx) {
-			super();
-			this.ctx = ctx;
-			this.pd = new ProgressDialog(this.ctx, ProgressDialog.STYLE_SPINNER);
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-
-			this.pd.setTitle(R.string.dict_list_export_progress_title);
-			this.pd.setMessage(res.getString(R.string.dict_list_export_progress_msg));
-			this.pd.show();
-		}
-
-		@Override
-		protected JSONObject doInBackground(Long... params) {
-			VocardsDataSource db = new VocardsDataSource(VocardsApp.getInstance().getApplicationContext());
-			JSONObject root = new JSONObject();
-			JSONArray dictArray = new JSONArray();
-
-			try {
-				db.open();
-				for (long id : params) {
-					JSONObject jsonDict = DictionarySerialization.getDictionaryJson(db, id);
-					dictArray.put(jsonDict);
-				}
-
-				root.put(DictionarySerialization.KEY_DICTIONARY_LIST, dictArray);
-			} catch (JSONException ex) {
-				Log.e("Error", ex.getLocalizedMessage());
-			} finally {
-				db.close();
-			}
-			return root;
-		}
-
-		@Override
-		protected void onPostExecute(JSONObject result) {
-			super.onPostExecute(result);
-
-			if (this.pd.isShowing()) {
-				this.pd.dismiss();
-			}
-			
-			if (! Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-				Toast.makeText(ctx, R.string.settings_export_sdcard_not_mounted, Toast.LENGTH_LONG).show();
-				return;
-			}
-
-			Log.d("result", result.toString());
-
-			try {
-				File dir = getExternalFilesDir();
-				dir.mkdirs();
-				File f = File.createTempFile(
-						DictionarySerialization.EXPORT_FILE_PREFIX, 
-						DictionarySerialization.EXPORT_FILE_SUFFIX,
-						dir);
-				FileWriter fw = new FileWriter(f);
-				
-				fw.write(result.toString());
-				fw.close();
-				
-				Intent sendIntent = new Intent(Intent.ACTION_SEND);
-				sendIntent.setType(DictionarySerialization.VOCARDS_MIME);
-				sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(f.getAbsolutePath()));
-				sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Test");
-				startActivity(Intent.createChooser(sendIntent, "Title:"));
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		public File getExternalFilesDir() {
-			String packageName = getPackageName();
-			File externalPath = Environment.getExternalStorageDirectory();
-			return new File(externalPath.getAbsolutePath() + "/Android/data/"
-					+ packageName + "/files");
-		}
-
-	}
+	
 }

@@ -24,7 +24,6 @@ public class VocardsDataSource {
 	public static final String CARD_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String CARD_COLUMN_FACTOR = "factor";
 	public static final String CARD_COLUMN_DICTIONARY = "dict_id";
-	public static final int CARD_FACTOR_DEFAULT = 0;
 
 	public static final String WORD_TABLE = "word";
 	public static final String WORD_COLUMN_ID = DB_DEFAULT_ID;

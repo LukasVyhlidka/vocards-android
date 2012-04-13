@@ -81,11 +81,15 @@ public class WordDS {
 	}
 
 	public static long createCard(VocardsDataSource db, String natWord, String forWord, long dictId) {
+		return createCard(db, natWord, forWord, CardUtil.MIN_FACTOR, dictId);
+	}
+
+	public static long createCard(VocardsDataSource db, String natWord, String forWord, int factor, long dictId) {
 		db.begin();
 
 		ContentValues cardValues = new ContentValues();
 		cardValues.put(VocardsDataSource.CARD_COLUMN_DICTIONARY, dictId);
-		cardValues.put(VocardsDataSource.CARD_COLUMN_FACTOR, VocardsDataSource.CARD_FACTOR_DEFAULT);
+		cardValues.put(VocardsDataSource.CARD_COLUMN_FACTOR, factor);
 		long cardId = db.insert(VocardsDataSource.CARD_TABLE, cardValues);
 
 		ContentValues forWordVal = new ContentValues();
@@ -123,6 +127,21 @@ public class WordDS {
 		return res;
 	}
 
+	public static int removeCardsByDict(VocardsDataSource db, long dictId) {
+		db.begin();
+		
+		int res = 0;
+		Cursor c = getWordsByDictId(db, dictId);
+		c.moveToNext();
+		while (! c.isAfterLast()) {
+			res += removeCard(db, c.getLong(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID)));
+			c.moveToNext();
+		}
+
+		db.commit();
+		return res;
+	}
+
 	public static void updateFactor(VocardsDataSource db, long cardId, int factor) {
 		ContentValues val = new ContentValues();
 		val.put(VocardsDataSource.CARD_COLUMN_FACTOR, factor);
@@ -136,27 +155,27 @@ public class WordDS {
 		ContentValues forVal = new ContentValues();
 		forVal.put(VocardsDataSource.WORD_COLUMN_TEXT, forWord);
 		int forCnt = db.update(
-				VocardsDataSource.WORD_TABLE, 
-				forVal, 
-				VocardsDataSource.WORD_COLUMN_CARD + "=? AND " + VocardsDataSource.WORD_COLUMN_TYPE + "=?", 
-				new String[] {cardId+"", VocardsDataSource.WORD_TYPE_FOREIGN+""});
-		
+				VocardsDataSource.WORD_TABLE,
+				forVal,
+				VocardsDataSource.WORD_COLUMN_CARD + "=? AND " + VocardsDataSource.WORD_COLUMN_TYPE + "=?",
+				new String[] { cardId + "", VocardsDataSource.WORD_TYPE_FOREIGN + "" });
+
 		ContentValues natVal = new ContentValues();
 		natVal.put(VocardsDataSource.WORD_COLUMN_TEXT, natWord);
 		int natCnt = db.update(
-				VocardsDataSource.WORD_TABLE, 
-				natVal, 
-				VocardsDataSource.WORD_COLUMN_CARD + "=? AND " + VocardsDataSource.WORD_COLUMN_TYPE + "=?", 
-				new String[] {cardId+"", VocardsDataSource.WORD_TYPE_NATIVE+""});
-		
+				VocardsDataSource.WORD_TABLE,
+				natVal,
+				VocardsDataSource.WORD_COLUMN_CARD + "=? AND " + VocardsDataSource.WORD_COLUMN_TYPE + "=?",
+				new String[] { cardId + "", VocardsDataSource.WORD_TYPE_NATIVE + "" });
+
 		ContentValues cardVal = new ContentValues();
 		cardVal.put(VocardsDataSource.CARD_COLUMN_FACTOR, CardUtil.MIN_FACTOR);
 		int cardCnt = db.update(
-				VocardsDataSource.CARD_TABLE, 
-				cardVal, 
-				VocardsDataSource.CARD_COLUMN_ID + "=?", 
-				new String[] {cardId+""});
-		
+				VocardsDataSource.CARD_TABLE,
+				cardVal,
+				VocardsDataSource.CARD_COLUMN_ID + "=?",
+				new String[] { cardId + "" });
+
 		if (forCnt == 1 && natCnt == 1 && cardCnt == 1) {
 			db.commit();
 		} else {

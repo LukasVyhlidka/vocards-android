@@ -68,9 +68,6 @@
     <string name="dict_list_menu_show_filter">Show Filter</string>
     <string name="dict_list_menu_hide_filter">Hide Filter</string>
     <string name="dict_list_menu_new_dict">Create Dictionary</string>
-    <string name="dict_list_menu_export">Export Dictionaries</string>
-    <string name="dict_list_export_progress_title">Export</string>
-    <string name="dict_list_export_progress_msg">Dictionaries are being exported&#8230;</string>
     <string name="dict_list_ctx_delete_dict">Delete</string>
     <string name="dict_list_filter_hint">Filter Dictionaries</string>
     <string name="dict_list_dict_deleted_toast">Dictionary was successfully deleted.</string>
@@ -93,6 +90,21 @@
     <string name="settings">Settings</string>
     <string name="settings_card_font_size_title">Card font size</string>
     <string name="settings_practice_direction_title">Practise Direction</string>
-    <string name="settings_export_sdcard_not_mounted">Can\'t export your dictionaries because SD Card is not mounted.</string>
+    
+    <!-- Export -->
+    <string name="export_sdcard_not_mounted">Can\'t export your dictionaries because SD Card is not mounted.</string>
+    <string name="export_send_subject">Vocards dictionary file</string>
+    <string name="export_send_text">Hello, I\'m sending you my exported Vocards cards. Open it in your device to import them.</string>
+    <string name="export_menu_export">Export Dictionaries</string>
+    <string name="export_select_app_title">Please, select application to send the exported dictionaries:</string>
+    <string name="export_file_write_error">There was an error during the file writing operation.</string>
+    <string name="export_progress_title">Export</string>
+    <string name="export_progress_msg">Dictionaries are being exported&#8230;</string>
+    
+    <!-- Import -->
+    <string name="import_activity">Vocards Dictionary Import</string>
+    <string name="import_activity_done">Import done.</string>
+    <string name="import_progress_title">Import</string>
+    <string name="import_progress_msg">Dictionaries are being imported&#8230;</string>
 
 </resources>
