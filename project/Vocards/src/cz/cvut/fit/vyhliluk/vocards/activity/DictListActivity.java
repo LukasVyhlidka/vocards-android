@@ -17,7 +17,6 @@ import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
 import cz.cvut.fit.vyhliluk.vocards.activity.task.ExportTask;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DictUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;

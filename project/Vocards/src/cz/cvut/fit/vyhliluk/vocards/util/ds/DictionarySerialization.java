@@ -1,5 +1,8 @@
 package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +50,7 @@ public class DictionarySerialization {
 			res.put(KEY_CARDS, words);
 			wordCursor.moveToNext();
 			while (!wordCursor.isAfterLast()) {
-				words.put(createWordJson(wordCursor));
+				words.put(createWordJson(db, wordCursor.getLong(wordCursor.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID))));
 				wordCursor.moveToNext();
 			}
 		} finally {
@@ -63,14 +66,25 @@ public class DictionarySerialization {
 			Language natLang = Language.getById(dict.getInt(KEY_NATIVE_LANG));
 			Language forLang = Language.getById(dict.getInt(KEY_FOREIGN_LANG));
 			long dictId = DictionaryDS.createDictionary(db, dictName, natLang, forLang);
-			
+
 			JSONArray cards = dict.getJSONArray(KEY_CARDS);
 			for (int i = 0; i < cards.length(); i++) {
 				JSONObject card = cards.getJSONObject(i);
 				int factor = card.getInt(KEY_CARD_FACTOR);
-				String natWord = card.getJSONArray(KEY_NATIVE_WORD).getString(0);
-				String forWord = card.getJSONArray(KEY_FOREIGN_WORD).getString(0);
-				WordDS.createCard(db, natWord, forWord, factor, dictId);
+
+				List<String> natWords = new ArrayList<String>();
+				JSONArray natArray = card.getJSONArray(KEY_NATIVE_WORD);
+				for (int j = 0; j < natArray.length(); j++) {
+					natWords.add(natArray.getString(j));
+				}
+
+				List<String> forWords = new ArrayList<String>();
+				JSONArray forArray = card.getJSONArray(KEY_FOREIGN_WORD);
+				for (int j = 0; j < forArray.length(); j++) {
+					forWords.add(forArray.getString(j));
+				}
+
+				WordDS.createCard(db, natWords, forWords, factor, dictId);
 			}
 		} catch (JSONException ex) {
 			throw new VocardsException("Not a dictionary JSON object.", ex);
@@ -99,19 +113,36 @@ public class DictionarySerialization {
 				));
 	}
 
-	private static JSONObject createWordJson(Cursor c) throws JSONException {
+	private static JSONObject createWordJson(VocardsDataSource db, long cardId) throws JSONException {
 		JSONObject res = new JSONObject();
 
-		res.put(KEY_CARD_FACTOR, c.getInt(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR)));
+		Cursor card = WordDS.getCardById(db, cardId);
+		Cursor natW = WordDS.getCardNativeWords(db, cardId);
+		Cursor forW = WordDS.getCardForeignWords(db, cardId);
+
+		card.moveToFirst();
+		res.put(KEY_CARD_FACTOR, card.getInt(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR)));
 
 		JSONArray natWords = new JSONArray();
-		natWords.put(c.getString(c.getColumnIndex(WordDS.NATIVE_WORD)));
+		natW.moveToNext();
+		while (!natW.isAfterLast()) {
+			natWords.put(natW.getString(natW.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
+			natW.moveToNext();
+		}
 
 		JSONArray forWords = new JSONArray();
-		forWords.put(c.getString(c.getColumnIndex(WordDS.FOREIGN_WORD)));
+		forW.moveToNext();
+		while (!forW.isAfterLast()) {
+			forWords.put(forW.getString(forW.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
+			forW.moveToNext();
+		}
 
 		res.put(KEY_NATIVE_WORD, natWords);
 		res.put(KEY_FOREIGN_WORD, forWords);
+		
+		card.close();
+		natW.close();
+		forW.close();
 
 		return res;
 	}

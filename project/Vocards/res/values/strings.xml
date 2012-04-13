@@ -55,6 +55,7 @@
     
     <!-- Add Word -->
     <string name="add_word">New Word</string>
+    <string name="add_word_add_image_description">Add</string>
     <string name="add_word_edit_title">Edit Word</string>
     <string name="add_word_native">Native</string>
     <string name="add_word_foreign">Foreign</string>

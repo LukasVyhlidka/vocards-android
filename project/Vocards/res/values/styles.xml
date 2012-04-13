@@ -144,6 +144,19 @@
         <item name="android:textSize">18sp</item>
     </style>
     
+    <!-- ADD WORD -->
+    
+    <style name="add_word_add_edit_icon">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:src">@drawable/word_add</item>
+        <item name="android:contentDescription">@string/add_word_add_image_description</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+    </style>
+    
     
 
 </resources>
