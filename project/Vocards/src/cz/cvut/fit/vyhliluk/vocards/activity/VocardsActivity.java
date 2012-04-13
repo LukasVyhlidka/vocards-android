@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
@@ -22,7 +21,6 @@ public class VocardsActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
 	
 	private static final int OPTIONS_SETTINGS = 0;
-	private static final int OPTIONS_EXPORT = 1;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -60,7 +58,6 @@ public class VocardsActivity extends AbstractActivity {
 		int none = Menu.NONE;
 
 		menu.add(none, OPTIONS_SETTINGS, none, R.string.main_options_settings);
-		menu.add(none, OPTIONS_EXPORT, none, R.string.main_options_export);
 		
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -71,26 +68,9 @@ public class VocardsActivity extends AbstractActivity {
 			case OPTIONS_SETTINGS:
 				startActivity(new Intent(this, SettingsActivity.class));
 				break;
-			case OPTIONS_EXPORT:
-				startActivityForResult(new Intent(this, DictMultiListActivity.class), DictMultiListActivity.REQUEST_DICT_LIST);
-				break;
 		}
 		
 		return super.onOptionsItemSelected(item);
-	}
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (resultCode == RESULT_OK) {
-			long[] ids = data.getLongArrayExtra(DictMultiListActivity.KEY_RESULT_LIST);
-			StringBuilder sb = new StringBuilder();
-			for (long id: ids) {
-				sb.append(id).append(", ");
-			}
-			Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG).show();
-		}
 	}
 
 	// ================= INSTANCE METHODS =======================
