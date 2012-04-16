@@ -90,6 +90,7 @@ public class WordAddActivity extends AbstractActivity {
 		if (b.containsKey(EXTRAS_NATIVE_WORD)) {
 			String natWord = b.getString(EXTRAS_NATIVE_WORD);
 			this.nativeEdit.setText(natWord);
+			this.foreignEdit.requestFocus();
 		} else if (b.containsKey(EXTRAS_CARD_ID)) {
 			this.cardId = b.getLong(EXTRAS_CARD_ID);
 //			Cursor c = WordDS.getWordById(db, dictId, cardId);
@@ -138,6 +139,8 @@ public class WordAddActivity extends AbstractActivity {
 		minus.setOnClickListener(new NativeWordRemoveListener(edit, horiz));
 		nativeEdits.add(edit);
 		nativeContainer.addView(horiz);
+		
+		edit.requestFocus();
 	}
 	
 	private void addForeign(String text) {
@@ -152,6 +155,8 @@ public class WordAddActivity extends AbstractActivity {
 		minus.setOnClickListener(new ForeignWordRemoveListener(edit, horiz));
 		foreignEdits.add(edit);
 		foreignContainer.addView(horiz);
+		
+		edit.requestFocus();
 	}
 	
 	private List<String> getNatWords() {

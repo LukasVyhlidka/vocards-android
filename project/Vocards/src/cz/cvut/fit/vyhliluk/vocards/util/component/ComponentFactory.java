@@ -2,7 +2,6 @@ package cz.cvut.fit.vyhliluk.vocards.util.component;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.EditText;

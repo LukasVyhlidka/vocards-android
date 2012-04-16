@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -13,9 +15,10 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FilterQueryProvider;
 import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import android.widget.SimpleCursorAdapter.ViewBinder;
+import android.widget.TextView;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
@@ -153,10 +156,14 @@ public class WordListActivity extends AbstractListActivity {
 						R.id.foreignWord,
 						R.id.factor
 				});
+		
+		this.filterEdit.addTextChangedListener(this.filterEditWatcher);
 
 		listAdapter.setViewBinder(this.wordListBinder);
+		listAdapter.setFilterQueryProvider(this.listFilterProvider);
 		this.setListAdapter(listAdapter);
 		this.registerForContextMenu(this.getListView());
+//		this.getListView().setTextFilterEnabled(true);
 
 		this.addWordBtn.setOnClickListener(this.addWordClickListener);
 	}
@@ -190,9 +197,11 @@ public class WordListActivity extends AbstractListActivity {
 
 		if (this.filterEdit.getVisibility() == EditText.GONE) {
 			this.filterEdit.setVisibility(EditText.VISIBLE);
+			this.filterEdit.requestFocus();
 			this.menuFilter.setTitle(res.getString(R.string.word_list_menu_hide_filter));
 		} else {
 			this.filterEdit.setVisibility(EditText.GONE);
+			this.filterEdit.setText("");
 			this.menuFilter.setTitle(res.getString(R.string.word_list_menu_show_filter));
 		}
 	}
@@ -203,6 +212,11 @@ public class WordListActivity extends AbstractListActivity {
 			i.putExtra(WordAddActivity.EXTRAS_NATIVE_WORD, natWord);
 		}
 		startActivity(i);
+	}
+	
+	private SimpleCursorAdapter getActualAdapter() {
+		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		return adapter;
 	}
 
 	// ================= GETTERS/SETTERS ========================
@@ -233,6 +247,31 @@ public class WordListActivity extends AbstractListActivity {
 			}
 
 			createWord(natWord);
+		}
+	};
+	
+	private TextWatcher filterEditWatcher = new TextWatcher() {
+		
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			SimpleCursorAdapter a = getActualAdapter();
+			a.getFilter().filter(s);
+		}
+		
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		public void afterTextChanged(Editable s) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	FilterQueryProvider listFilterProvider = new FilterQueryProvider() {
+		
+		public Cursor runQuery(CharSequence constraint) {
+			return WordDS.getWordsByDictIdFilter(db, selectedDictId, constraint.toString());
 		}
 	};
 

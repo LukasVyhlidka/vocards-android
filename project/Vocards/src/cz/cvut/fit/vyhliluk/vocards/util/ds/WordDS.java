@@ -15,31 +15,6 @@ public class WordDS {
 
 	public static final String FOREIGN_WORD = "foreign_word";
 
-	// SELECT
-	// c._id,
-	// nat.text as native_word,
-	// for.text as foreign_word,
-	// c.factor
-	// FROM card c,
-	// (
-	// SELECT _id, group_concat(text, ', ') as text, card_id, type
-	// FROM word
-	// where word.type=1
-	// GROUP BY card_id
-	// ) nat,
-	// (
-	// SELECT _id, group_concat(text, ', ') as text, card_id, type
-	// FROM word
-	// where word.type=2
-	// GROUP BY card_id
-	// ) for
-	// WHERE
-	// dict_id=1 AND
-	// nat.card_id=c._id AND
-	// for.card_id=c._id AND
-	// nat.type=1 AND
-	// for.type=2
-
 	private static final String QUERY_WORDS = "SELECT " +
 			"c." + VocardsDataSource.CARD_COLUMN_ID + ", " +
 			"nat." + VocardsDataSource.WORD_COLUMN_TEXT + " as " + NATIVE_WORD + ", " +
@@ -77,6 +52,13 @@ public class WordDS {
 	private static final String QUERY_WORDS_ORD = QUERY_WORDS +
 			" ORDER BY nat." + VocardsDataSource.WORD_COLUMN_TEXT;
 
+	private static final String QUERY_WORDS_FILTER = QUERY_WORDS +
+			" AND " +
+			"(" +
+			"nat." + VocardsDataSource.WORD_COLUMN_TEXT + " like ? OR " +
+			"for." + VocardsDataSource.WORD_COLUMN_TEXT + " like ?" +
+			")";
+
 	private static final String QUERY_RANDOM_WORD_UNIFORM = QUERY_WORDS +
 			" ORDER by RANDOM()" +
 			" LIMIT 1";
@@ -90,10 +72,6 @@ public class WordDS {
 
 	private static final double LAMBDA = 0.5;
 
-	static {
-		System.out.println(QUERY_WORDS);
-	}
-
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	// ================= STATIC METHODS =========================
@@ -104,6 +82,11 @@ public class WordDS {
 
 	public static Cursor getOrdWordsByDictId(VocardsDataSource db, long id) {
 		return db.rawQuery(QUERY_WORDS_ORD, new String[] { id + "" });
+	}
+
+	public static Cursor getWordsByDictIdFilter(VocardsDataSource db, long id, String filter) {
+		String f = "%"+filter+"%";
+		return db.rawQuery(QUERY_WORDS_FILTER, new String[] { id + "", f, f });
 	}
 
 	public static Cursor getRandomWord(VocardsDataSource db, long dictId) {
@@ -166,24 +149,7 @@ public class WordDS {
 		long cardId = db.insert(VocardsDataSource.CARD_TABLE, cardValues);
 
 		insertWords(db, forWords, cardId, VocardsDataSource.WORD_TYPE_FOREIGN);
-		// for (String forWord : forWords) {
-		// ContentValues forWordVal = new ContentValues();
-		// forWordVal.put(VocardsDataSource.WORD_COLUMN_CARD, cardId);
-		// forWordVal.put(VocardsDataSource.WORD_COLUMN_TYPE,
-		// VocardsDataSource.WORD_TYPE_FOREIGN);
-		// forWordVal.put(VocardsDataSource.WORD_COLUMN_TEXT, forWord);
-		// db.insert(VocardsDataSource.WORD_TABLE, forWordVal);
-		// }
-
 		insertWords(db, natWords, cardId, VocardsDataSource.WORD_TYPE_NATIVE);
-		// for (String natWord : natWords) {
-		// ContentValues natWordVal = new ContentValues();
-		// natWordVal.put(VocardsDataSource.WORD_COLUMN_CARD, cardId);
-		// natWordVal.put(VocardsDataSource.WORD_COLUMN_TYPE,
-		// VocardsDataSource.WORD_TYPE_NATIVE);
-		// natWordVal.put(VocardsDataSource.WORD_COLUMN_TEXT, natWord);
-		// db.insert(VocardsDataSource.WORD_TABLE, natWordVal);
-		// }
 
 		if (cardId != -1) {
 			db.commit();
@@ -212,13 +178,13 @@ public class WordDS {
 		db.begin();
 
 		int res = 0;
-		Cursor c = db.query(VocardsDataSource.CARD_TABLE, null, VocardsDataSource.CARD_COLUMN_DICTIONARY+"=?", new String[]{dictId+""});
+		Cursor c = db.query(VocardsDataSource.CARD_TABLE, null, VocardsDataSource.CARD_COLUMN_DICTIONARY + "=?", new String[] { dictId + "" });
 		c.moveToNext();
 		while (!c.isAfterLast()) {
 			res += removeCard(db, c.getLong(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID)));
 			c.moveToNext();
 		}
-		
+
 		c.close();
 
 		db.commit();
@@ -239,35 +205,6 @@ public class WordDS {
 		insertWords(db, natWords, cardId, VocardsDataSource.WORD_TYPE_NATIVE);
 		insertWords(db, forWords, cardId, VocardsDataSource.WORD_TYPE_FOREIGN);
 		updateFactor(db, cardId, CardUtil.MIN_FACTOR);
-
-		// ContentValues forVal = new ContentValues();
-		// forVal.put(VocardsDataSource.WORD_COLUMN_TEXT, forWord);
-		// int forCnt = db.update(
-		// VocardsDataSource.WORD_TABLE,
-		// forVal,
-		// VocardsDataSource.WORD_COLUMN_CARD + "=? AND " +
-		// VocardsDataSource.WORD_COLUMN_TYPE + "=?",
-		// new String[] { cardId + "", VocardsDataSource.WORD_TYPE_FOREIGN + ""
-		// });
-		//
-		// ContentValues natVal = new ContentValues();
-		// natVal.put(VocardsDataSource.WORD_COLUMN_TEXT, natWord);
-		// int natCnt = db.update(
-		// VocardsDataSource.WORD_TABLE,
-		// natVal,
-		// VocardsDataSource.WORD_COLUMN_CARD + "=? AND " +
-		// VocardsDataSource.WORD_COLUMN_TYPE + "=?",
-		// new String[] { cardId + "", VocardsDataSource.WORD_TYPE_NATIVE + ""
-		// });
-		//
-		// ContentValues cardVal = new ContentValues();
-		// cardVal.put(VocardsDataSource.CARD_COLUMN_FACTOR,
-		// CardUtil.MIN_FACTOR);
-		// int cardCnt = db.update(
-		// VocardsDataSource.CARD_TABLE,
-		// cardVal,
-		// VocardsDataSource.CARD_COLUMN_ID + "=?",
-		// new String[] { cardId + "" });
 
 		db.commit();
 	}

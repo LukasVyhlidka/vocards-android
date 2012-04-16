@@ -32,12 +32,12 @@ public class SettingsActivity extends PreferenceActivity implements
 		PreferenceManager prefMgr = getPreferenceManager();
 		prefMgr.setSharedPreferencesName(Settings.PREF_NAME);
 		prefMgr.setSharedPreferencesMode(MODE_PRIVATE);
-		
-		prefMgr.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
 		addPreferencesFromResource(R.xml.preferences);
 
 		this.init();
+		
+		prefMgr.getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
 
 	public void onSharedPreferenceChanged(SharedPreferences sp, String key) {

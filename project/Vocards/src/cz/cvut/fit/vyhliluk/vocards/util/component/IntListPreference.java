@@ -1,8 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards.util.component;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 

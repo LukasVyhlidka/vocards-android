@@ -1,5 +1,7 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -81,7 +83,7 @@ public class DictListActivity extends AbstractListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int none = Menu.NONE;
 
-		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, R.string.dict_list_menu_show_filter);
+//		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, R.string.dict_list_menu_show_filter);
 		menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict);
 		menu.add(none, MENU_EXPORT, none, R.string.export_menu_export);
 		return super.onCreateOptionsMenu(menu);
@@ -183,11 +185,21 @@ public class DictListActivity extends AbstractListActivity {
 		adapter.changeCursor(c);
 	}
 
-	private void deleteDict(long id) {
-		DictionaryDS.deleteDict(db, id);
-
-		Toast.makeText(this, R.string.dict_list_dict_deleted_toast, Toast.LENGTH_SHORT).show();
-		this.refreshListAdapter();
+	private void deleteDict(long dictId) {
+		int count = DictionaryDS.getWordCount(db, dictId);
+		String title = getString(R.string.dict_list_dialog_delete_title, count);
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(title)
+				.setCancelable(false)
+				.setPositiveButton(R.string.dict_list_dialog_delete_yes, new DeleteYesListener(dictId))
+				.setNegativeButton(R.string.dict_list_dialog_delete_no, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.cancel();
+					}
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 	private void addDictActivity() {
@@ -208,5 +220,21 @@ public class DictListActivity extends AbstractListActivity {
 
 	// ================= INNER CLASSES ==========================
 
-	
+	private class DeleteYesListener implements DialogInterface.OnClickListener {
+
+		private long dictId;
+		
+		public DeleteYesListener(long dictId) {
+			super();
+			this.dictId = dictId;
+		}
+
+		public void onClick(DialogInterface dialog, int which) {
+			DictionaryDS.deleteDict(db, dictId);
+
+			Toast.makeText(DictListActivity.this, R.string.dict_list_dict_deleted_toast, Toast.LENGTH_SHORT).show();
+			DictListActivity.this.refreshListAdapter();
+		}
+		
+	}
 }
