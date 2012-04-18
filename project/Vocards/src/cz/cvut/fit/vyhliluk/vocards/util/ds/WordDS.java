@@ -153,11 +153,11 @@ public class WordDS {
 
 		if (cardId != -1) {
 			db.commit();
-			Log.d("OK", "OK");
+//			Log.d("OK", "OK");
 			return cardId;
 		} else {
 			db.rollback();
-			Log.d("ROLBACK", "ROLBACK");
+//			Log.d("ROLBACK", "ROLBACK");
 			return -1;
 		}
 	}

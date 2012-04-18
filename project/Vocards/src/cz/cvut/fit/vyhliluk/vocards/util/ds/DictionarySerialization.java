@@ -87,7 +87,7 @@ public class DictionarySerialization {
 		}
 	}
 
-	public static void importDictionary(VocardsDataSource db, JSONObject dict) throws VocardsException {
+	public static long importDictionary(VocardsDataSource db, JSONObject dict) throws VocardsException {
 		try {
 			String dictName = dict.getString(KEY_DICTIONARY_NAME);
 			Language natLang = Language.getById(dict.getInt(KEY_NATIVE_LANG));
@@ -114,6 +114,7 @@ public class DictionarySerialization {
 
 				WordDS.createCard(db, natWords, forWords, factor, dictId);
 			}
+			return dictId;
 		} catch (JSONException ex) {
 			throw new VocardsException("Not a dictionary JSON object.", ex);
 		}

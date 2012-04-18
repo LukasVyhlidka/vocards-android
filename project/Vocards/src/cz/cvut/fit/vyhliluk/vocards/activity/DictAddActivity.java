@@ -114,7 +114,7 @@ public class DictAddActivity extends AbstractActivity {
 
 			int forLang = c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG));
 			int forLangPos = this.langAdapter.getPosition(Language.getById(forLang));
-			this.nativeSpinner.setSelection(forLangPos);
+			this.foreignSpinner.setSelection(forLangPos);
 			
 			c.close();
 			

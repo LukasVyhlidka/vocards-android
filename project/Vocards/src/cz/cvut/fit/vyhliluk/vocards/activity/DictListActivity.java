@@ -41,6 +41,7 @@ public class DictListActivity extends AbstractListActivity {
 	public static final int MENU_EXPORT = 2;
 
 	public static final int CTX_MENU_DELETE = 50;
+	public static final int CTX_MENU_EDIT = 51;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -125,6 +126,7 @@ public class DictListActivity extends AbstractListActivity {
 		int none = Menu.NONE;
 
 		menu.add(none, CTX_MENU_DELETE, none, res.getString(R.string.dict_list_ctx_delete_dict));
+		menu.add(none, CTX_MENU_EDIT, none, res.getString(R.string.dict_list_ctx_edit_dict));
 
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
@@ -135,6 +137,9 @@ public class DictListActivity extends AbstractListActivity {
 		switch (item.getItemId()) {
 			case CTX_MENU_DELETE:
 				this.deleteDict(info.id);
+				break;
+			case CTX_MENU_EDIT:
+				this.editDict(info.id);
 				break;
 		}
 		return super.onContextItemSelected(item);
@@ -238,6 +243,12 @@ public class DictListActivity extends AbstractListActivity {
 
 	private void addDictActivity() {
 		Intent i = new Intent(this, DictAddActivity.class);
+		startActivity(i);
+	}
+	
+	private void editDict(long id) {
+		Intent i = new Intent(this, DictAddActivity.class);
+		i.putExtra(DictAddActivity.EXTRAS_DICT_ID, id);
 		startActivity(i);
 	}
 

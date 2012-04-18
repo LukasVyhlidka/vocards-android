@@ -4,9 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,17 +14,19 @@ import org.json.JSONObject;
 import android.app.backup.BackupAgent;
 import android.app.backup.BackupDataInput;
 import android.app.backup.BackupDataOutput;
+import android.database.Cursor;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.ds.BackupDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionarySerialization;
 
 public class VocardsBackupAgent extends BackupAgent {
 	// ================= STATIC ATTRIBUTES ======================
 
-	private static final String KEY_DATA = "data";
+	// private static final String KEY_DATA = "data";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -37,60 +39,67 @@ public class VocardsBackupAgent extends BackupAgent {
 	@Override
 	public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState) throws IOException {
 		Log.i("Vocards Backup", "Backup start");
+
+		long lastBackup = -1;
+		if (oldState != null) {
+			FileInputStream instream = new FileInputStream(oldState.getFileDescriptor());
+			DataInputStream in = new DataInputStream(instream);
+
+			try {
+				lastBackup = in.readLong();
+			} catch (IOException e) {
+			}
+		}
+
 		VocardsDataSource db = new VocardsDataSource(this);
 		db.open();
-
-		List<Long> allDictIds = DictionaryDS.getDictIds(db);
-
 		try {
-			JSONObject bckp = DictionarySerialization.getDictionariesJson(db, allDictIds.toArray(new Long[] {}));
-			ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
-			DataOutputStream outWriter = new DataOutputStream(bufStream);
 
-			// Write structured data
-			outWriter.writeUTF(bckp.toString());
+			this.wipeDeleted(db, data);
+			this.backupModified(db, data, lastBackup);
 
-			// Send the data to the Backup Manager via the BackupDataOutput
-			byte[] buffer = bufStream.toByteArray();
-			int len = buffer.length;
-			data.writeEntityHeader(KEY_DATA, len);
-			data.writeEntityData(buffer, len);
-		} catch (JSONException ex) {
-			Log.e("Vocards backup", "Error during data backup: " + ex.getLocalizedMessage());
+			FileOutputStream outstream = new FileOutputStream(newState.getFileDescriptor());
+			DataOutputStream out = new DataOutputStream(outstream);
+
+			long backupTime = System.currentTimeMillis();
+			out.writeLong(backupTime);
+
+			Log.i("Vocards Backup", "Backup done");
 		} finally {
 			db.close();
 		}
-		
-		FileOutputStream outstream = new FileOutputStream(newState.getFileDescriptor());
-		DataOutputStream out = new DataOutputStream(outstream);
-
-		long backupTime = System.currentTimeMillis();
-		out.writeLong(backupTime);
-		
-		Log.i("Vocards Backup", "Backup done");
 	}
 
 	@Override
 	public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState) throws IOException {
+		Log.i("Vocards Backup", "Restore start");
 		VocardsDataSource db = new VocardsDataSource(this);
 		db.open();
 		try {
 			db.begin();
 			while (data.readNextHeader()) {
 				String key = data.getKey();
-				int dataSize = data.getDataSize();
+				try {
+					long backupId = Long.parseLong(key);
+					int dataSize = data.getDataSize();
 
-				// Create an input stream for the BackupDataInput
-				byte[] dataBuf = new byte[dataSize];
-				data.readEntityData(dataBuf, 0, dataSize);
-				ByteArrayInputStream baStream = new ByteArrayInputStream(dataBuf);
-				DataInputStream in = new DataInputStream(baStream);
+					// Create an input stream for the BackupDataInput
+					byte[] dataBuf = new byte[dataSize];
+					data.readEntityData(dataBuf, 0, dataSize);
+					ByteArrayInputStream baStream = new ByteArrayInputStream(dataBuf);
+					DataInputStream in = new DataInputStream(baStream);
 
-				// Read the player name and score from the backup data
-				String json = in.readUTF();
-				JSONObject root = new JSONObject(json);
+					// Read the player name and score from the backup data
+					String json = in.readUTF();
+					JSONObject dictJson = new JSONObject(json);
 
-				DictionarySerialization.importDictionaries(db, root);
+					long dictId = DictionarySerialization.importDictionary(db, dictJson);
+
+					BackupDS.createBackup(db, dictId, backupId);
+				} catch (NumberFormatException ex) {
+					Log.e("Vocards restore", "key id = " + key);
+					data.skipEntityData();
+				}
 			}
 			db.commit();
 		} catch (VocardsException ex) {
@@ -102,13 +111,71 @@ public class VocardsBackupAgent extends BackupAgent {
 		} finally {
 			db.close();
 		}
-		
+
 		Log.i("Vocards Backup", "Restore done");
 	}
 
 	// ================= INSTANCE METHODS =======================
 
 	// ================= PRIVATE METHODS ========================
+
+	private void wipeDeleted(VocardsDataSource db, BackupDataOutput data) throws IOException {
+		db.begin();
+		Cursor c = BackupDS.getDeleted(db);
+		c.moveToNext();
+		while (!c.isAfterLast()) {
+			long backupId = c.getLong(c.getColumnIndex(VocardsDataSource.BACKUP_COLUMN_ID));
+			Log.i("Vocards Backup", "wiping backupId=" + backupId);
+			data.writeEntityHeader(backupId + "", -1);
+			BackupDS.deleteBackup(db, backupId);
+			c.moveToNext();
+		}
+		c.close();
+		db.commit();
+	}
+
+	private void backupModified(VocardsDataSource db, BackupDataOutput data, long lastBackup) throws IOException {
+		Cursor c = DictionaryDS.getModifiedDicts(db, lastBackup);
+		c.moveToNext();
+		try {
+			while (!c.isAfterLast()) {
+				long dictId = c.getLong(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID));
+				long backupId = -1;
+
+				Cursor backupCursor = BackupDS.getByDictId(db, dictId);
+				if (backupCursor.getCount() == 0) {
+					backupId = BackupDS.createBackup(db, dictId);
+				} else {
+					backupCursor.moveToFirst();
+					backupId = backupCursor.getLong(backupCursor.getColumnIndex(VocardsDataSource.BACKUP_COLUMN_ID));
+				}
+				backupCursor.close();
+
+				Log.i("Vocards Backup", "saving dictId=" + dictId + "; backupId=" + backupId);
+				try {
+					JSONObject dictJson = DictionarySerialization.getDictionaryJson(db, dictId);
+					ByteArrayOutputStream bufStream = new ByteArrayOutputStream();
+					DataOutputStream outWriter = new DataOutputStream(bufStream);
+
+					// Write structured data
+					outWriter.writeUTF(dictJson.toString());
+
+					// Send the data to the Backup Manager via the
+					// BackupDataOutput
+					byte[] buffer = bufStream.toByteArray();
+					int len = buffer.length;
+					data.writeEntityHeader(backupId + "", len);
+					data.writeEntityData(buffer, len);
+				} catch (JSONException ex) {
+					Log.e("Vocards backup", "Error during data backup (dict id = " + dictId + "): " + ex.getLocalizedMessage());
+				}
+
+				c.moveToNext();
+			}
+		} finally {
+			c.close();
+		}
+	}
 
 	// ================= GETTERS/SETTERS ========================
 

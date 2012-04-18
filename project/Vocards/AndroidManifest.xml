@@ -13,7 +13,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Black"
-        android:backupAgent=".VocardsBackupAgent" >
+        android:backupAgent="cz.cvut.fit.vyhliluk.vocards.VocardsBackupAgent" >
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIgPS02M-lbYgi49MliJUoc9WxKT03ywmDJOZzsg" />

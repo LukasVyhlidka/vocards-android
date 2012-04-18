@@ -7,10 +7,6 @@ import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTION
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_ID;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_NAME;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
@@ -81,15 +77,12 @@ public class DictionaryDS {
 		return c;
 	}
 
-	public static List<Long> getDictIds(VocardsDataSource db) {
-		Cursor c = getDictionaries(db);
-		List<Long> res = new ArrayList<Long>();
-		c.moveToNext();
-		while (! c.isAfterLast()) {
-			res.add(c.getLong(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID)));
-		}
-		c.close();
-		return res;
+	public static Cursor getModifiedDicts(VocardsDataSource db, long lastBackup) {
+		return db.query(
+				VocardsDataSource.DICTIONARY_TABLE,
+				null,
+				VocardsDataSource.DICTIONARY_COLUMN_MODIFIED + ">? OR " + VocardsDataSource.DICTIONARY_COLUMN_MODIFIED + " IS NULL",
+				new String[] { lastBackup + "" });
 	}
 
 	public static long createDictionary(VocardsDataSource db, String name, Language nativeLang, Language foreignLang) {
@@ -100,10 +93,21 @@ public class DictionaryDS {
 		return db.insert(VocardsDataSource.DICTIONARY_TABLE, val);
 	}
 
+	public static void setModified(VocardsDataSource db, long dictId) {
+		ContentValues val = new ContentValues();
+		val.put(VocardsDataSource.DICTIONARY_COLUMN_MODIFIED, System.currentTimeMillis());
+		db.update(
+				VocardsDataSource.DICTIONARY_TABLE,
+				val,
+				VocardsDataSource.DICTIONARY_COLUMN_ID + "=?",
+				new String[] { dictId + "" });
+	}
+
 	public static int deleteDict(VocardsDataSource db, long dictId) {
 		int res = 0;
 
 		db.begin();
+		BackupDS.setDeleted(db, dictId);
 		res += WordDS.removeCardsByDict(db, dictId);
 		res += db.delete(VocardsDataSource.DICTIONARY_TABLE, dictId);
 		db.commit();

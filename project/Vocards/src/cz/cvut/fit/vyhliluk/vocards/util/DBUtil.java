@@ -1,6 +1,10 @@
 package cz.cvut.fit.vyhliluk.vocards.util;
 
+import android.app.backup.BackupManager;
+import android.content.Context;
 import android.database.Cursor;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 public class DBUtil {
 	//================= STATIC ATTRIBUTES ======================
@@ -19,6 +23,13 @@ public class DBUtil {
 		if (! c.isClosed()) {
 			c.close();
 		}
+	}
+	
+	public static void dictModif(VocardsDataSource db, Context ctx, long dictId) {
+		DictionaryDS.setModified(db, dictId);
+		
+		BackupManager bckpMgr = new BackupManager(ctx);
+		bckpMgr.dataChanged();
 	}
 
 	//================= CONSTRUCTORS ===========================

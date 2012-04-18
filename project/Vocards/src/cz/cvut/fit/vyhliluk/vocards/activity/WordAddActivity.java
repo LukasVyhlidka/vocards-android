@@ -17,6 +17,7 @@ import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
@@ -202,6 +203,8 @@ public class WordAddActivity extends AbstractActivity {
 			} else {
 				WordDS.updateCard(db, cardId, natWords, forWords);
 			}
+			
+			DBUtil.dictModif(db, WordAddActivity.this, dictId);
 
 			Intent i = new Intent(WordAddActivity.this, WordListActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
