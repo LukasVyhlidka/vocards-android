@@ -19,10 +19,11 @@ public class DictionarySerialization {
 	public static final String VOCARDS_MIME = "application/vnd.cz.cvut.fit.vyhliluk.vocards";
 
 	public static final String EXPORT_FILE_PREFIX = "vocardsExport";
-	public static final String EXPORT_FILE_SUFFIX = ".json";
+	public static final String EXPORT_FILE_SUFFIX = ".voc";
 
 	public static final String KEY_DICTIONARY_LIST = "dicts";
 
+	public static final String KEY_DICTIONARY_BACKUP_ID = "id";
 	public static final String KEY_DICTIONARY_NAME = "dictName";
 	public static final String KEY_NATIVE_LANG = "natLang";
 	public static final String KEY_FOREIGN_LANG = "forLang";
@@ -35,6 +36,20 @@ public class DictionarySerialization {
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	// ================= STATIC METHODS =========================
+
+	public static JSONObject getDictionariesJson(VocardsDataSource db, Long... dictIds) throws JSONException {
+		JSONObject root = new JSONObject();
+		JSONArray dictArray = new JSONArray();
+
+		for (long id : dictIds) {
+			JSONObject jsonDict = DictionarySerialization.getDictionaryJson(db, id);
+			dictArray.put(jsonDict);
+		}
+
+		root.put(DictionarySerialization.KEY_DICTIONARY_LIST, dictArray);
+
+		return root;
+	}
 
 	public static JSONObject getDictionaryJson(VocardsDataSource db, long dictId) throws JSONException {
 		JSONObject res = new JSONObject();
@@ -60,11 +75,24 @@ public class DictionarySerialization {
 		return res;
 	}
 
+	public static void importDictionaries(VocardsDataSource db, JSONObject root) throws VocardsException {
+		try {
+			JSONArray dicts = root.getJSONArray(DictionarySerialization.KEY_DICTIONARY_LIST);
+			for (int i = 0; i < dicts.length(); i++) {
+				JSONObject dict = dicts.getJSONObject(i);
+				importDictionary(db, dict);
+			}
+		} catch (JSONException ex) {
+			throw new VocardsException("Not a dictionary JSON object.", ex);
+		}
+	}
+
 	public static void importDictionary(VocardsDataSource db, JSONObject dict) throws VocardsException {
 		try {
 			String dictName = dict.getString(KEY_DICTIONARY_NAME);
 			Language natLang = Language.getById(dict.getInt(KEY_NATIVE_LANG));
 			Language forLang = Language.getById(dict.getInt(KEY_FOREIGN_LANG));
+
 			long dictId = DictionaryDS.createDictionary(db, dictName, natLang, forLang);
 
 			JSONArray cards = dict.getJSONArray(KEY_CARDS);
@@ -139,7 +167,7 @@ public class DictionarySerialization {
 
 		res.put(KEY_NATIVE_WORD, natWords);
 		res.put(KEY_FOREIGN_WORD, forWords);
-		
+
 		card.close();
 		natW.close();
 		forW.close();

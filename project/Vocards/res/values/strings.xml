@@ -87,7 +87,9 @@
     <string name="add_dict_native">Native Language</string>
     <string name="add_dict_foreign">Foreign Language</string>
     <string name="add_dict_create">Create Dictionary</string>
+    <string name="add_dict_edit">Create Dictionary</string>
     <string name="add_dict_created_toast">Dictionary created.</string>
+    <string name="add_dict_edited_toast">Dictionary edited.</string>
     <string name="add_dict_empty_name_toast">Please, fill the dictionary name.</string>
     
     <!-- Settings -->

@@ -13,14 +13,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.SimpleCursorAdapter.ViewBinder;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
 import cz.cvut.fit.vyhliluk.vocards.activity.task.ExportTask;
+import cz.cvut.fit.vyhliluk.vocards.enums.Language;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
-import cz.cvut.fit.vyhliluk.vocards.util.DictUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
@@ -83,7 +86,8 @@ public class DictListActivity extends AbstractListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int none = Menu.NONE;
 
-//		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, R.string.dict_list_menu_show_filter);
+		// this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none,
+		// R.string.dict_list_menu_show_filter);
 		menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict);
 		menu.add(none, MENU_EXPORT, none, R.string.export_menu_export);
 		return super.onCreateOptionsMenu(menu);
@@ -158,9 +162,39 @@ public class DictListActivity extends AbstractListActivity {
 	private void init() {
 		this.filterEdit = (EditText) findViewById(R.id.filterEdit);
 
+		SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
+				this,
+				R.layout.inf_dictionary_item,
+				null,
+				new String[] {
+						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
+						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG,
+						VocardsDataSource.DICTIONARY_COLUMN_NAME
+				},
+				new int[] {
+						R.id.nativeLangIcon,
+						R.id.foreignLangIcon,
+						R.id.languageText
+				});
+		
+		ViewBinder listViewBinder = new ViewBinder() {
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				String colName = cursor.getColumnName(columnIndex);
+				if (VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG.equals(colName)
+						|| VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG.equals(colName)) {
+					ImageView img = (ImageView) view;
+					Language lang = Language.getById(cursor.getInt(columnIndex));
+					img.setImageResource(lang.getIconId());
+					return true;
+				} else {
+					return false;
+				}
+			}
+		};
+		
+		listAdapter.setViewBinder(listViewBinder);
 		this.registerForContextMenu(this.getListView());
-
-		this.setListAdapter(DictUtil.createDictListAdapter(this));
+		this.setListAdapter(listAdapter);
 	}
 
 	/**
@@ -188,7 +222,7 @@ public class DictListActivity extends AbstractListActivity {
 	private void deleteDict(long dictId) {
 		int count = DictionaryDS.getWordCount(db, dictId);
 		String title = getString(R.string.dict_list_dialog_delete_title, count);
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(title)
 				.setCancelable(false)
@@ -219,11 +253,11 @@ public class DictListActivity extends AbstractListActivity {
 	// ================= GETTERS/SETTERS ========================
 
 	// ================= INNER CLASSES ==========================
-
+	
 	private class DeleteYesListener implements DialogInterface.OnClickListener {
 
 		private long dictId;
-		
+
 		public DeleteYesListener(long dictId) {
 			super();
 			this.dictId = dictId;
@@ -235,6 +269,6 @@ public class DictListActivity extends AbstractListActivity {
 			Toast.makeText(DictListActivity.this, R.string.dict_list_dict_deleted_toast, Toast.LENGTH_SHORT).show();
 			DictListActivity.this.refreshListAdapter();
 		}
-		
+
 	}
 }

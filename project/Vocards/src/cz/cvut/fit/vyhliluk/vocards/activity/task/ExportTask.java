@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,17 +46,10 @@ public class ExportTask extends AsyncTask<Long, String, JSONObject> {
 	@Override
 	protected JSONObject doInBackground(Long... params) {
 		VocardsDataSource db = new VocardsDataSource(this.ctx);
-		JSONObject root = new JSONObject();
-		JSONArray dictArray = new JSONArray();
-
+		db.open();
+		JSONObject root = null;
 		try {
-			db.open();
-			for (long id : params) {
-				JSONObject jsonDict = DictionarySerialization.getDictionaryJson(db, id);
-				dictArray.put(jsonDict);
-			}
-
-			root.put(DictionarySerialization.KEY_DICTIONARY_LIST, dictArray);
+			root = DictionarySerialization.getDictionariesJson(db, params);
 		} catch (JSONException ex) {
 			Log.e("Error", ex.getLocalizedMessage());
 		} finally {

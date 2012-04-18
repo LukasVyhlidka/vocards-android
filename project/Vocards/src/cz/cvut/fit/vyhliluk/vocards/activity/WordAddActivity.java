@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -18,7 +19,6 @@ import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
-import cz.cvut.fit.vyhliluk.vocards.util.component.ComponentFactory;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
 public class WordAddActivity extends AbstractActivity {
@@ -93,11 +93,6 @@ public class WordAddActivity extends AbstractActivity {
 			this.foreignEdit.requestFocus();
 		} else if (b.containsKey(EXTRAS_CARD_ID)) {
 			this.cardId = b.getLong(EXTRAS_CARD_ID);
-//			Cursor c = WordDS.getWordById(db, dictId, cardId);
-//			c.moveToFirst();
-//			this.nativeEdit.setText(c.getString(c.getColumnIndex(WordDS.NATIVE_WORD)));
-//			this.foreignEdit.setText(c.getString(c.getColumnIndex(WordDS.FOREIGN_WORD)));
-//			c.close();
 			
 			Cursor nat = WordDS.getCardNativeWords(db, this.cardId);
 			this.loadNativeWords(nat);
@@ -128,33 +123,35 @@ public class WordAddActivity extends AbstractActivity {
 	}
 	
 	private void addNative(String text) {
-		EditText edit = ComponentFactory.createEditText(WordAddActivity.this);
-		ImageView minus = ComponentFactory.createMinusIcon(WordAddActivity.this);
-		LinearLayout horiz = ComponentFactory.createHorizLinLay(WordAddActivity.this, edit, minus);
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View cont = inflater.inflate(R.layout.inf_word_add_edit, null, false);
+		EditText edit = (EditText) cont.findViewWithTag("edit");
+		ImageView minus = (ImageView) cont.findViewWithTag("image");
 		
 		if (text != null) {
 			edit.setText(text);
 		}
 		
-		minus.setOnClickListener(new NativeWordRemoveListener(edit, horiz));
+		minus.setOnClickListener(new NativeWordRemoveListener(edit, cont));
 		nativeEdits.add(edit);
-		nativeContainer.addView(horiz);
+		nativeContainer.addView(cont);
 		
 		edit.requestFocus();
 	}
 	
 	private void addForeign(String text) {
-		EditText edit = ComponentFactory.createEditText(WordAddActivity.this);
-		ImageView minus = ComponentFactory.createMinusIcon(WordAddActivity.this);
-		LinearLayout horiz = ComponentFactory.createHorizLinLay(WordAddActivity.this, edit, minus);
+		LayoutInflater inflater = LayoutInflater.from(this);
+		View cont = inflater.inflate(R.layout.inf_word_add_edit, null, false);
+		EditText edit = (EditText) cont.findViewWithTag("edit");
+		ImageView minus = (ImageView) cont.findViewWithTag("image");
 		
 		if (text != null) {
 			edit.setText(text);
 		}
 		
-		minus.setOnClickListener(new ForeignWordRemoveListener(edit, horiz));
+		minus.setOnClickListener(new ForeignWordRemoveListener(edit, cont));
 		foreignEdits.add(edit);
-		foreignContainer.addView(horiz);
+		foreignContainer.addView(cont);
 		
 		edit.requestFocus();
 	}
@@ -229,9 +226,9 @@ public class WordAddActivity extends AbstractActivity {
 	private class NativeWordRemoveListener implements OnClickListener {
 
 		private EditText edit;
-		private LinearLayout container;
+		private View container;
 		
-		public NativeWordRemoveListener(EditText edit, LinearLayout container) {
+		public NativeWordRemoveListener(EditText edit, View container) {
 			super();
 			this.edit = edit;
 			this.container = container;
@@ -247,9 +244,9 @@ public class WordAddActivity extends AbstractActivity {
 	private class ForeignWordRemoveListener implements OnClickListener {
 
 		private EditText edit;
-		private LinearLayout container;
+		private View container;
 		
-		public ForeignWordRemoveListener(EditText edit, LinearLayout container) {
+		public ForeignWordRemoveListener(EditText edit, View container) {
 			super();
 			this.edit = edit;
 			this.container = container;
