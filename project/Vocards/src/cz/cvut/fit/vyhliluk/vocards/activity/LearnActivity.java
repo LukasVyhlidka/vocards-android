@@ -14,6 +14,8 @@ import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
 public class LearnActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
+	
+	private static final String KEY_POSITION = "pos";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -39,6 +41,10 @@ public class LearnActivity extends AbstractActivity {
 		setContentView(R.layout.learn);
 
 		this.init();
+		
+		if (savedInstanceState != null) {
+			this.position = savedInstanceState.getInt(KEY_POSITION);
+		}
 	}
 
 	@Override
@@ -55,12 +61,19 @@ public class LearnActivity extends AbstractActivity {
 		this.wordCursor.moveToPosition(this.position);
 		this.showCurrentWord();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		this.wordCursor.close();
-		
+
 		super.onPause();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putInt(KEY_POSITION, this.position);
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -82,7 +95,7 @@ public class LearnActivity extends AbstractActivity {
 
 		this.nextBtn.setOnClickListener(this.nextBtnListener);
 		this.prevBtn.setOnClickListener(this.prevBtnListener);
-		
+
 		int fontSize = Settings.getCardFontSize();
 		this.wordCardNat.setTextSize(fontSize);
 		this.wordCardFor.setTextSize(fontSize);

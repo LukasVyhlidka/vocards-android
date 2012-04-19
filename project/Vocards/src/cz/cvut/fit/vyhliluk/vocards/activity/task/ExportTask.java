@@ -111,6 +111,23 @@ public class ExportTask extends AsyncTask<Long, String, JSONObject> {
 	//================= PRIVATE METHODS ========================
 
 	//================= GETTERS/SETTERS ========================
+	
+	public void attach(Context ctx) {
+		this.ctx = ctx;
+		this.pd = new ProgressDialog(this.ctx, ProgressDialog.STYLE_SPINNER);
+		this.res = this.ctx.getResources();
+		
+		this.pd.setTitle(R.string.export_progress_title);
+		this.pd.setMessage(res.getString(R.string.export_progress_msg));
+		this.pd.show();
+	}
+	
+	public void detach() {
+		this.ctx = null;
+		this.pd.dismiss();
+		this.pd = null;
+		this.res = null;
+	}
 
 	//================= INNER CLASSES ==========================
 

@@ -65,7 +65,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data
-                    android:mimeType="application/vnd.cz.cvut.fit.vyhliluk.vocards"
+                    android:mimeType="application/json"
                     android:scheme="file"
                     android:pathPattern="\\*\\.voc" />
             </intent-filter>

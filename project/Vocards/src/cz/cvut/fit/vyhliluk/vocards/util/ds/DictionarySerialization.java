@@ -16,7 +16,7 @@ import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 public class DictionarySerialization {
 	// ================= STATIC ATTRIBUTES ======================
 
-	public static final String VOCARDS_MIME = "application/vnd.cz.cvut.fit.vyhliluk.vocards";
+	public static final String VOCARDS_MIME = "application/json";
 
 	public static final String EXPORT_FILE_PREFIX = "vocardsExport";
 	public static final String EXPORT_FILE_SUFFIX = ".voc";

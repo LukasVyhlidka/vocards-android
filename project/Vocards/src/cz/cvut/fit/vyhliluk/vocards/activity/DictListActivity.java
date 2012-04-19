@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -48,6 +49,8 @@ public class DictListActivity extends AbstractListActivity {
 	// private ListView dictList = null;
 	private EditText filterEdit = null;
 	private MenuItem menuFilter = null;
+	
+	private ExportTask exportTask = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -58,6 +61,12 @@ public class DictListActivity extends AbstractListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dict_list);
+		
+		Object o = getLastNonConfigurationInstance();
+		if (o != null) {
+			this.exportTask = (ExportTask) o;
+			this.exportTask.attach(this);
+		}
 
 		this.init();
 	}
@@ -155,6 +164,16 @@ public class DictListActivity extends AbstractListActivity {
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(i);
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+	}
+	
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		if (this.exportTask == null || this.exportTask.getStatus().equals(Status.FINISHED)) {
+			return super.onRetainNonConfigurationInstance();
+		}
+		
+		this.exportTask.detach();
+		return this.exportTask;
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -257,8 +276,8 @@ public class DictListActivity extends AbstractListActivity {
 		for (int i = 0; i < dictIds.length; i++) {
 			ids[i] = dictIds[i];
 		}
-		ExportTask task = new ExportTask(this);
-		task.execute(ids);
+		this.exportTask = new ExportTask(this);
+		this.exportTask.execute(ids);
 	}
 
 	// ================= GETTERS/SETTERS ========================

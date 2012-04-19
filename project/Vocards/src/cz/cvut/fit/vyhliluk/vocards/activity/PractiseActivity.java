@@ -17,6 +17,8 @@ import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
 public class PractiseActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
+	
+	private static final String KEY_CARD_ID = "cardId";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -46,6 +48,10 @@ public class PractiseActivity extends AbstractActivity {
 		setContentView(R.layout.practise);
 
 		this.init();
+		
+		if (savedInstanceState != null) {
+			this.cardId = savedInstanceState.getLong(KEY_CARD_ID);
+		}
 	}
 
 	@Override
@@ -63,6 +69,13 @@ public class PractiseActivity extends AbstractActivity {
 		} else {
 			this.loadWord(this.cardId);
 		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		outState.putLong(KEY_CARD_ID, this.cardId);
 	}
 
 	// ================= INSTANCE METHODS =======================

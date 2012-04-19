@@ -8,11 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
+import cz.cvut.fit.vyhliluk.vocards.activity.ImportActivity;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.StorageUtil;
@@ -26,7 +26,7 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
-	private Context ctx;
+	private ImportActivity ctx;
 	private ProgressDialog pd;
 	private Resources res;
 
@@ -34,7 +34,7 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 
 	// ================= CONSTRUCTORS ===========================
 
-	public ImportTask(Context ctx) {
+	public ImportTask(ImportActivity ctx) {
 		super();
 		this.ctx = ctx;
 		this.pd = new ProgressDialog(this.ctx, ProgressDialog.STYLE_HORIZONTAL);
@@ -92,6 +92,7 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 		}
 		
 		Toast.makeText(this.ctx, R.string.import_activity_done, Toast.LENGTH_LONG).show();
+		this.ctx.finish();
 	}
 
 	@Override
@@ -112,6 +113,19 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 	// ================= PRIVATE METHODS ========================
 
 	// ================= GETTERS/SETTERS ========================
+	
+	public void attach(ImportActivity ctx) {
+		this.ctx = ctx;
+		this.pd = new ProgressDialog(this.ctx, ProgressDialog.STYLE_HORIZONTAL);
+		this.res = this.ctx.getResources();
+	}
+	
+	public void detach() {
+		this.ctx = null;
+		this.pd.dismiss();
+		this.pd = null;
+		this.res = null;
+	}
 
 	// ================= INNER CLASSES ==========================
 
