@@ -1,10 +1,27 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.R.string;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,6 +109,9 @@ public class WordAddActivity extends AbstractActivity {
 			String natWord = b.getString(EXTRAS_NATIVE_WORD);
 			this.nativeEdit.setText(natWord);
 			this.foreignEdit.requestFocus();
+			
+			TranslateTask task = new TranslateTask();
+			task.execute(natWord);
 		} else if (b.containsKey(EXTRAS_CARD_ID)) {
 			this.cardId = b.getLong(EXTRAS_CARD_ID);
 			
@@ -258,6 +278,47 @@ public class WordAddActivity extends AbstractActivity {
 		public void onClick(View v) {
 			foreignEdits.remove(this.edit);
 			foreignContainer.removeView(this.container);
+		}
+		
+	}
+	
+	private class TranslateTask extends AsyncTask<String, Void, String> {
+		
+		@Override
+		protected String doInBackground(String... params) {
+			String url = "http://1.vocardsdroid.appspot.com/api/v1/trans/1/4/"+ params[0];
+			HttpClient httpclient = new DefaultHttpClient();  
+	        HttpGet request = new HttpGet(url);
+	        String trans = null;
+	        try {  
+	            HttpResponse resp = httpclient.execute(request);
+	            int status = resp.getStatusLine().getStatusCode();
+	            if (status == 200) {
+	            	InputStream is = resp.getEntity().getContent();
+	            	String content = null;
+	            	try {
+	            		content = new java.util.Scanner(is).useDelimiter("\\A").next();
+	                } catch (java.util.NoSuchElementException e) {
+	                }
+	            	JSONObject json = new JSONObject(content);
+	            	trans = json.getJSONArray("translations").getString(0);
+	            }
+	        } catch (ClientProtocolException e) {  
+	            e.printStackTrace();  
+	        } catch (IOException e) {  
+	            e.printStackTrace();  
+	        } catch (JSONException ex) {
+	        	ex.printStackTrace();
+	        }
+	        httpclient.getConnectionManager().shutdown();
+	        return trans;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			
+			foreignEdit.setText(result);
 		}
 		
 	}
