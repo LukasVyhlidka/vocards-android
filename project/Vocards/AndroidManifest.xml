@@ -12,10 +12,10 @@
 
     <application
         android:name=".VocardsApp"
+        android:backupAgent="cz.cvut.fit.vyhliluk.vocards.VocardsBackupAgent"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Black"
-        android:backupAgent="cz.cvut.fit.vyhliluk.vocards.VocardsBackupAgent" >
+        android:theme="@android:style/Theme.Black" >
         <meta-data
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAIgPS02M-lbYgi49MliJUoc9WxKT03ywmDJOZzsg" />
@@ -68,8 +68,13 @@
 
                 <data
                     android:mimeType="application/json"
-                    android:scheme="file"
-                    android:pathPattern="\\*\\.voc" />
+                    android:pathPattern=".*\\.voc"
+                    android:scheme="content" />
+                
+                <data
+                    android:mimeType="application/json"
+                    android:pathPattern=".*\\.voc"
+                    android:scheme="file" />
             </intent-filter>
         </activity>
     </application>
