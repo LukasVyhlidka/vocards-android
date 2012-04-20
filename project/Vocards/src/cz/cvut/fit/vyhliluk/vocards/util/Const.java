@@ -2,7 +2,7 @@ package cz.cvut.fit.vyhliluk.vocards.util;
 
 public class Const {
 	
-	public static final String TRANSL_URI_TEMPLATE = "http://1.vocardsdroid.appspot.com/api/v1/trans/%d/%d/%s";
+	public static final String TRANSL_URI_TEMPLATE = "http://1.vocardsdroid.appspot.com/api/v1/trans?from=%d&to=%d&word=%s";
 	
 	//================= LANGUAGES ==============================
 	public static final int LANGUAGE_NONE = 0;
