@@ -51,6 +51,7 @@ public class DictListActivity extends AbstractListActivity {
 	private MenuItem menuFilter = null;
 	
 	private ExportTask exportTask = null;
+	private AlertDialog alertDialog = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -168,6 +169,9 @@ public class DictListActivity extends AbstractListActivity {
 	
 	@Override
 	public Object onRetainNonConfigurationInstance() {
+		if (this.alertDialog != null && this.alertDialog.isShowing()) {
+			this.alertDialog.dismiss();
+		}
 		if (this.exportTask == null || this.exportTask.getStatus().equals(Status.FINISHED)) {
 			return super.onRetainNonConfigurationInstance();
 		}
@@ -256,8 +260,8 @@ public class DictListActivity extends AbstractListActivity {
 						dialog.cancel();
 					}
 				});
-		AlertDialog alert = builder.create();
-		alert.show();
+		this.alertDialog = builder.create();
+		this.alertDialog.show();
 	}
 
 	private void addDictActivity() {

@@ -61,6 +61,7 @@
     <string name="add_word_foreign">Foreign</string>
     <string name="add_word_create">Create Word</string>
     <string name="add_word_edit">Edit Word</string>
+    <string name="add_word_translation_pick_title">Select a translation:</string>
     <string name="add_word_empty_word_toast">Please, fill the native and foreign word.</string>
     
     <!-- Dict List -->

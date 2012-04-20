@@ -1,27 +1,14 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.R.string;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,13 +17,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
+import cz.cvut.fit.vyhliluk.vocards.activity.task.TranslateTask;
+import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.AppStatus;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
+import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
 public class WordAddActivity extends AbstractActivity {
@@ -53,11 +45,16 @@ public class WordAddActivity extends AbstractActivity {
 	private LinearLayout nativeContainer = null;
 	private LinearLayout foreignContainer = null;
 
+	private ProgressBar progressBar = null;
+
 	private List<EditText> nativeEdits = new ArrayList<EditText>();
 	private List<EditText> foreignEdits = new ArrayList<EditText>();
 
 	private long cardId = -1;
 	private long dictId = -1;
+
+	private MyTranslateTask translateTask = null;
+	private AlertDialog alertDialog = null;
 
 	// ================= STATIC METHODS =========================
 
@@ -73,6 +70,19 @@ public class WordAddActivity extends AbstractActivity {
 		this.init();
 	}
 
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		if (this.alertDialog != null && this.alertDialog.isShowing()) {
+			this.alertDialog.dismiss();
+			this.alertDialog = null;
+		}
+		if (this.translateTask != null && !this.translateTask.getStatus().equals(Status.FINISHED)) {
+			this.translateTask.detach();
+			return this.translateTask;
+		}
+		return super.onRetainNonConfigurationInstance();
+	}
+
 	// ================= INSTANCE METHODS =======================
 
 	// ================= PRIVATE METHODS ========================
@@ -82,7 +92,8 @@ public class WordAddActivity extends AbstractActivity {
 		this.foreignEdit = (EditText) findViewById(R.id.foreignEdit);
 		this.nativeContainer = (LinearLayout) findViewById(R.id.nativeContainer);
 		this.foreignContainer = (LinearLayout) findViewById(R.id.foreignContainer);
-		
+		this.progressBar = (ProgressBar) findViewById(R.id.translateProgress);
+
 		this.nativeEdits.add(this.nativeEdit);
 		this.foreignEdits.add(this.foreignEdit);
 
@@ -91,16 +102,21 @@ public class WordAddActivity extends AbstractActivity {
 
 		ImageView nativeAdd = (ImageView) findViewById(R.id.nativeAdd);
 		nativeAdd.setOnClickListener(this.nativeAddListener);
-		
+
 		ImageView foreignAdd = (ImageView) findViewById(R.id.foreignAdd);
 		foreignAdd.setOnClickListener(this.foreignAddListener);
 
 		this.dictId = Settings.getActiveDictionaryId();
 
-		Intent i = this.getIntent();
-		Bundle b = i.getExtras();
-		if (b != null) {
-			this.handleBundle(b);
+		if (getLastNonConfigurationInstance() != null) {
+			this.translateTask = (MyTranslateTask) getLastNonConfigurationInstance();
+			this.translateTask.attach(this);
+		} else {
+			Intent i = this.getIntent();
+			Bundle b = i.getExtras();
+			if (b != null) {
+				this.handleBundle(b);
+			}
 		}
 	}
 
@@ -109,90 +125,105 @@ public class WordAddActivity extends AbstractActivity {
 			String natWord = b.getString(EXTRAS_NATIVE_WORD);
 			this.nativeEdit.setText(natWord);
 			this.foreignEdit.requestFocus();
-			
-			TranslateTask task = new TranslateTask();
-			task.execute(natWord);
+			this.translate(natWord);
 		} else if (b.containsKey(EXTRAS_CARD_ID)) {
 			this.cardId = b.getLong(EXTRAS_CARD_ID);
-			
+
 			Cursor nat = WordDS.getCardNativeWords(db, this.cardId);
 			this.loadNativeWords(nat);
 			nat.close();
-			
+
 			Cursor foreign = WordDS.getCardForeignWords(db, this.cardId);
 			this.loadForeignWords(foreign);
 			foreign.close();
 		}
 	}
-	
+
+	private void translate(String word) {
+		if (!AppStatus.isOnline(this)) {
+			return;
+		}
+
+		Cursor c = DictionaryDS.getById(db, dictId);
+		c.moveToFirst();
+		Language from = Language.getById(c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG)));
+		Language to = Language.getById(c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG)));
+		c.close();
+		if (!Language.NONE.equals(from) && !Language.NONE.equals(to)) {
+			this.translateTask = new MyTranslateTask(from, to);
+			this.translateTask.attach(this);
+			this.translateTask.execute(word);
+		}
+	}
+
 	private void loadNativeWords(Cursor c) {
 		c.moveToFirst();
 		this.nativeEdit.setText(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
-		while (! c.isLast()) {
+		while (!c.isLast()) {
 			c.moveToNext();
 			this.addNative(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
 		}
 	}
-	
+
 	private void loadForeignWords(Cursor c) {
 		c.moveToFirst();
 		this.foreignEdit.setText(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
-		while (! c.isLast()) {
+		while (!c.isLast()) {
 			c.moveToNext();
 			this.addForeign(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
 		}
 	}
-	
+
 	private void addNative(String text) {
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View cont = inflater.inflate(R.layout.inf_word_add_edit, null, false);
 		EditText edit = (EditText) cont.findViewWithTag("edit");
 		ImageView minus = (ImageView) cont.findViewWithTag("image");
-		
+
 		if (text != null) {
 			edit.setText(text);
 		}
-		
+
 		minus.setOnClickListener(new NativeWordRemoveListener(edit, cont));
 		nativeEdits.add(edit);
 		nativeContainer.addView(cont);
-		
+
 		edit.requestFocus();
 	}
-	
+
 	private void addForeign(String text) {
 		LayoutInflater inflater = LayoutInflater.from(this);
 		View cont = inflater.inflate(R.layout.inf_word_add_edit, null, false);
 		EditText edit = (EditText) cont.findViewWithTag("edit");
 		ImageView minus = (ImageView) cont.findViewWithTag("image");
-		
+
 		if (text != null) {
 			edit.setText(text);
 		}
-		
+
 		minus.setOnClickListener(new ForeignWordRemoveListener(edit, cont));
 		foreignEdits.add(edit);
 		foreignContainer.addView(cont);
-		
+
 		edit.requestFocus();
 	}
-	
+
 	private List<String> getNatWords() {
 		List<String> res = new ArrayList<String>();
 		for (EditText edit : this.nativeEdits) {
 			String str = edit.getText().toString();
-			if (! StringUtil.isEmpty(str)) {
+			if (!StringUtil.isEmpty(str)) {
 				res.add(str);
 			}
 		}
 		return res;
 	}
-	
+
 	private List<String> getForWords() {
 		List<String> res = new ArrayList<String>();
 		for (EditText edit : this.foreignEdits) {
 			String str = edit.getText().toString();
-			if (! StringUtil.isEmpty(str)) {
+			if (!StringUtil.isEmpty(str)) {
 				res.add(str);
 			}
 		}
@@ -208,11 +239,7 @@ public class WordAddActivity extends AbstractActivity {
 		public void onClick(View v) {
 			List<String> natWords = getNatWords();
 			List<String> forWords = getForWords();
-//			
-//			String natWord = nativeEdit.getText().toString();
-//			String forWord = foreignEdit.getText().toString();
 
-//			if (StringUtil.isEmpty(natWord) || StringUtil.isEmpty(forWord)) {
 			if (natWords.isEmpty() || forWords.isEmpty()) {
 				Toast.makeText(WordAddActivity.this, R.string.add_word_empty_word_toast, Toast.LENGTH_SHORT).show();
 				return;
@@ -223,7 +250,7 @@ public class WordAddActivity extends AbstractActivity {
 			} else {
 				WordDS.updateCard(db, cardId, natWords, forWords);
 			}
-			
+
 			DBUtil.dictModif(db, WordAddActivity.this, dictId);
 
 			Intent i = new Intent(WordAddActivity.this, WordListActivity.class);
@@ -238,19 +265,19 @@ public class WordAddActivity extends AbstractActivity {
 			addNative(null);
 		}
 	};
-	
+
 	private OnClickListener foreignAddListener = new OnClickListener() {
 
 		public void onClick(View v) {
 			addForeign(null);
 		}
 	};
-	
+
 	private class NativeWordRemoveListener implements OnClickListener {
 
 		private EditText edit;
 		private View container;
-		
+
 		public NativeWordRemoveListener(EditText edit, View container) {
 			super();
 			this.edit = edit;
@@ -261,14 +288,14 @@ public class WordAddActivity extends AbstractActivity {
 			nativeEdits.remove(this.edit);
 			nativeContainer.removeView(this.container);
 		}
-		
+
 	}
-	
+
 	private class ForeignWordRemoveListener implements OnClickListener {
 
 		private EditText edit;
 		private View container;
-		
+
 		public ForeignWordRemoveListener(EditText edit, View container) {
 			super();
 			this.edit = edit;
@@ -279,48 +306,54 @@ public class WordAddActivity extends AbstractActivity {
 			foreignEdits.remove(this.edit);
 			foreignContainer.removeView(this.container);
 		}
-		
+
 	}
-	
-	private class TranslateTask extends AsyncTask<String, Void, String> {
+
+	private class MyTranslateTask extends TranslateTask {
+
+		private Context ctx;
 		
-		@Override
-		protected String doInBackground(String... params) {
-			String url = "http://1.vocardsdroid.appspot.com/api/v1/trans/1/4/"+ params[0];
-			HttpClient httpclient = new DefaultHttpClient();  
-	        HttpGet request = new HttpGet(url);
-	        String trans = null;
-	        try {  
-	            HttpResponse resp = httpclient.execute(request);
-	            int status = resp.getStatusLine().getStatusCode();
-	            if (status == 200) {
-	            	InputStream is = resp.getEntity().getContent();
-	            	String content = null;
-	            	try {
-	            		content = new java.util.Scanner(is).useDelimiter("\\A").next();
-	                } catch (java.util.NoSuchElementException e) {
-	                }
-	            	JSONObject json = new JSONObject(content);
-	            	trans = json.getJSONArray("translations").getString(0);
-	            }
-	        } catch (ClientProtocolException e) {  
-	            e.printStackTrace();  
-	        } catch (IOException e) {  
-	            e.printStackTrace();  
-	        } catch (JSONException ex) {
-	        	ex.printStackTrace();
-	        }
-	        httpclient.getConnectionManager().shutdown();
-	        return trans;
+		public MyTranslateTask(Language from, Language to) {
+			super(from, to);
+		}
+		
+		public void detach() {
+			this.ctx = null;
+		}
+		
+		public void attach(Context ctx) {
+			this.ctx = ctx;
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(List<String> result) {
 			super.onPostExecute(result);
-			
-			foreignEdit.setText(result);
+
+			translateTask = null;
+			progressBar.setVisibility(View.INVISIBLE);
+			if (!result.isEmpty()) {
+				final String[] items = result.toArray(new String[] {});
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(this.ctx);
+				builder.setTitle(R.string.add_word_translation_pick_title);
+				builder.setItems(items, new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int item) {
+						String word = items[item];
+						foreignEdit.setText(word);
+					}
+				});
+				alertDialog = builder.create();
+				alertDialog.show();
+			}
 		}
-		
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			progressBar.setVisibility(View.VISIBLE);
+		}
+
 	}
 
 }
