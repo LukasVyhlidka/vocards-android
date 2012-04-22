@@ -54,7 +54,6 @@ public class WordAddActivity extends AbstractActivity {
 	private long dictId = -1;
 
 	private MyTranslateTask translateTask = null;
-	private AlertDialog alertDialog = null;
 
 	// ================= STATIC METHODS =========================
 
@@ -72,13 +71,11 @@ public class WordAddActivity extends AbstractActivity {
 
 	@Override
 	public Object onRetainNonConfigurationInstance() {
-		if (this.alertDialog != null && this.alertDialog.isShowing()) {
-			this.alertDialog.dismiss();
-			this.alertDialog = null;
-		}
 		if (this.translateTask != null && !this.translateTask.getStatus().equals(Status.FINISHED)) {
 			this.translateTask.detach();
 			return this.translateTask;
+		} else if (this.translateTask != null) {
+			this.translateTask.dismissDialog();
 		}
 		return super.onRetainNonConfigurationInstance();
 	}
@@ -312,6 +309,7 @@ public class WordAddActivity extends AbstractActivity {
 	private class MyTranslateTask extends TranslateTask {
 
 		private Context ctx;
+		private AlertDialog alertDialog = null;
 		
 		public MyTranslateTask(Language from, Language to) {
 			super(from, to);
@@ -319,6 +317,7 @@ public class WordAddActivity extends AbstractActivity {
 		
 		public void detach() {
 			this.ctx = null;
+			this.dismissDialog();
 		}
 		
 		public void attach(Context ctx) {
@@ -329,7 +328,6 @@ public class WordAddActivity extends AbstractActivity {
 		protected void onPostExecute(List<String> result) {
 			super.onPostExecute(result);
 
-			translateTask = null;
 			progressBar.setVisibility(View.INVISIBLE);
 			if (!result.isEmpty()) {
 				final String[] items = result.toArray(new String[] {});
@@ -352,6 +350,13 @@ public class WordAddActivity extends AbstractActivity {
 			super.onPreExecute();
 
 			progressBar.setVisibility(View.VISIBLE);
+		}
+		
+		public void dismissDialog() {
+			if (this.alertDialog != null && this.alertDialog.isShowing()) {
+				this.alertDialog.dismiss();
+				this.alertDialog = null;
+			}
 		}
 
 	}
