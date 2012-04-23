@@ -160,7 +160,7 @@ public class DictionarySerialization {
 		JSONArray forWords = new JSONArray();
 		List<String> forWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_FOREIGN)));
 		for (String forw : forWList) {
-			natWords.put(forw);
+			forWords.put(forw);
 		}
 
 		res.put(KEY_NATIVE_WORD, natWords);

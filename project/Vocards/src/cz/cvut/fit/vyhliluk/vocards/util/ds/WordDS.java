@@ -12,7 +12,6 @@ public class WordDS {
 	// ================= STATIC ATTRIBUTES ======================
 
 	public static final String NATIVE_WORD = "native_word";
-
 	public static final String FOREIGN_WORD = "foreign_word";
 
 	private static final String QUERY_WORDS = "SELECT " +
@@ -23,50 +22,6 @@ public class WordDS {
 			"replace(" + VocardsDataSource.CARD_COLUMN_FOREIGN + ", '" + VocardsDataSource.WORD_DELIM + "', ', ') as " + FOREIGN_WORD + " " +
 			"FROM " + VocardsDataSource.CARD_TABLE + " " +
 			"WHERE " + VocardsDataSource.CARD_COLUMN_DICTIONARY + "=?";
-
-	// private static final String QUERY_WORDS2 = "SELECT " +
-	// "c." + VocardsDataSource.CARD_COLUMN_ID + ", " +
-	// "nat." + VocardsDataSource.WORD_COLUMN_TEXT + " as " + NATIVE_WORD + ", "
-	// +
-	// "for." + VocardsDataSource.WORD_COLUMN_TEXT + " as " + FOREIGN_WORD +
-	// ", " +
-	// "c." + VocardsDataSource.CARD_COLUMN_FACTOR + " " +
-	// "FROM " +
-	// VocardsDataSource.CARD_TABLE + " c, " +
-	// "(" +
-	// "SELECT " +
-	// VocardsDataSource.WORD_COLUMN_ID + ", " +
-	// "group_concat(" + VocardsDataSource.WORD_COLUMN_TEXT + ", ', ') as " +
-	// VocardsDataSource.WORD_COLUMN_TEXT + ", " +
-	// VocardsDataSource.WORD_COLUMN_CARD + ", " +
-	// VocardsDataSource.WORD_COLUMN_TYPE + " " +
-	// "FROM " + VocardsDataSource.WORD_TABLE + " " +
-	// "WHERE " + VocardsDataSource.WORD_COLUMN_TYPE + "=" +
-	// VocardsDataSource.WORD_TYPE_NATIVE + " " +
-	// "GROUP BY " + VocardsDataSource.WORD_COLUMN_CARD +
-	// ") nat, " +
-	// "(" +
-	// "SELECT " +
-	// VocardsDataSource.WORD_COLUMN_ID + ", " +
-	// "group_concat(" + VocardsDataSource.WORD_COLUMN_TEXT + ", ', ') as " +
-	// VocardsDataSource.WORD_COLUMN_TEXT + ", " +
-	// VocardsDataSource.WORD_COLUMN_CARD + ", " +
-	// VocardsDataSource.WORD_COLUMN_TYPE + " " +
-	// "FROM " + VocardsDataSource.WORD_TABLE + " " +
-	// "WHERE " + VocardsDataSource.WORD_COLUMN_TYPE + "=" +
-	// VocardsDataSource.WORD_TYPE_FOREIGN + " " +
-	// "GROUP BY " + VocardsDataSource.WORD_COLUMN_CARD +
-	// ") for " +
-	// "WHERE " +
-	// VocardsDataSource.CARD_COLUMN_DICTIONARY + "=? AND " +
-	// "nat." + VocardsDataSource.WORD_COLUMN_CARD + "=" + "c." +
-	// VocardsDataSource.CARD_COLUMN_ID + " AND " +
-	// "for." + VocardsDataSource.WORD_COLUMN_CARD + "=" + "c." +
-	// VocardsDataSource.CARD_COLUMN_ID + " AND " +
-	// "nat." + VocardsDataSource.WORD_COLUMN_TYPE + "=" +
-	// VocardsDataSource.WORD_TYPE_NATIVE + " AND " +
-	// "for." + VocardsDataSource.WORD_COLUMN_TYPE + "=" +
-	// VocardsDataSource.WORD_TYPE_FOREIGN;
 
 	private static final String QUERY_WORDS_ORD = QUERY_WORDS +
 			" ORDER BY " + VocardsDataSource.CARD_COLUMN_NATIVE;
@@ -139,26 +94,6 @@ public class WordDS {
 				new String[] { cardId + "" });
 	}
 
-	// public static Cursor getCardNativeWords(VocardsDataSource db, long
-	// cardId) {
-	// return db.query(
-	// VocardsDataSource.WORD_TABLE,
-	// null,
-	// VocardsDataSource.WORD_COLUMN_CARD + "=? AND " +
-	// VocardsDataSource.WORD_COLUMN_TYPE + "=?",
-	// new String[] { cardId + "", VocardsDataSource.WORD_TYPE_NATIVE + "" });
-	// }
-	//
-	// public static Cursor getCardForeignWords(VocardsDataSource db, long
-	// cardId) {
-	// return db.query(
-	// VocardsDataSource.WORD_TABLE,
-	// null,
-	// VocardsDataSource.WORD_COLUMN_CARD + "=? AND " +
-	// VocardsDataSource.WORD_COLUMN_TYPE + "=?",
-	// new String[] { cardId + "", VocardsDataSource.WORD_TYPE_FOREIGN + "" });
-	// }
-
 	public static long createCard(VocardsDataSource db, List<String> natWords, List<String> forWords, long dictId) {
 		return createCard(db, natWords, forWords, CardUtil.MIN_FACTOR, dictId);
 	}
@@ -173,18 +108,11 @@ public class WordDS {
 		cardValues.put(VocardsDataSource.CARD_COLUMN_FOREIGN, CardUtil.implodeWords(forWords));
 		long cardId = db.insert(VocardsDataSource.CARD_TABLE, cardValues);
 
-		// insertWords(db, forWords, cardId,
-		// VocardsDataSource.WORD_TYPE_FOREIGN);
-		// insertWords(db, natWords, cardId,
-		// VocardsDataSource.WORD_TYPE_NATIVE);
-
 		if (cardId != -1) {
 			db.commit();
-			// Log.d("OK", "OK");
 			return cardId;
 		} else {
 			db.rollback();
-			// Log.d("ROLBACK", "ROLBACK");
 			return -1;
 		}
 	}
@@ -193,7 +121,6 @@ public class WordDS {
 		db.begin();
 
 		int res = 0;
-		// res += removeWords(db, cardId);
 		res += db.delete(VocardsDataSource.CARD_TABLE, cardId);
 
 		db.commit();
@@ -245,22 +172,6 @@ public class WordDS {
 	// ================= INSTANCE METHODS =======================
 
 	// ================= PRIVATE METHODS ========================
-
-//	private static void insertWords(VocardsDataSource db, List<String> words, long cardId, int wordType) {
-//		db.begin();
-//		for (String forWord : words) {
-//			ContentValues forWordVal = new ContentValues();
-//			forWordVal.put(VocardsDataSource.WORD_COLUMN_CARD, cardId);
-//			forWordVal.put(VocardsDataSource.WORD_COLUMN_TYPE, wordType);
-//			forWordVal.put(VocardsDataSource.WORD_COLUMN_TEXT, forWord);
-//			db.insert(VocardsDataSource.WORD_TABLE, forWordVal);
-//		}
-//		db.commit();
-//	}
-//
-//	private static int removeWords(VocardsDataSource db, long cardId) {
-//		return db.delete(VocardsDataSource.WORD_TABLE, VocardsDataSource.WORD_COLUMN_CARD + "=?", new String[] { cardId + "" });
-//	}
 
 	private static int getExponentialRandom(int max, double lambda) {
 		double rand = Math.random();
