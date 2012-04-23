@@ -1,5 +1,13 @@
 package cz.cvut.fit.vyhliluk.vocards.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+
 public class CardUtil {
 	// ================= STATIC ATTRIBUTES ======================
 
@@ -10,6 +18,28 @@ public class CardUtil {
 
 	// ================= STATIC METHODS =========================
 
+	public static String implodeWords(List<String> words) {
+		StringBuilder sb = new StringBuilder();
+		Iterator<String> it = words.iterator();
+		while (it.hasNext()) {
+			sb.append(it.next());
+			if (it.hasNext()) {
+				sb.append(VocardsDataSource.WORD_DELIM);
+			}
+		}
+		return sb.toString();
+	}
+	
+	public static List<String> explodeWords(String word) {
+//		return Arrays.asList(word.split(VocardsDataSource.WORD_DELIM));
+		List<String> res = new ArrayList<String>();
+		StringTokenizer tokenizer = new StringTokenizer(word, VocardsDataSource.WORD_DELIM);
+		while (tokenizer.hasMoreTokens()) {
+			res.add(tokenizer.nextToken());
+		}
+		return res;
+	}
+	
 	public static int getNewFactor(boolean know, int factor) {
 		if (know) {
 			return newKnowFactor(factor);

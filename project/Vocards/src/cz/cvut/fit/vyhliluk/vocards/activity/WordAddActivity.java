@@ -25,6 +25,7 @@ import cz.cvut.fit.vyhliluk.vocards.activity.task.TranslateTask;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.AppStatus;
+import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
@@ -125,14 +126,17 @@ public class WordAddActivity extends AbstractActivity {
 			this.translate(natWord);
 		} else if (b.containsKey(EXTRAS_CARD_ID)) {
 			this.cardId = b.getLong(EXTRAS_CARD_ID);
+			
+			Cursor c = WordDS.getCardById(db, this.cardId);
+			c.moveToFirst();
+			
+			List<String> natWords = CardUtil.explodeWords(c.getString(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_NATIVE)));
+			List<String> forWords = CardUtil.explodeWords(c.getString(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_FOREIGN)));
+			
+			c.close();
 
-			Cursor nat = WordDS.getCardNativeWords(db, this.cardId);
-			this.loadNativeWords(nat);
-			nat.close();
-
-			Cursor foreign = WordDS.getCardForeignWords(db, this.cardId);
-			this.loadForeignWords(foreign);
-			foreign.close();
+			this.loadNativeWords(natWords);
+			this.loadForeignWords(forWords);
 		}
 	}
 
@@ -153,21 +157,21 @@ public class WordAddActivity extends AbstractActivity {
 		}
 	}
 
-	private void loadNativeWords(Cursor c) {
-		c.moveToFirst();
-		this.nativeEdit.setText(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
-		while (!c.isLast()) {
-			c.moveToNext();
-			this.addNative(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
+	private void loadNativeWords(List<String> words) {
+		String first = words.get(0);
+		this.nativeEdit.setText(first);
+		words.remove(0);
+		for (String word : words) {
+			this.addNative(word);
 		}
 	}
 
-	private void loadForeignWords(Cursor c) {
-		c.moveToFirst();
-		this.foreignEdit.setText(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
-		while (!c.isLast()) {
-			c.moveToNext();
-			this.addForeign(c.getString(c.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
+	private void loadForeignWords(List<String> words) {
+		String first = words.get(0);
+		this.foreignEdit.setText(first);
+		words.remove(0);
+		for (String word : words) {
+			this.addForeign(word);
 		}
 	}
 

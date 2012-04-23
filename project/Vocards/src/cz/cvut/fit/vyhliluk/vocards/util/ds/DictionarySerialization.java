@@ -11,6 +11,7 @@ import android.database.Cursor;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 
 public class DictionarySerialization {
@@ -146,32 +147,26 @@ public class DictionarySerialization {
 		JSONObject res = new JSONObject();
 
 		Cursor card = WordDS.getCardById(db, cardId);
-		Cursor natW = WordDS.getCardNativeWords(db, cardId);
-		Cursor forW = WordDS.getCardForeignWords(db, cardId);
 
 		card.moveToFirst();
 		res.put(KEY_CARD_FACTOR, card.getInt(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR)));
 
 		JSONArray natWords = new JSONArray();
-		natW.moveToNext();
-		while (!natW.isAfterLast()) {
-			natWords.put(natW.getString(natW.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
-			natW.moveToNext();
+		List<String> natWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_NATIVE)));
+		for (String nat : natWList) {
+			natWords.put(nat);
 		}
 
 		JSONArray forWords = new JSONArray();
-		forW.moveToNext();
-		while (!forW.isAfterLast()) {
-			forWords.put(forW.getString(forW.getColumnIndex(VocardsDataSource.WORD_COLUMN_TEXT)));
-			forW.moveToNext();
+		List<String> forWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_FOREIGN)));
+		for (String forw : forWList) {
+			natWords.put(forw);
 		}
 
 		res.put(KEY_NATIVE_WORD, natWords);
 		res.put(KEY_FOREIGN_WORD, forWords);
 
 		card.close();
-		natW.close();
-		forW.close();
 
 		return res;
 	}

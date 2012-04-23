@@ -10,7 +10,7 @@ public class VocardsDataSource {
 	// ================= STATIC ATTRIBUTES ======================
 
 	public static final String DB_NAME = "vocards";
-	public static final int DB_VERSION = 2;
+	public static final int DB_VERSION = 1;
 
 	public static final String DB_DEFAULT_ID = "_id";
 
@@ -25,23 +25,27 @@ public class VocardsDataSource {
 	public static final String CARD_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String CARD_COLUMN_FACTOR = "factor";
 	public static final String CARD_COLUMN_DICTIONARY = "dict_id";
+	public static final String CARD_COLUMN_NATIVE = "native_word";
+	public static final String CARD_COLUMN_FOREIGN = "foreign_word";
 
-	public static final String WORD_TABLE = "word";
-	public static final String WORD_COLUMN_ID = DB_DEFAULT_ID;
-	public static final String WORD_COLUMN_TEXT = "text";
-	public static final String WORD_COLUMN_CARD = "card_id";
-	public static final String WORD_COLUMN_TYPE = "type";
+//	public static final String WORD_TABLE = "word";
+//	public static final String WORD_COLUMN_ID = DB_DEFAULT_ID;
+//	public static final String WORD_COLUMN_TEXT = "text";
+//	public static final String WORD_COLUMN_CARD = "card_id";
+//	public static final String WORD_COLUMN_TYPE = "type";
 
 	public static final String BACKUP_TABLE = "backup";
 	public static final String BACKUP_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String BACKUP_COLUMN_DICTIONARY = "dict_id";
 	public static final String BACKUP_COLUMN_STATE = "state";
 
-	public static final int WORD_TYPE_NATIVE = 1;
-	public static final int WORD_TYPE_FOREIGN = 2;
+//	public static final int WORD_TYPE_NATIVE = 1;
+//	public static final int WORD_TYPE_FOREIGN = 2;
 	
 	public static final int BACKUP_STATE_BACKUPED = 1;
 	public static final int BACKUP_STATE_DELETED = 2;
+	
+	public static final String WORD_DELIM = "|||";
 
 	private static final String CREATE_DICTIONARY = "CREATE TABLE " + DICTIONARY_TABLE + "("
 			+ DICTIONARY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -55,16 +59,18 @@ public class VocardsDataSource {
 			+ CARD_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
 			+ CARD_COLUMN_FACTOR + " INTEGER NOT NULL,"
 			+ CARD_COLUMN_DICTIONARY + " INTEGER NOT NULL,"
+			+ CARD_COLUMN_NATIVE +" TEXT NOT NULL,"
+			+ CARD_COLUMN_FOREIGN +" TEXT NOT NULL, "
 			+ "FOREIGN KEY (" + CARD_COLUMN_DICTIONARY + ") REFERENCES " + DICTIONARY_TABLE + "(" + DICTIONARY_COLUMN_ID + ")"
 			+ ");";
 
-	private static final String CREATE_WORD = "CREATE TABLE " + WORD_TABLE + "("
-			+ WORD_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ WORD_COLUMN_TEXT + " TEXT,"
-			+ WORD_COLUMN_CARD + " INTEGER NOT NULL,"
-			+ WORD_COLUMN_TYPE + " INTEGER NOT NULL,"
-			+ "FOREIGN KEY (" + WORD_COLUMN_CARD + ") REFERENCES " + CARD_TABLE + "(" + CARD_COLUMN_ID + ")"
-			+ ")";
+//	private static final String CREATE_WORD = "CREATE TABLE " + WORD_TABLE + "("
+//			+ WORD_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+//			+ WORD_COLUMN_TEXT + " TEXT,"
+//			+ WORD_COLUMN_CARD + " INTEGER NOT NULL,"
+//			+ WORD_COLUMN_TYPE + " INTEGER NOT NULL,"
+//			+ "FOREIGN KEY (" + WORD_COLUMN_CARD + ") REFERENCES " + CARD_TABLE + "(" + CARD_COLUMN_ID + ")"
+//			+ ")";
 
 	private static final String CREATE_BACKUP = "CREATE TABLE " + BACKUP_TABLE + "("
 			+ BACKUP_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -168,16 +174,16 @@ public class VocardsDataSource {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL(CREATE_DICTIONARY);
 			db.execSQL(CREATE_CARD);
-			db.execSQL(CREATE_WORD);
+//			db.execSQL(CREATE_WORD);
 			db.execSQL(CREATE_BACKUP);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int from, int to) {
-			if (from < 2) {
-				db.execSQL(CREATE_BACKUP);
-				db.execSQL("ALTER TABLE "+ DICTIONARY_TABLE +" ADD COLUMN "+ DICTIONARY_COLUMN_MODIFIED +" INTEGER");
-			}
+//			if (from < 2) {
+//				db.execSQL(CREATE_BACKUP);
+//				db.execSQL("ALTER TABLE "+ DICTIONARY_TABLE +" ADD COLUMN "+ DICTIONARY_COLUMN_MODIFIED +" INTEGER");
+//			}s
 		}
 
 		@Override
