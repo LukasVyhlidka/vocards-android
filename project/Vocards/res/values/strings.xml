@@ -46,12 +46,14 @@
     <string name="word_list_menu_show_filter">Show Filter</string>
     <string name="word_list_menu_hide_filter">Hide Filter</string>
     <string name="word_list_menu_new_word">Create Word</string>
+    <string name="word_list_menu_order">Sorting</string>
     <string name="word_list_filter_hint">Filter Words</string>
     <string name="word_list_new_word">New Word</string>
     <string name="word_list_ctx_delete">Delete</string>
     <string name="word_list_ctx_edit">Edit</string>
     <string name="word_list_deleted_toast">Word was successfully deleted.</string>
     <string name="word_list_empty_word_toast">Please, enter a native word text.</string>
+    <string name="word_list_select_order_dialog_title">Please, select the desired word ordering.</string>
     
     <!-- Add Word -->
     <string name="add_word">New Word</string>
@@ -98,6 +100,7 @@
     <string name="settings">Settings</string>
     <string name="settings_card_font_size_title">Card font size</string>
     <string name="settings_practice_direction_title">Practise Direction</string>
+    <string name="settings_translation_title">Enable Translation</string>
     
     <!-- Export -->
     <string name="export_sdcard_not_mounted">Can\'t export your dictionaries because SD Card is not mounted.</string>

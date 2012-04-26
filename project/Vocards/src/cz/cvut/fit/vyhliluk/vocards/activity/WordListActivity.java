@@ -1,5 +1,7 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -35,6 +37,7 @@ public class WordListActivity extends AbstractListActivity {
 
 	public static final int MENU_SHOW_HIDE_FILTER = 0;
 	public static final int MENU_NEW_WORD = 1;
+	public static final int MENU_ORDER = 2;
 
 	public static final int CTX_DELETE_WORD = 0;
 	public static final int CTX_EDIT_WORD = 1;
@@ -49,6 +52,9 @@ public class WordListActivity extends AbstractListActivity {
 	private MenuItem menuFilter = null;
 
 	private long selectedDictId;
+	
+	private String orderBy = null;
+	private AlertDialog alertDialog = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -89,7 +95,10 @@ public class WordListActivity extends AbstractListActivity {
 		int none = Menu.NONE;
 
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, res.getString(R.string.word_list_menu_show_filter));
-		menu.add(none, MENU_NEW_WORD, none, res.getString(R.string.word_list_new_word));
+		this.menuFilter.setIcon(R.drawable.icon_filter);
+		
+		menu.add(none, MENU_NEW_WORD, none, res.getString(R.string.word_list_menu_new_word)).setIcon(R.drawable.icon_new);
+		menu.add(none, MENU_ORDER, none, res.getString(R.string.word_list_menu_order)).setIcon(R.drawable.icon_sort);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -102,6 +111,9 @@ public class WordListActivity extends AbstractListActivity {
 				break;
 			case MENU_NEW_WORD:
 				this.createWord(null);
+				break;
+			case MENU_ORDER:
+				this.showSelectOrderDialog();
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -163,7 +175,6 @@ public class WordListActivity extends AbstractListActivity {
 		listAdapter.setFilterQueryProvider(this.listFilterProvider);
 		this.setListAdapter(listAdapter);
 		this.registerForContextMenu(this.getListView());
-//		this.getListView().setTextFilterEnabled(true);
 
 		this.addWordBtn.setOnClickListener(this.addWordClickListener);
 	}
@@ -172,7 +183,12 @@ public class WordListActivity extends AbstractListActivity {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		DBUtil.closeExistingCursor(adapter.getCursor());
 
-		Cursor c = WordDS.getWordsByDictId(this.db, this.selectedDictId);
+		Cursor c = null;
+		if (this.orderBy != null) {
+			c = WordDS.getOrdWordsByDictId(this.db, this.selectedDictId, this.orderBy);
+		} else {
+			c = WordDS.getWordsByDictId(this.db, this.selectedDictId);
+		}
 		adapter.changeCursor(c);
 	}
 
@@ -204,6 +220,22 @@ public class WordListActivity extends AbstractListActivity {
 			this.filterEdit.setText("");
 			this.menuFilter.setTitle(res.getString(R.string.word_list_menu_show_filter));
 		}
+	}
+	
+	private void showSelectOrderDialog() {
+		String[] labels = res.getStringArray(R.array.word_list_ordering_labels);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.word_list_select_order_dialog_title);
+		builder.setItems(labels, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int item) {
+				alertDialog = null;
+				String[] values = res.getStringArray(R.array.word_list_ordering_values);
+				orderBy = values[item];
+				refreshListAdapter();
+			}
+		});
+		alertDialog = builder.create();
+		alertDialog.show();
 	}
 
 	private void createWord(String natWord) {

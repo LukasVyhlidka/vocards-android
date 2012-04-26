@@ -99,8 +99,8 @@ public class DictListActivity extends AbstractListActivity {
 
 		// this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none,
 		// R.string.dict_list_menu_show_filter);
-		menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict);
-		menu.add(none, MENU_EXPORT, none, R.string.export_menu_export);
+		menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict).setIcon(R.drawable.icon_new);
+		menu.add(none, MENU_EXPORT, none, R.string.export_menu_export).setIcon(R.drawable.icon_send);
 		return super.onCreateOptionsMenu(menu);
 	}
 

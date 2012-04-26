@@ -12,5 +12,17 @@
         <item>Foreign to Native</item>
         <item>Both</item>
     </string-array>
+    
+    <string-array name="word_list_ordering_labels">
+        <item>By Native Words</item>
+        <item>By Foreign Words</item>
+        <item>By Learn Factor</item>
+    </string-array>
+    
+    <string-array name="word_list_ordering_values">
+        <item>native_word</item>
+        <item>foreign_word</item>
+        <item>factor</item>
+    </string-array>
 
 </resources>

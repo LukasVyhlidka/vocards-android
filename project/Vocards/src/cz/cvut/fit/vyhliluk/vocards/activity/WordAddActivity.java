@@ -141,7 +141,7 @@ public class WordAddActivity extends AbstractActivity {
 	}
 
 	private void translate(String word) {
-		if (!AppStatus.isOnline(this)) {
+		if (! Settings.getTranslation() || !AppStatus.isOnline(this)) {
 			return;
 		}
 

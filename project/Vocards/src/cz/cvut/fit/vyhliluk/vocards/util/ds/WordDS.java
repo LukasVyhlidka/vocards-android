@@ -24,7 +24,7 @@ public class WordDS {
 			"WHERE " + VocardsDataSource.CARD_COLUMN_DICTIONARY + "=?";
 
 	private static final String QUERY_WORDS_ORD = QUERY_WORDS +
-			" ORDER BY " + VocardsDataSource.CARD_COLUMN_NATIVE;
+			" ORDER BY ";
 
 	private static final String QUERY_WORDS_FILTER = QUERY_WORDS +
 			" AND " +
@@ -55,7 +55,11 @@ public class WordDS {
 	}
 
 	public static Cursor getOrdWordsByDictId(VocardsDataSource db, long id) {
-		return db.rawQuery(QUERY_WORDS_ORD, new String[] { id + "" });
+		return getOrdWordsByDictId(db, id, VocardsDataSource.CARD_COLUMN_NATIVE);
+	}
+
+	public static Cursor getOrdWordsByDictId(VocardsDataSource db, long id, String orderBy) {
+		return db.rawQuery(QUERY_WORDS_ORD + "lower(" + orderBy + ")", new String[] { id + "" });
 	}
 
 	public static Cursor getWordsByDictIdFilter(VocardsDataSource db, long id, String filter) {

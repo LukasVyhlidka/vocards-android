@@ -2,28 +2,25 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory android:title="@string/settings" >
-
-        <!-- Sem doplnte kod k bonusu 1 -->
-        <!--<CheckBoxPreference
-            android:defaultValue="true"
-            android:key="javascript_preference"
-            android:summary="@string/summary_enable_disable"
-            android:title="@string/title_javascript_preference" />-->
-        
-        <EditTextPreference 
+        <EditTextPreference
             android:defaultValue="15"
             android:key="card_font_size"
             android:maxLength="2"
             android:numeric="integer"
             android:summary=""
             android:title="@string/settings_card_font_size_title" />
-        
-        <cz.cvut.fit.vyhliluk.vocards.util.component.IntListPreference 
-            android:title="@string/settings_practice_direction_title"
-            android:key="practise_direction"
+
+        <cz.cvut.fit.vyhliluk.vocards.util.component.IntListPreference
             android:defaultValue="2"
             android:entries="@array/practise_direction_array_names"
-            android:entryValues="@array/practise_direction_array_values" />
+            android:entryValues="@array/practise_direction_array_values"
+            android:key="practise_direction"
+            android:title="@string/settings_practice_direction_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="translation"
+            android:title="@string/settings_translation_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

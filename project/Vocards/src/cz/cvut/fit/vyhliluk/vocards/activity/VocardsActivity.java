@@ -57,7 +57,7 @@ public class VocardsActivity extends AbstractActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int none = Menu.NONE;
 
-		menu.add(none, OPTIONS_SETTINGS, none, R.string.main_options_settings);
+		menu.add(none, OPTIONS_SETTINGS, none, R.string.main_options_settings).setIcon(R.drawable.icon_preferences);
 		
 		return super.onCreateOptionsMenu(menu);
 	}

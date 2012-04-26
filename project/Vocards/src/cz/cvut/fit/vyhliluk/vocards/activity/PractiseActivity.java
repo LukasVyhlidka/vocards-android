@@ -19,6 +19,9 @@ public class PractiseActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
 	
 	private static final String KEY_CARD_ID = "cardId";
+	private static final String KEY_OTHER_SIDE_SHOWN = "otherSideShown";
+	private static final String KEY_FIRST_WORD = "firstWord";
+	private static final String KEY_SECOND_WORD = "secondWord";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -36,6 +39,8 @@ public class PractiseActivity extends AbstractActivity {
 	private long dictId = -1;
 
 	private int practiseDirection = -1;
+	
+	private Bundle restoredInstanceState = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -50,7 +55,7 @@ public class PractiseActivity extends AbstractActivity {
 		this.init();
 		
 		if (savedInstanceState != null) {
-			this.cardId = savedInstanceState.getLong(KEY_CARD_ID);
+			this.restoredInstanceState = savedInstanceState;
 		}
 	}
 
@@ -64,10 +69,10 @@ public class PractiseActivity extends AbstractActivity {
 	protected void onResume() {
 		super.onResume();
 
-		if (this.cardId == -1) {
+		if (this.restoredInstanceState == null) {
 			this.loadNextWord();
 		} else {
-			this.loadWord(this.cardId);
+			this.restoreWord();
 		}
 	}
 	
@@ -76,6 +81,9 @@ public class PractiseActivity extends AbstractActivity {
 		super.onSaveInstanceState(outState);
 
 		outState.putLong(KEY_CARD_ID, this.cardId);
+		outState.putString(KEY_FIRST_WORD, this.firstWord);
+		outState.putString(KEY_SECOND_WORD, this.secondWord);
+		outState.putBoolean(KEY_OTHER_SIDE_SHOWN, this.wordCardFor.getVisibility() == View.VISIBLE);
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -105,11 +113,19 @@ public class PractiseActivity extends AbstractActivity {
 		this.wordCardFor.setTextSize(fontSize);
 	}
 
-	private void loadWord(long id) {
-		Cursor c = WordDS.getWordById(db, this.dictId, id);
-		this.fetchCursor(c);
-
+	private void restoreWord() {
+		this.cardId = this.restoredInstanceState.getLong(KEY_CARD_ID);
+		this.firstWord = this.restoredInstanceState.getString(KEY_FIRST_WORD);
+		this.secondWord = this.restoredInstanceState.getString(KEY_SECOND_WORD);
+		
+		this.loadDictFactor();
 		this.loadOneSide();
+		
+		if (this.restoredInstanceState.getBoolean(KEY_OTHER_SIDE_SHOWN)) {
+			this.loadOtherSide();
+		}
+		
+		this.restoredInstanceState = null;
 	}
 
 	private void loadNextWord() {

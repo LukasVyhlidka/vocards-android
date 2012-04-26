@@ -20,6 +20,7 @@ public class Settings {
 	public static final String KEY_ACTIVE_DICT_ID = "active_dict_id";
 	public static final String KEY_PRACTISE_DIRECTION = "practise_direction";
 	public static final String KEY_CARD_FONT_SIZE = "card_font_size";
+	public static final String KEY_TRANSLATION = "translation";
 
 	public static final long UNDEFINED_ACTIVE_DICT_ID = -1;
 
@@ -50,6 +51,14 @@ public class Settings {
 	public static int getCardFontSize() {
 		return Integer.parseInt(getString(KEY_CARD_FONT_SIZE, "15"));
 	}
+	
+	public static boolean getTranslation() {
+		return getBool(KEY_TRANSLATION, true);
+	}
+	
+	public static void setTranslation(boolean trans) {
+		putBool(KEY_TRANSLATION, trans);
+	}
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -70,10 +79,20 @@ public class Settings {
 	private static String getString(String key, String defVal) {
 		return getSharedPreferences().getString(key, defVal);
 	}
+	
+	private static boolean getBool(String key, boolean defVal) {
+		return getSharedPreferences().getBoolean(key, defVal);
+	}
 
 	private static void putLong(String key, Long value) {
 		Editor e = getEditor();
 		e.putLong(key, value);
+		e.commit();
+	}
+	
+	private static void putBool(String key, boolean value) {
+		Editor e = getEditor();
+		e.putBoolean(key, value);
 		e.commit();
 	}
 
