@@ -26,8 +26,8 @@ public class DictionaryDS {
 			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1";
 
 	public static final String QUERY_DICT_ROOT = "SELECT " +
-			"c.* FROM " + VocardsDataSource.DICTIONARY_TABLE + " c" +
-			"WHERE NOT EXISTS( " +
+			"c.* FROM " + VocardsDataSource.DICTIONARY_TABLE + " c " +
+			"WHERE NOT EXISTS( SELECT " +
 			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
 			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
 			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "= c."+ VocardsDataSource.DICTIONARY_COLUMN_ID +
@@ -115,11 +115,22 @@ public class DictionaryDS {
 	}
 
 	public static long createDictionary(VocardsDataSource db, String name, Language nativeLang, Language foreignLang) {
+		db.begin();
+		
 		ContentValues val = new ContentValues();
 		val.put(VocardsDataSource.DICTIONARY_COLUMN_NAME, name);
 		val.put(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG, nativeLang.getId());
 		val.put(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG, foreignLang.getId());
-		return db.insert(VocardsDataSource.DICTIONARY_TABLE, val);
+		long id = db.insert(VocardsDataSource.DICTIONARY_TABLE, val);
+		
+		val = new ContentValues();
+		val.put(VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR, id);
+		val.put(VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT, id);
+		val.put(VocardsDataSource.HIERARCHY_COLUMN_LENGTH, 0);
+		db.insert(VocardsDataSource.HIERARCHY_TABLE, val);
+		
+		db.commit();
+		return id;
 	}
 
 	public static void setModified(VocardsDataSource db, long dictId) {
@@ -141,6 +152,7 @@ public class DictionaryDS {
 		res += db.delete(VocardsDataSource.DICTIONARY_TABLE, dictId);
 		db.commit();
 
+		
 		return res;
 	}
 
