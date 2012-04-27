@@ -10,7 +10,7 @@ public class VocardsDataSource {
 	// ================= STATIC ATTRIBUTES ======================
 
 	public static final String DB_NAME = "vocards";
-	public static final int DB_VERSION = 1;
+	public static final int DB_VERSION = 2;
 
 	public static final String DB_DEFAULT_ID = "_id";
 
@@ -32,6 +32,11 @@ public class VocardsDataSource {
 	public static final String BACKUP_COLUMN_ID = DB_DEFAULT_ID;
 	public static final String BACKUP_COLUMN_DICTIONARY = "dict_id";
 	public static final String BACKUP_COLUMN_STATE = "state";
+	
+	public static final String HIERARCHY_TABLE = "hierarchy";
+	public static final String HIERARCHY_COLUMN_ANCESTOR = "ancestor";
+	public static final String HIERARCHY_COLUMN_DESCENDANT = "descendant";
+	public static final String HIERARCHY_COLUMN_LENGTH = "length";
 	
 	public static final int BACKUP_STATE_BACKUPED = 1;
 	public static final int BACKUP_STATE_DELETED = 2;
@@ -60,6 +65,14 @@ public class VocardsDataSource {
 			+ BACKUP_COLUMN_DICTIONARY + " INTEGER,"
 			+ BACKUP_COLUMN_STATE +" INTEGER NOT NULL,"
 			+ "FOREIGN KEY ("+ BACKUP_COLUMN_DICTIONARY +") REFERENCES "+ DICTIONARY_TABLE +"("+ DICTIONARY_COLUMN_ID + ")"
+			+ ")";
+	
+	private static final String CREATE_HIERARCHY = "CREATE TABLE "+ HIERARCHY_TABLE +"("
+			+ HIERARCHY_COLUMN_ANCESTOR +" INTEGER NOT NULL,"
+			+ HIERARCHY_COLUMN_DESCENDANT +" INTEGER NOT NULL,"
+			+ HIERARCHY_COLUMN_LENGTH +" INTEGER NOT NULL,"
+			+"FOREIGN KEY ("+ HIERARCHY_COLUMN_ANCESTOR +") REFERENCES "+ DICTIONARY_TABLE +"("+ DICTIONARY_COLUMN_ID +"),"
+			+"FOREIGN KEY ("+ HIERARCHY_COLUMN_DESCENDANT +") REFERENCES "+ DICTIONARY_TABLE +"("+ DICTIONARY_COLUMN_ID +")"
 			+ ")";
 
 	// ================= INSTANCE ATTRIBUTES ====================
@@ -158,10 +171,27 @@ public class VocardsDataSource {
 			db.execSQL(CREATE_DICTIONARY);
 			db.execSQL(CREATE_CARD);
 			db.execSQL(CREATE_BACKUP);
+			db.execSQL(CREATE_HIERARCHY);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int from, int to) {
+			if (from < 2) {
+				db.execSQL(CREATE_HIERARCHY);
+				db.beginTransaction();
+				Cursor c = db.query(DICTIONARY_TABLE, null, null, null, null, null, null);
+				while (!c.isLast()) {
+					c.moveToNext();
+					long id = c.getLong(c.getColumnIndex(DICTIONARY_COLUMN_ID));
+					ContentValues val = new ContentValues();
+					val.put(HIERARCHY_COLUMN_ANCESTOR, id);
+					val.put(HIERARCHY_COLUMN_DESCENDANT, id);
+					val.put(HIERARCHY_COLUMN_LENGTH, 0);
+					db.insert(HIERARCHY_TABLE, null, val);
+				}
+				db.setTransactionSuccessful();
+				db.endTransaction();
+			}
 		}
 
 		@Override

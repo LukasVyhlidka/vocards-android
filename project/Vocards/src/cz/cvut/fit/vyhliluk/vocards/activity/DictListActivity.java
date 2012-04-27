@@ -52,6 +52,8 @@ public class DictListActivity extends AbstractListActivity {
 	
 	private ExportTask exportTask = null;
 	private AlertDialog alertDialog = null;
+	
+	private Long rootDict = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -243,7 +245,8 @@ public class DictListActivity extends AbstractListActivity {
 	private void refreshListAdapter() {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		DBUtil.closeExistingCursor(adapter.getCursor());
-		Cursor c = DictionaryDS.getDictionaries(this.db);
+//		Cursor c = DictionaryDS.getDictionaries(this.db);
+		Cursor c = DictionaryDS.getChildDictionaries(this.db, this.rootDict);
 		adapter.changeCursor(c);
 	}
 

@@ -1,7 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.CARD_COLUMN_DICTIONARY;
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.CARD_COLUMN_ID;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.CARD_TABLE;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG;
 import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_ID;
@@ -18,10 +17,27 @@ public class DictionaryDS {
 	public static final String WORD_COUNT = "word_count";
 	public static final String LEARN_FACTOR = "learn_factor";
 
+	public static final String QUERY_DICT_DESCENDANT_OR_SELF_IDS = "SELECT " +
+			VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " " +
+			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
+			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=?";
+
+	public static final String QUERY_DICT_CHILD_IDS = QUERY_DICT_DESCENDANT_OR_SELF_IDS +
+			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1";
+
+	public static final String QUERY_DICT_ROOT = "SELECT " +
+			"c.* FROM " + VocardsDataSource.DICTIONARY_TABLE + " c" +
+			"WHERE NOT EXISTS( " +
+			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
+			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
+			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "= c."+ VocardsDataSource.DICTIONARY_COLUMN_ID +
+			" AND " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " != " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
+			")";
+
 	private static final String QUERY_STATS = "SELECT " +
 			"COUNT(" + VocardsDataSource.CARD_COLUMN_ID + ") as " + WORD_COUNT + "," +
 			"AVG(" + VocardsDataSource.CARD_COLUMN_FACTOR + ") as " + LEARN_FACTOR +
-			" FROM " + CARD_TABLE + " WHERE " + CARD_COLUMN_DICTIONARY + "=?";
+			" FROM " + CARD_TABLE + " WHERE " + CARD_COLUMN_DICTIONARY + " IN (" + QUERY_DICT_DESCENDANT_OR_SELF_IDS + ")";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -46,8 +62,9 @@ public class DictionaryDS {
 	}
 
 	public static int getWordCount(VocardsDataSource db, long dictId) {
-		Cursor c = db.query(CARD_TABLE, new String[] { CARD_COLUMN_ID }, CARD_COLUMN_DICTIONARY + "=?", new String[] { dictId + "" });
-		int count = c.getCount();
+		Cursor c = getDictionaryStats(db, dictId);
+		c.moveToFirst();
+		int count = c.getInt(c.getColumnIndex(WORD_COUNT));
 		c.close();
 		return count;
 	}
@@ -62,6 +79,18 @@ public class DictionaryDS {
 		double res = c.getDouble(c.getColumnIndex(LEARN_FACTOR));
 		c.close();
 		return res;
+	}
+
+	public static Cursor getChildDictionaries(VocardsDataSource db, Long rootDictId) {
+		if (rootDictId == null) {
+			return db.rawQuery(QUERY_DICT_ROOT, new String[]{});
+		} else {
+			return db.query(
+					VocardsDataSource.DICTIONARY_TABLE,
+					null,
+					VocardsDataSource.DICTIONARY_COLUMN_ID + " IN (" + QUERY_DICT_CHILD_IDS + ")",
+					new String[] { rootDictId + "" });
+		}
 	}
 
 	public static Cursor getDictionaries(VocardsDataSource db) {
