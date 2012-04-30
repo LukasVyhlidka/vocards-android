@@ -15,6 +15,7 @@
     <ImageView 
         android:tag="image"
         style="@style/add_word_add_edit_icon"
+        android:contentDescription="@string/icon_descr"
         android:src="@drawable/word_remove" />
     
 

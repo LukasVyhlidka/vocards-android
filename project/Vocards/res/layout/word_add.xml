@@ -42,6 +42,7 @@
                 style="@style/add_word_add_edit_icon"
                 android:id="@id/nativeAdd"
                 android:layout_alignParentRight="true"
+                android:contentDescription="@string/icon_descr"
                 android:layout_alignTop="@id/nativeEdit"
                 android:layout_alignBottom="@id/nativeEdit" />
 
@@ -74,6 +75,7 @@
                 style="@style/add_word_add_edit_icon"
                 android:id="@id/foreignAdd"
                 android:layout_alignParentRight="true"
+                android:contentDescription="@string/icon_descr"
                 android:layout_alignTop="@id/foreignEdit"
                 android:layout_alignBottom="@id/foreignEdit" />
 

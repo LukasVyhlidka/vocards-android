@@ -8,12 +8,12 @@
         <TextView
             style="@style/card_container_native"
             android:id="@+id/wordCardNative"
-            android:text="a wordddd" />
+            android:text="" />
         
         <TextView
             style="@style/card_container_foreign"
             android:id="@+id/wordCardForeign"
-            android:text="a trans"/>
+            android:text=""/>
     </LinearLayout>
 
 </merge>
