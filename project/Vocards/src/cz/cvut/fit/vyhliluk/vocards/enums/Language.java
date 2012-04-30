@@ -11,7 +11,7 @@ import cz.cvut.fit.vyhliluk.vocards.util.Const;
  */
 public enum Language {
 	
-	NONE(Const.LANGUAGE_NONE, R.string.lang_none, R.drawable.lang_cz),
+	NONE(Const.LANGUAGE_NONE, R.string.lang_none, R.drawable.lang_none),
 	CZECH(Const.LANGUAGE_CZ, R.string.lang_cz, R.drawable.lang_cz),
 	SLOVAK(Const.LANGUAGE_SK, R.string.lang_sk, R.drawable.lang_sk),
 	ENGLISH(Const.LANGUAGE_EN, R.string.lang_en, R.drawable.lang_en),

@@ -55,11 +55,11 @@ public class WordDS {
 	}
 
 	public static Cursor getOrdWordsByDictId(VocardsDataSource db, long id) {
-		return getOrdWordsByDictId(db, id, VocardsDataSource.CARD_COLUMN_NATIVE);
+		return getOrdWordsByDictId(db, id, "lower("+VocardsDataSource.CARD_COLUMN_NATIVE +")");
 	}
 
 	public static Cursor getOrdWordsByDictId(VocardsDataSource db, long id, String orderBy) {
-		return db.rawQuery(QUERY_WORDS_ORD + "lower(" + orderBy + ")", new String[] { id + "" });
+		return db.rawQuery(QUERY_WORDS_ORD + orderBy, new String[] { id + "" });
 	}
 
 	public static Cursor getWordsByDictIdFilter(VocardsDataSource db, long id, String filter) {
