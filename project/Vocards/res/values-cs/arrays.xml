@@ -13,7 +13,7 @@
         <item>Podle cizího jazyka (vzestupně)</item>
         <item>Podle cizího jazyka (sestupně)</item>
         <item>Podle faktoru naučení (vzestupně)</item>
-        <item>Podle faktoru naučení (vzestupně)</item>
+        <item>Podle faktoru naučení (sestupně)</item>
     </string-array>
 
 </resources>
