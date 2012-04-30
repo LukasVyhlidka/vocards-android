@@ -64,7 +64,7 @@ public class DictAddActivity extends AbstractActivity {
 			Language foreignLang = (Language) foreignSpinner.getSelectedItem();
 
 			if (StringUtil.isEmpty(name)) {
-				Toast.makeText(DictAddActivity.this, R.string.add_dict_empty_name_toast, Toast.LENGTH_SHORT);
+				Toast.makeText(DictAddActivity.this, R.string.add_dict_empty_name_toast, Toast.LENGTH_SHORT).show();
 				return;
 			}
 

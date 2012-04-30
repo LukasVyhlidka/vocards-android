@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- MAIN ACTIVITY -->
+    <string name="app_name">Vocards</string>
+    <string name="main_practise">Zkoušení</string>
+    <string name="main_learn">Učení</string>
+    <string name="main_set_dict">Nastav slovník</string>
+    <string name="main_wordList">Kartičky</string>
+    <string name="main_settings">Nastavení</string>
+    <string name="main_active_dict_label">Aktivní slovník</string>
+    <string name="main_active_dict_word_count_label">Počet slov</string>
+    <string name="main_factor_label">Faktor naučení</string>
+    <string name="main_no_active_dict">Není vybrán žádný slovník</string>
+    <string name="main_unknown_value">Neznámé</string>
+    <string name="main_options_settings">Nastavení</string>
+    
+    <!-- COMMON -->
+    <string name="done_button">Hotovo</string>
+    <string name="add_button">Přidej</string>
+    <string name="lang_none">NONE</string>
+    <string name="lang_cz">CZ</string>
+    <string name="lang_en">EN</string>
+    <string name="lang_fr">FR</string>
+    <string name="lang_sk">SK</string>
+    <string name="lang_de">DE</string>
+    <string name="lang_flag_description">Ikona jazyka</string>
+    
+    <!-- Practise -->
+    <string name="practise">Zkoušení</string>
+    <string name="practose_factor">Faktor slovníku:</string>
+    <string name="practise_show">Ukaž druhou stranu</string>
+    <string name="practise_know">Vím</string>
+    <string name="practise_dont_know">Nevím</string>
+    
+    <!-- Learn -->
+    <string name="learn">Učení</string>
+    <string name="learn_factor">Faktor:</string>
+    <string name="learn_position">Pozice:</string>
+    <string name="learn_prev_btn">Předchozí</string>
+    <string name="learn_next_btn">Následující</string>
+    
+    <!-- Word List -->
+    <string name="word_list">Seznam kartiček</string>
+    <string name="word_list_new_word_hint">Slovo v rodném jazyce</string>
+    <string name="word_list_menu_show_filter">Ukaž filtr</string>
+    <string name="word_list_menu_hide_filter">Skryj filtr</string>
+    <string name="word_list_menu_new_word">Vytvoř slovo</string>
+    <string name="word_list_menu_order">Řazení</string>
+    <string name="word_list_filter_hint">Filtruj slova</string>
+    <string name="word_list_new_word">Nové slovo</string>
+    <string name="word_list_ctx_delete">Smaž</string>
+    <string name="word_list_ctx_edit">Uprav</string>
+    <string name="word_list_deleted_toast">Slovo bylo úspěšně smazáno.</string>
+    <string name="word_list_empty_word_toast">Zadejte slovo v rodném jazyce, prosím.</string>
+    <string name="word_list_select_order_dialog_title">Zadejte požadované řazení.</string>
+    
+    <!-- Add Word -->
+    <string name="add_word">Nové slovo</string>
+    <string name="add_word_add_image_description">Přidej</string>
+    <string name="add_word_edit_title">Uprav slovo</string>
+    <string name="add_word_native">Rodné</string>
+    <string name="add_word_foreign">Cizí</string>
+    <string name="add_word_create">Vytvoř slovo</string>
+    <string name="add_word_edit">Uprav slovo</string>
+    <string name="add_word_translation_pick_title">Vyberte překlad:</string>
+    <string name="add_word_empty_word_toast">Vyplňte slovo v rodném a cizím jazyce, prosím.</string>
+    
+    <!-- Dict List -->
+    <string name="dict_list">Seznam slovníků</string>
+    <string name="dict_list_new_dict_hint">Jméno nového slovníku</string>
+    <string name="dict_list_menu_show_filter">Ukaž filtr</string>
+    <string name="dict_list_menu_hide_filter">Skryj filtr</string>
+    <string name="dict_list_menu_new_dict">Vytvoř slovník</string>
+    <string name="dict_list_ctx_delete_dict">Smaž</string>
+    <string name="dict_list_ctx_edit_dict">Uprav</string>
+    <string name="dict_list_dialog_delete_title">Vybraný slovník obsahuje %1$s kartiček. Opravdu ho chcete smazat?</string>
+    <string name="dict_list_dialog_delete_yes">Ano</string>
+    <string name="dict_list_dialog_delete_no">Ne</string>
+    <string name="dict_list_filter_hint">Filtruj slovníky</string>
+    <string name="dict_list_dict_deleted_toast">Slovník byl úspěšně smazán.</string>
+    
+    <!-- Dict Multi List -->
+    <string name="dict_multilist">Multiseznam slovníků</string>
+    <string name="dict_multilist_ok">Ok</string>
+    <string name="dict_multilist_cancel">Zpět</string>
+    
+    <!-- Add Dict Form -->
+    <string name="add_dict">Nový slovník</string>
+    <string name="add_dict_name">Jméno</string>
+    <string name="add_dict_native">Rodný jazyk</string>
+    <string name="add_dict_foreign">Cizí jazyk</string>
+    <string name="add_dict_create">Vytvoř slovník</string>
+    <string name="add_dict_edit">Uprav slovník</string>
+    <string name="add_dict_created_toast">Slovník byl vytvořen.</string>
+    <string name="add_dict_edited_toast">Slovník byl upraven.</string>
+    <string name="add_dict_empty_name_toast">Vyplňte jméno slovníku, prosím.</string>
+    
+    <!-- Settings -->
+    <string name="settings">Nastavení</string>
+    <string name="settings_card_font_size_title">Velikost písma kartiček</string>
+    <string name="settings_practice_direction_title">Směr zkoušení</string>
+    <string name="settings_translation_title">Povol překlady</string>
+    
+    <!-- Export -->
+    <string name="export_sdcard_not_mounted">Nemohu exportovat Vaše slovníky, protože není připojena SD karta.</string>
+    <string name="export_send_subject">Vocards dictionary file</string>
+    <string name="export_send_text">Dobrý den, posílám Vám svoje Vocards kartičky. Otevřete je ve svém zařízení, pokud je chcete importovat.</string>
+    <string name="export_menu_export">Exportuj slovníky</string>
+    <string name="export_select_app_title">Vyberte aplikaci pro odeslání slovníků.</string>
+    <string name="export_file_write_error">Při zápisu souboru došlo k chybě.</string>
+    <string name="export_progress_title">Export</string>
+    <string name="export_progress_msg">Slovníky jsou exportovány&#8230;</string>
+    
+    <!-- Import -->
+    <string name="import_activity">Vocards Import slovníků</string>
+    <string name="import_activity_done">Import byl dokončen.</string>
+    <string name="import_progress_title">Import</string>
+    <string name="import_progress_msg">Slovníky jsou importovány&#8230;</string>
+
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="practise_direction_array_names">
+        <item>Z rodného jazyka do cizího</item>
+        <item>Z cizího jazyka do rodného</item>
+        <item>Oba směry</item>
+    </string-array>
+    
+    <string-array name="word_list_ordering_labels">
+        <item>Podle rodného jazyka (vzestupně)</item>
+        <item>Podle rodného jazyka (sestupně)</item>
+        <item>Podle cizího jazyka (vzestupně)</item>
+        <item>Podle cizího jazyka (sestupně)</item>
+        <item>Podle faktoru naučení (vzestupně)</item>
+        <item>Podle faktoru naučení (vzestupně)</item>
+    </string-array>
+
+</resources>
