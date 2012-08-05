@@ -21,7 +21,11 @@ public class WordDS {
 			"replace(" + VocardsDataSource.CARD_COLUMN_NATIVE + ", '" + VocardsDataSource.WORD_DELIM + "', ', ') as " + NATIVE_WORD + ", " +
 			"replace(" + VocardsDataSource.CARD_COLUMN_FOREIGN + ", '" + VocardsDataSource.WORD_DELIM + "', ', ') as " + FOREIGN_WORD + " " +
 			"FROM " + VocardsDataSource.CARD_TABLE + " " +
-			"WHERE " + VocardsDataSource.CARD_COLUMN_DICTIONARY + "=?";
+			"WHERE " + VocardsDataSource.CARD_COLUMN_DICTIONARY + " IN (" +
+			" SELECT " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " " +
+			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
+			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR +"=?" +
+			")";
 
 	private static final String QUERY_WORDS_ORD = QUERY_WORDS +
 			" ORDER BY ";
