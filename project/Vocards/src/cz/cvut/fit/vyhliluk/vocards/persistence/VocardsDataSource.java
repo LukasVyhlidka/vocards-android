@@ -129,6 +129,10 @@ public class VocardsDataSource {
 	public Cursor rawQuery(String sql, String[] args) {
 		return this.db.rawQuery(sql, args);
 	}
+	
+	public void execSql(String sql, String[] args) {
+		this.db.execSQL(sql, args);
+	}
 
 	public void begin() {
 		this.db.beginTransaction();

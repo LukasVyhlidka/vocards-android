@@ -56,7 +56,7 @@ public class DictListActivity extends AbstractListActivity {
 	private ExportTask exportTask = null;
 	private AlertDialog alertDialog = null;
 
-	private Long rootDict = null;
+	private Long parentDictId = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -252,8 +252,8 @@ public class DictListActivity extends AbstractListActivity {
 
 	private void handleBundle(Bundle b) {
 		if (b.containsKey(EXTRAS_PARENT_DICT_ID)) {
-			this.rootDict = b.getLong(EXTRAS_PARENT_DICT_ID);
-			Cursor c = DictionaryDS.getById(this.db, this.rootDict);
+			this.parentDictId = b.getLong(EXTRAS_PARENT_DICT_ID);
+			Cursor c = DictionaryDS.getById(this.db, this.parentDictId);
 			c.moveToFirst();
 			this.setTitle(getString(
 					R.string.dict_list_children_title,
@@ -285,7 +285,7 @@ public class DictListActivity extends AbstractListActivity {
 				.getListAdapter();
 		DBUtil.closeExistingCursor(adapter.getCursor());
 		// Cursor c = DictionaryDS.getDictionaries(this.db);
-		Cursor c = DictionaryDS.getChildDictionaries(this.db, this.rootDict);
+		Cursor c = DictionaryDS.getChildDictionaries(this.db, this.parentDictId);
 		adapter.changeCursor(c);
 	}
 
@@ -310,6 +310,9 @@ public class DictListActivity extends AbstractListActivity {
 
 	private void addDictActivity() {
 		Intent i = new Intent(this, DictAddActivity.class);
+		if (this.parentDictId != null) {
+			i.putExtra(DictAddActivity.EXTRAS_PARENT_DICT_ID, this.parentDictId);
+		}
 		startActivity(i);
 	}
 

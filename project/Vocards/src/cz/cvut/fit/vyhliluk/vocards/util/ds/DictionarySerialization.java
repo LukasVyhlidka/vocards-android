@@ -14,6 +14,11 @@ import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 
+/**
+ * TODO: Pri serializaci neukladam ani nenacitam hierarchii slovniku
+ * @author Lucky
+ *
+ */
 public class DictionarySerialization {
 	// ================= STATIC ATTRIBUTES ======================
 
@@ -94,7 +99,7 @@ public class DictionarySerialization {
 			Language natLang = Language.getById(dict.getInt(KEY_NATIVE_LANG));
 			Language forLang = Language.getById(dict.getInt(KEY_FOREIGN_LANG));
 
-			long dictId = DictionaryDS.createDictionary(db, dictName, natLang, forLang);
+			long dictId = DictionaryDS.createDictionary(db, dictName, natLang, forLang, null);
 
 			JSONArray cards = dict.getJSONArray(KEY_CARDS);
 			for (int i = 0; i < cards.length(); i++) {

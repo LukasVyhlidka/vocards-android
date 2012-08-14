@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ public class DictAddActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
 
 	public static final String EXTRAS_DICT_ID = "dictId";
+	public static final String EXTRAS_PARENT_DICT_ID = "parentDictId";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -33,7 +35,8 @@ public class DictAddActivity extends AbstractActivity {
 	private Spinner foreignSpinner = null;
 	private Button addButton = null;
 
-	private long dictId = -1;
+	private Long dictId = null;
+	private Long parentDictId = null;
 
 	private ArrayAdapter<Language> langAdapter;
 
@@ -120,11 +123,16 @@ public class DictAddActivity extends AbstractActivity {
 			
 			this.addButton.setText(getString(R.string.add_dict_edit));
 		}
+		
+		if (b.containsKey(EXTRAS_PARENT_DICT_ID)) {
+			this.parentDictId = b.getLong(EXTRAS_PARENT_DICT_ID);
+		}
 	}
 
 	private void saveDictionary(String name, Language nativeLang, Language foreignLang) {
-		if (this.dictId == -1) {
-			DictionaryDS.createDictionary(this.db, name, nativeLang, foreignLang);
+		if (this.dictId == null) {
+			Log.d("saving dict", "root id = "+ this.parentDictId);
+			DictionaryDS.createDictionary(this.db, name, nativeLang, foreignLang, this.parentDictId);
 			Toast.makeText(this, res.getString(R.string.add_dict_created_toast), Toast.LENGTH_SHORT).show();
 		} else {
 			DictionaryDS.updateDictionary(this.db, this.dictId, name, nativeLang, foreignLang);
@@ -133,6 +141,9 @@ public class DictAddActivity extends AbstractActivity {
 
 		Intent i = new Intent(this, DictListActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		if (this.parentDictId != null) {
+			i.putExtra(DictListActivity.EXTRAS_PARENT_DICT_ID, this.parentDictId);
+		}
 		startActivity(i);
 	}
 
