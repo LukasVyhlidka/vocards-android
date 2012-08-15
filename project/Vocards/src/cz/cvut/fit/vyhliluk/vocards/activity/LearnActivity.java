@@ -9,6 +9,7 @@ import android.widget.TextView;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
 
@@ -110,7 +111,7 @@ public class LearnActivity extends AbstractActivity {
 
 		this.wordCardNat.setText(natWord);
 		this.wordCardFor.setText(forWord);
-		this.cardFactor.setText(factor + "");
+		this.cardFactor.setText(CardUtil.cardFactorPercent(factor));
 		this.cardPos.setText((this.position + 1) + " / " + cardCount);
 
 		this.amendBtnStates();
