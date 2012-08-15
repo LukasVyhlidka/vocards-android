@@ -1,30 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp">
-    
+    android:paddingRight="8dp" >
+
     <ImageView
-        style="@style/list_item_flag_image"
         android:id="@+id/nativeLangIcon"
-        android:contentDescription="@string/lang_flag_description" />
-    
-    <ImageView
         style="@style/list_item_flag_image"
+        android:layout_alignParentLeft="true"
+        android:contentDescription="@string/lang_flag_description" />
+
+    <ImageView
         android:id="@+id/foreignLangIcon"
-        android:contentDescription="@string/lang_flag_description"
-        android:layout_marginLeft="8dp" />
-    
+        style="@style/list_item_flag_image"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/nativeLangIcon"
+        android:contentDescription="@string/lang_flag_description" />
+
     <TextView
-        style="@style/list_item_text"
         android:id="@+id/languageText"
-        android:layout_width="fill_parent"
+        style="@style/list_item_text"
         android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_alignTop="@id/foreignLangIcon"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="10dp"
-        android:text="@string/lang_none" />
-    
+        android:text="@string/lang_none"
+        android:layout_toRightOf="@id/foreignLangIcon"
+        android:layout_toLeftOf="@+id/goInto" />
 
-</LinearLayout>
+    <View
+        android:id="@id/goInto"
+        android:background="@drawable/folder_yellow_open"
+        android:layout_alignParentRight="true"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription=""
+        android:clickable="true" />
+
+</RelativeLayout>
