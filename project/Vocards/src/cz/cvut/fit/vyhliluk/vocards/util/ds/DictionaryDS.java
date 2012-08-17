@@ -24,6 +24,9 @@ public class DictionaryDS {
 
 	public static final String QUERY_DICT_CHILD_IDS = QUERY_DICT_DESCENDANT_OR_SELF_IDS +
 			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1";
+	
+	public static final String QUERY_DICT_DESCENDANT_IDS = QUERY_DICT_DESCENDANT_OR_SELF_IDS +
+			" AND "+ VocardsDataSource.HIERARCHY_COLUMN_LENGTH +"!=0";
 
 	public static final String QUERY_DICT_ROOT = "SELECT " +
 			"c.* FROM " + VocardsDataSource.DICTIONARY_TABLE + " c " +
@@ -119,6 +122,14 @@ public class DictionaryDS {
 					new String[] { rootDictId + "" });
 		}
 	}
+	
+	public static Cursor getDescendantDictionaries(VocardsDataSource db, Long dictId) {
+		return db.query(
+				VocardsDataSource.DICTIONARY_TABLE,
+				null,
+				VocardsDataSource.DICTIONARY_COLUMN_ID + " IN (" + QUERY_DICT_DESCENDANT_IDS + ")",
+				new String[] { dictId + "" });
+	}
 
 	// public static Cursor getParentDictionary(VocardsDataSource db, Long
 	// dictId) {
@@ -185,16 +196,25 @@ public class DictionaryDS {
 	}
 
 	/**
-	 * TODO: Hierarchy has to be removed first!
 	 * 
 	 * @param db
 	 * @param dictId
 	 * @return
 	 */
-	public static int deleteDict(VocardsDataSource db, long dictId) {
+	public static int deleteDict(VocardsDataSource db, long dictId, boolean descendants) {
 		int res = 0;
 
 		db.begin();
+		if (descendants) {
+			Cursor descs = getDescendantDictionaries(db, dictId);
+			descs.moveToFirst();
+			while (! descs.isAfterLast()) {
+				long descId = descs.getLong(descs.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID));
+				deleteDict(db, descId, false);
+				descs.moveToNext();
+			}
+			descs.close();
+		}
 		BackupDS.setDeleted(db, dictId);
 		
 		db.execSql(UPDATE_DICT_HIERARCHY, new String[]{dictId +""});

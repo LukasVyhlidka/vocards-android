@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -298,17 +299,22 @@ public class DictListActivity extends AbstractListActivity {
 		int count = DictionaryDS.getWordCount(db, dictId);
 		String title = getString(R.string.dict_list_dialog_delete_title, count);
 
+		View checkView = getLayoutInflater().inflate(R.layout.inf_delete_dict_dialog, null);
+		CheckBox checkBox = (CheckBox) checkView.findViewById(R.id.checkboxDelDesc);
+		DeleteYesListener lsnr = new DeleteYesListener(dictId, checkBox);
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(title)
 				.setCancelable(false)
-				.setPositiveButton(R.string.dict_list_dialog_delete_yes,
-						new DeleteYesListener(dictId))
+				.setPositiveButton(R.string.dict_list_dialog_delete_yes, lsnr)
 				.setNegativeButton(R.string.dict_list_dialog_delete_no,
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.cancel();
 							}
-						});
+						})
+				.setView(checkView);
+		
 		this.alertDialog = builder.create();
 		this.alertDialog.show();
 	}
@@ -349,14 +355,16 @@ public class DictListActivity extends AbstractListActivity {
 	private class DeleteYesListener implements DialogInterface.OnClickListener {
 
 		private long dictId;
+		private CheckBox delDescendantsCheck;
 
-		public DeleteYesListener(long dictId) {
+		public DeleteYesListener(long dictId, CheckBox delDescendantsCheck) {
 			super();
 			this.dictId = dictId;
+			this.delDescendantsCheck = delDescendantsCheck;
 		}
 
 		public void onClick(DialogInterface dialog, int which) {
-			DictionaryDS.deleteDict(db, dictId);
+			DictionaryDS.deleteDict(db, dictId, this.delDescendantsCheck.isChecked());
 
 			Toast.makeText(DictListActivity.this,
 					R.string.dict_list_dict_deleted_toast, Toast.LENGTH_SHORT)
@@ -386,7 +394,7 @@ public class DictListActivity extends AbstractListActivity {
 
 			String dictText = cursor.getString(cursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME));
 			h.dictText.setText(dictText);
-			
+
 			h.goInto.setTag(cursor.getLong(cursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID)));
 		}
 
@@ -406,11 +414,11 @@ public class DictListActivity extends AbstractListActivity {
 
 			return view;
 		}
-		
+
 		private OnClickListener goIntoClickListener = new OnClickListener() {
 
 			public void onClick(View v) {
-				Long id = (Long)v.getTag();
+				Long id = (Long) v.getTag();
 				showDescendants(id);
 			}
 		};

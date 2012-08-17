@@ -80,6 +80,7 @@
     <string name="dict_list_dialog_delete_title">Selected dictionary contains %1$s cards. Do you really want to delete it?</string>
     <string name="dict_list_dialog_delete_yes">Yes</string>
     <string name="dict_list_dialog_delete_no">No</string>
+    <string name="dict_list_dialog_delete_del_descendants_check">Delete all descendants</string>
     <string name="dict_list_filter_hint">Filter Dictionaries</string>
     <string name="dict_list_dict_deleted_toast">Dictionary was successfully deleted.</string>
     
