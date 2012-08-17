@@ -69,7 +69,7 @@
     
     <!-- Dict List -->
     <string name="dict_list">Dict List</string>
-    <string name="dict_list_children_title">Dict List (children of %1$s)</string>
+    <string name="dict_list_children_title">Children of %1$s</string>
     <string name="dict_list_new_dict_hint">New Dictionary Name</string>
     <string name="dict_list_menu_show_filter">Show Filter</string>
     <string name="dict_list_menu_hide_filter">Hide Filter</string>

@@ -69,7 +69,7 @@
     
     <!-- Dict List -->
     <string name="dict_list">Seznam slovníků</string>
-    <string name="dict_list_children_title">Seznam slovníků (děti slovníku %1$s)</string>
+    <string name="dict_list_children_title">Děti slovníku %1$s</string>
     <string name="dict_list_new_dict_hint">Jméno nového slovníku</string>
     <string name="dict_list_menu_show_filter">Ukaž filtr</string>
     <string name="dict_list_menu_hide_filter">Skryj filtr</string>

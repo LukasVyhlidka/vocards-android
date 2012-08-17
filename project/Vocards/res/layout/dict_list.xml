@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true" >
-
+    
     <EditText
         android:id="@+id/filterEdit"
         android:layout_width="fill_parent"
@@ -13,29 +13,32 @@
         android:inputType="textFilter"
         android:hint="@string/dict_list_filter_hint"
         android:visibility="gone" />
+    
+    <View 
+        android:id="@+id/goUp"
+        android:layout_width="51dp"
+        android:layout_height="28dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="18dp"
+        android:layout_below="@id/filterEdit"
+        android:background="@drawable/go_back_icon"
+        android:visibility="gone" />
+    
+    <TextView 
+        android:id="@+id/parentFolderName"
+        android:layout_alignTop="@id/goUp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/buttonAdd"
-        android:layout_below="@id/filterEdit" />
-
-    <!--<EditText
-        android:id="@+id/editNewDict"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/buttonAdd"
-        android:layout_toLeftOf="@id/buttonAdd"
-        android:hint="@string/dict_list_new_dict_hint"
-        android:inputType="text" />
-
-    <Button
-        android:id="@id/buttonAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="@string/add_button" />-->
+        android:layout_below="@id/goUp" />
 
 </RelativeLayout>
