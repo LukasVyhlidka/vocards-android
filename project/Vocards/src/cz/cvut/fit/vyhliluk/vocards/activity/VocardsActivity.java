@@ -21,6 +21,8 @@ public class VocardsActivity extends AbstractActivity {
 	// ================= STATIC ATTRIBUTES ======================
 	
 	private static final int OPTIONS_SETTINGS = 0;
+	
+	private static final int REQUEST_DICT_ID = 1;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -71,6 +73,18 @@ public class VocardsActivity extends AbstractActivity {
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (requestCode == REQUEST_DICT_ID) {
+			if (resultCode == RESULT_OK) {
+				long id = data.getExtras().getLong(DictListActivity.KEY_RESULT_DICT_ID);
+				Settings.setActiveDictionaryId(id);
+			}
+		}
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -174,7 +188,8 @@ public class VocardsActivity extends AbstractActivity {
 		public void onClick(View v) {
 			Context ctx = VocardsActivity.this;
 			Intent i = new Intent(ctx, DictListActivity.class);
-			startActivity(i);
+			startActivityForResult(i, REQUEST_DICT_ID);
+//			startActivity(i);
 			overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
 		}
 	};

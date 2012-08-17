@@ -141,9 +141,6 @@ public class DictAddActivity extends AbstractActivity {
 
 		Intent i = new Intent(this, DictListActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		if (this.parentDictId != null) {
-			i.putExtra(DictListActivity.EXTRAS_PARENT_DICT_ID, this.parentDictId);
-		}
 		startActivity(i);
 	}
 

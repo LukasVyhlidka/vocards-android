@@ -29,7 +29,6 @@ import cz.cvut.fit.vyhliluk.vocards.activity.task.ExportTask;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
-import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 /**
@@ -49,7 +48,11 @@ public class DictListActivity extends AbstractListActivity {
 	public static final int CTX_MENU_EDIT = 51;
 	public static final int CTX_MENU_SHOW_DESC = 52;
 
-	public static final String EXTRAS_PARENT_DICT_ID = "parentId";
+//	public static final String EXTRAS_PARENT_DICT_ID = "parentId";
+	public static final String EXTRAS_MESSAGE = "message";
+	public static final String EXTRAS_ONLY_DICT_SELECTION = "onlyDictSelection";
+	
+	public static final String KEY_RESULT_DICT_ID = "resDictId";
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -63,6 +66,11 @@ public class DictListActivity extends AbstractListActivity {
 	private AlertDialog alertDialog = null;
 
 	private Long parentDictId = null;
+	
+	/**
+	 * If this is true, this activity has no menu and only returns the id of the dictionary
+	 */
+	private boolean onlyDictSelection = false;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -182,12 +190,19 @@ public class DictListActivity extends AbstractListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Settings.setActiveDictionaryId(id);
-
-		Intent i = new Intent(this, VocardsActivity.class);
-		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(i);
+		Intent i = getIntent();
+		i.putExtra(KEY_RESULT_DICT_ID, id);
+		
+		setResult(RESULT_OK, i);
+		finish();
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+		
+//		Settings.setActiveDictionaryId(id);
+//
+//		Intent i = new Intent(this, VocardsActivity.class);
+//		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//		startActivity(i);
+//		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
 
 	@Override
@@ -230,8 +245,16 @@ public class DictListActivity extends AbstractListActivity {
 	}
 
 	private void handleBundle(Bundle b) {
-		if (b.containsKey(EXTRAS_PARENT_DICT_ID)) {
-			this.parentDictId = b.getLong(EXTRAS_PARENT_DICT_ID);
+//		if (b.containsKey(EXTRAS_PARENT_DICT_ID)) {
+//			this.parentDictId = b.getLong(EXTRAS_PARENT_DICT_ID);
+//		}
+		
+		if (b.containsKey(EXTRAS_MESSAGE)) {
+			this.setTitle(b.getString(EXTRAS_MESSAGE));
+		}
+		
+		if (b.containsKey(EXTRAS_ONLY_DICT_SELECTION)) {
+			this.onlyDictSelection = b.getBoolean(EXTRAS_ONLY_DICT_SELECTION);
 		}
 	}
 
