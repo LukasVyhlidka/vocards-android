@@ -37,11 +37,16 @@ public class DictionaryDS {
 			" AND " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " != " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
 			")";
 
-	public static final String QUERY_PARENT_DICT_ID = "SELECT " +
+	public static final String QUERY_ANCESTOR_OR_SELF_DICT_ID = "SELECT " +
 			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
 			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
-			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1" +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
+			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
+
+	public static final String QUERY_ANCESTOR_DICT_ID = QUERY_ANCESTOR_OR_SELF_DICT_ID +
+			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + ">0";
+
+	public static final String QUERY_PARENT_DICT_ID = QUERY_ANCESTOR_OR_SELF_DICT_ID +
+			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1";
 
 	private static final String QUERY_STATS = "SELECT " +
 			"COUNT(" + VocardsDataSource.CARD_COLUMN_ID + ") as " + WORD_COUNT + "," +
@@ -55,7 +60,7 @@ public class DictionaryDS {
 			VocardsDataSource.HIERARCHY_COLUMN_LENGTH +
 			") SELECT " +
 			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + ", " +
-			/* VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + */"?, " +
+			"?, " +
 			"(" + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + " + 1) " +
 			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
 			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
@@ -64,10 +69,14 @@ public class DictionaryDS {
 			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=? " +
 			"OR " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
 
-	private static final String UPDATE_DICT_HIERARCHY = "UPDATE " + VocardsDataSource.HIERARCHY_TABLE + " " +
+	private static final String UPDATE_DICT_DESCENDANTS_HIERARCHY = "UPDATE " + VocardsDataSource.HIERARCHY_TABLE + " " +
 			"SET " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=" + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "-1 " +
 			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " IN (" + QUERY_DICT_CHILD_IDS + ")" +
 			" AND " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " != " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT;
+
+	// private static final String SET_AS_ROOT = "DELETE FROM "+
+	// VocardsDataSource.HIERARCHY_TABLE +" "+
+	// "WHERE "+ Voc
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -216,7 +225,7 @@ public class DictionaryDS {
 		}
 		BackupDS.setDeleted(db, dictId);
 
-		db.execSql(UPDATE_DICT_HIERARCHY, new String[] { dictId + "" });
+		db.execSql(UPDATE_DICT_DESCENDANTS_HIERARCHY, new String[] { dictId + "" });
 		db.execSql(REMOVE_DICT_HIERARCHY, new String[] { dictId + "", dictId + "" });
 
 		res += WordDS.removeCardsByDict(db, dictId);
@@ -232,6 +241,24 @@ public class DictionaryDS {
 		val.put(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG, nativeLang.getId());
 		val.put(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG, foreignLang.getId());
 		return db.update(VocardsDataSource.DICTIONARY_TABLE, val, VocardsDataSource.DICTIONARY_COLUMN_ID + "=?", new String[] { id + "" });
+	}
+
+	public static int setAsRoot(VocardsDataSource db, long id) {
+		String where = VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT +" IN (" +
+				QUERY_DICT_DESCENDANT_OR_SELF_IDS +
+				") " +
+				"AND "+ VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " IN ("+
+				QUERY_ANCESTOR_DICT_ID +
+				")";
+		
+		db.begin();
+		int deleted =  db.delete(
+				VocardsDataSource.HIERARCHY_TABLE, 
+				where,
+				new String[] {id + "", id + ""}
+				);
+		db.commit();
+		return deleted;
 	}
 
 	// ================= CONSTRUCTORS ===========================

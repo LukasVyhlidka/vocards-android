@@ -47,11 +47,13 @@ public class DictListActivity extends AbstractListActivity {
 	public static final int CTX_MENU_DELETE = 50;
 	public static final int CTX_MENU_EDIT = 51;
 	public static final int CTX_MENU_SHOW_DESC = 52;
+	public static final int CTX_MENU_MOVE_UNDER = 53;
+	public static final int CTX_MENU_MOVE_ROOT = 54;
 
-//	public static final String EXTRAS_PARENT_DICT_ID = "parentId";
+	// public static final String EXTRAS_PARENT_DICT_ID = "parentId";
 	public static final String EXTRAS_MESSAGE = "message";
 	public static final String EXTRAS_ONLY_DICT_SELECTION = "onlyDictSelection";
-	
+
 	public static final String KEY_RESULT_DICT_ID = "resDictId";
 
 	// ================= INSTANCE ATTRIBUTES ====================
@@ -66,9 +68,10 @@ public class DictListActivity extends AbstractListActivity {
 	private AlertDialog alertDialog = null;
 
 	private Long parentDictId = null;
-	
+
 	/**
-	 * If this is true, this activity has no menu and only returns the id of the dictionary
+	 * If this is true, this activity has no menu and only returns the id of the
+	 * dictionary
 	 */
 	private boolean onlyDictSelection = false;
 
@@ -116,10 +119,12 @@ public class DictListActivity extends AbstractListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		int none = Menu.NONE;
 
-		menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict)
-				.setIcon(R.drawable.icon_new);
-		menu.add(none, MENU_EXPORT, none, R.string.export_menu_export).setIcon(
-				R.drawable.icon_send);
+		if (!this.onlyDictSelection) {
+			menu.add(none, MENU_NEW_DICT, none, R.string.dict_list_menu_new_dict)
+					.setIcon(R.drawable.icon_new);
+			menu.add(none, MENU_EXPORT, none, R.string.export_menu_export).setIcon(
+					R.drawable.icon_send);
+		}
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -158,12 +163,11 @@ public class DictListActivity extends AbstractListActivity {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		int none = Menu.NONE;
 
-		menu.add(none, CTX_MENU_DELETE, none,
-				res.getString(R.string.dict_list_ctx_delete_dict));
-		menu.add(none, CTX_MENU_EDIT, none,
-				res.getString(R.string.dict_list_ctx_edit_dict));
-		menu.add(none, CTX_MENU_SHOW_DESC, none,
-				res.getString(R.string.dict_list_ctx_show_descendant_dicts));
+		menu.add(none, CTX_MENU_DELETE, none, R.string.dict_list_ctx_delete_dict);
+		menu.add(none, CTX_MENU_EDIT, none, R.string.dict_list_ctx_edit_dict);
+		menu.add(none, CTX_MENU_SHOW_DESC, none, R.string.dict_list_ctx_show_descendant_dicts);
+		menu.add(none, CTX_MENU_MOVE_UNDER, none, R.string.dict_list_ctx_move_dict_under);
+		menu.add(none, CTX_MENU_MOVE_ROOT, none, R.string.dict_list_ctx_move_root);
 
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
@@ -182,6 +186,12 @@ public class DictListActivity extends AbstractListActivity {
 			case CTX_MENU_SHOW_DESC:
 				this.showDescendants(info.id);
 				break;
+			case CTX_MENU_MOVE_UNDER:
+				this.moveUnderDictionary(info.id);
+				break;
+			case CTX_MENU_MOVE_ROOT:
+				this.moveToRoot(info.id);
+				break;
 		}
 		return super.onContextItemSelected(item);
 	}
@@ -192,17 +202,10 @@ public class DictListActivity extends AbstractListActivity {
 
 		Intent i = getIntent();
 		i.putExtra(KEY_RESULT_DICT_ID, id);
-		
+
 		setResult(RESULT_OK, i);
 		finish();
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-		
-//		Settings.setActiveDictionaryId(id);
-//
-//		Intent i = new Intent(this, VocardsActivity.class);
-//		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//		startActivity(i);
-//		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
 
 	@Override
@@ -210,8 +213,7 @@ public class DictListActivity extends AbstractListActivity {
 		if (this.alertDialog != null && this.alertDialog.isShowing()) {
 			this.alertDialog.dismiss();
 		}
-		if (this.exportTask == null
-				|| this.exportTask.getStatus().equals(Status.FINISHED)) {
+		if (this.exportTask == null || this.exportTask.getStatus().equals(Status.FINISHED)) {
 			return super.onRetainNonConfigurationInstance();
 		}
 
@@ -231,10 +233,12 @@ public class DictListActivity extends AbstractListActivity {
 		this.goUpView = findViewById(R.id.goUp);
 		this.parentFolderNameText = (TextView) findViewById(R.id.parentFolderName);
 
+		if (!this.onlyDictSelection) {
+			this.registerForContextMenu(this.getListView());
+		}
 		DictListAdapter listAdapter = new DictListAdapter(this, null);
-		this.registerForContextMenu(this.getListView());
 		this.setListAdapter(listAdapter);
-		
+
 		this.goUpView.setOnClickListener(this.goUpClickListener);
 
 		Intent i = this.getIntent();
@@ -245,14 +249,10 @@ public class DictListActivity extends AbstractListActivity {
 	}
 
 	private void handleBundle(Bundle b) {
-//		if (b.containsKey(EXTRAS_PARENT_DICT_ID)) {
-//			this.parentDictId = b.getLong(EXTRAS_PARENT_DICT_ID);
-//		}
-		
 		if (b.containsKey(EXTRAS_MESSAGE)) {
 			this.setTitle(b.getString(EXTRAS_MESSAGE));
 		}
-		
+
 		if (b.containsKey(EXTRAS_ONLY_DICT_SELECTION)) {
 			this.onlyDictSelection = b.getBoolean(EXTRAS_ONLY_DICT_SELECTION);
 		}
@@ -281,21 +281,21 @@ public class DictListActivity extends AbstractListActivity {
 		DBUtil.closeExistingCursor(adapter.getCursor());
 		Cursor c = DictionaryDS.getChildDictionaries(this.db, this.parentDictId);
 		adapter.changeCursor(c);
-		
+
 		this.handleUpIcon();
 	}
-	
+
 	private void handleUpIcon() {
 		if (this.parentDictId != null) {
 			Cursor pDict = DictionaryDS.getById(this.db, this.parentDictId);
 			pDict.moveToFirst();
-			String dictName = pDict.getString(pDict.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME)); 
+			String dictName = pDict.getString(pDict.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME));
 			String text = getString(R.string.dict_list_children_title, dictName);
-			
+
 			this.parentFolderNameText.setText(text);
 			this.parentFolderNameText.setVisibility(View.VISIBLE);
 			this.goUpView.setVisibility(View.VISIBLE);
-			
+
 			DBUtil.closeCursor(pDict);
 		} else {
 			this.parentFolderNameText.setVisibility(View.GONE);
@@ -342,10 +342,6 @@ public class DictListActivity extends AbstractListActivity {
 	}
 
 	private void showDescendants(long id) {
-//		Intent i = new Intent(this, DictListActivity.class);
-//		i.putExtra(EXTRAS_PARENT_DICT_ID, id);
-//		startActivity(i);
-		
 		this.parentDictId = id;
 		this.refreshListAdapter();
 	}
@@ -358,13 +354,34 @@ public class DictListActivity extends AbstractListActivity {
 		this.exportTask = new ExportTask(this);
 		this.exportTask.execute(ids);
 	}
+	
+	/**
+	 * Move to be a child of another dictionary. The parent will be selected in this method.
+	 * @param id
+	 */
+	private void moveUnderDictionary(long id) {
+		
+	}
+	
+	/**
+	 * Move selected dictionary to be a root dictionary
+	 * @param id
+	 */
+	private void moveToRoot(long id) {
+		DictionaryDS.setAsRoot(this.db, id);
+		this.refreshListAdapter();
+		Toast.makeText(this, R.string.dict_list_dict_moved_root_toast, Toast.LENGTH_LONG).show();
+	}
 
 	// ================= GETTERS/SETTERS ========================
 
 	// ================= INNER CLASSES ==========================
-	
+
+	/**
+	 * Listener which is called when user click on back arrow to go to parent dictionary.
+	 */
 	private OnClickListener goUpClickListener = new OnClickListener() {
-		
+
 		public void onClick(View v) {
 			Cursor pDict = DictionaryDS.getParentDictionary(db, parentDictId);
 			pDict.moveToFirst();

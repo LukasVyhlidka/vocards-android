@@ -77,12 +77,15 @@
     <string name="dict_list_ctx_delete_dict">Smaž</string>
     <string name="dict_list_ctx_edit_dict">Uprav</string>
     <string name="dict_list_ctx_show_descendant_dicts">Ukaž potomky</string>
+    <string name="dict_list_ctx_move_dict_under">Nastav rodičovský slovník</string>
+    <string name="dict_list_ctx_move_root">Nastav jako kořenový slovník</string>
     <string name="dict_list_dialog_delete_title">Vybraný slovník obsahuje %1$s kartiček. Opravdu ho chcete smazat?</string>
     <string name="dict_list_dialog_delete_yes">Ano</string>
     <string name="dict_list_dialog_delete_no">Ne</string>
     <string name="dict_list_dialog_delete_del_descendants_check">Smaž všechny potomky</string>
     <string name="dict_list_filter_hint">Filtruj slovníky</string>
     <string name="dict_list_dict_deleted_toast">Slovník byl úspěšně smazán.</string>
+    <string name="dict_list_dict_moved_root_toast">Slovník byl úspěšně nastavej jako kořenový.</string>
     
     <!-- Dict Multi List -->
     <string name="dict_multilist">Multiseznam slovníků</string>
