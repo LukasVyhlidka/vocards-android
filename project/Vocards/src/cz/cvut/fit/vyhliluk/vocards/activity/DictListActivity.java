@@ -51,7 +51,6 @@ public class DictListActivity extends AbstractListActivity {
 	public static final int CTX_MENU_MOVE_UNDER = 53;
 	public static final int CTX_MENU_MOVE_ROOT = 54;
 
-	// public static final String EXTRAS_PARENT_DICT_ID = "parentId";
 	public static final String EXTRAS_MESSAGE = "message";
 	public static final String EXTRAS_ONLY_DICT_SELECTION = "onlyDictSelection";
 
@@ -61,7 +60,6 @@ public class DictListActivity extends AbstractListActivity {
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
-	// private ListView dictList = null;
 	private EditText filterEdit = null;
 	private MenuItem menuFilter = null;
 	private View goUpView = null;
