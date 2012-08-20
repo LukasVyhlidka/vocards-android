@@ -26,6 +26,8 @@ import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
 import cz.cvut.fit.vyhliluk.vocards.activity.task.ExportTask;
+import cz.cvut.fit.vyhliluk.vocards.core.ParentIsDescendantException;
+import cz.cvut.fit.vyhliluk.vocards.core.ParentIsTheSameException;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
@@ -46,7 +48,6 @@ public class DictListActivity extends AbstractListActivity {
 
 	public static final int CTX_MENU_DELETE = 50;
 	public static final int CTX_MENU_EDIT = 51;
-	public static final int CTX_MENU_SHOW_DESC = 52;
 	public static final int CTX_MENU_MOVE_UNDER = 53;
 	public static final int CTX_MENU_MOVE_ROOT = 54;
 
@@ -55,6 +56,8 @@ public class DictListActivity extends AbstractListActivity {
 	public static final String EXTRAS_ONLY_DICT_SELECTION = "onlyDictSelection";
 
 	public static final String KEY_RESULT_DICT_ID = "resDictId";
+	
+	private static final int REQUEST_PARENT_DICT = 100;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -74,6 +77,11 @@ public class DictListActivity extends AbstractListActivity {
 	 * dictionary
 	 */
 	private boolean onlyDictSelection = false;
+	
+	/**
+	 * This is used for storing the moved dictionary id until user selects parent dictionary.
+	 */
+	private Long movedDictionaryId = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -151,11 +159,14 @@ public class DictListActivity extends AbstractListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		if (requestCode == DictMultiListActivity.REQUEST_DICT_LIST
-				&& resultCode == RESULT_OK) {
+		if (requestCode == DictMultiListActivity.REQUEST_DICT_LIST && resultCode == RESULT_OK) {
 			long[] ids = data
 					.getLongArrayExtra(DictMultiListActivity.KEY_RESULT_LIST);
 			this.export(ids);
+		} else if (requestCode == REQUEST_PARENT_DICT && resultCode == RESULT_OK) {
+			long id = data.getExtras().getLong(KEY_RESULT_DICT_ID);
+			this.moveUnderDictionary(this.movedDictionaryId, id);
+			this.movedDictionaryId = null;
 		}
 	}
 
@@ -165,7 +176,6 @@ public class DictListActivity extends AbstractListActivity {
 
 		menu.add(none, CTX_MENU_DELETE, none, R.string.dict_list_ctx_delete_dict);
 		menu.add(none, CTX_MENU_EDIT, none, R.string.dict_list_ctx_edit_dict);
-		menu.add(none, CTX_MENU_SHOW_DESC, none, R.string.dict_list_ctx_show_descendant_dicts);
 		menu.add(none, CTX_MENU_MOVE_UNDER, none, R.string.dict_list_ctx_move_dict_under);
 		menu.add(none, CTX_MENU_MOVE_ROOT, none, R.string.dict_list_ctx_move_root);
 
@@ -183,11 +193,12 @@ public class DictListActivity extends AbstractListActivity {
 			case CTX_MENU_EDIT:
 				this.editDict(info.id);
 				break;
-			case CTX_MENU_SHOW_DESC:
-				this.showDescendants(info.id);
-				break;
 			case CTX_MENU_MOVE_UNDER:
-				this.moveUnderDictionary(info.id);
+				this.movedDictionaryId = info.id;
+				Intent i = new Intent(this, DictListActivity.class);
+				i.putExtra(EXTRAS_MESSAGE, res.getString(R.string.dict_list_select_parent_title));
+				i.putExtra(EXTRAS_ONLY_DICT_SELECTION, true);
+				startActivityForResult(i, REQUEST_PARENT_DICT);
 				break;
 			case CTX_MENU_MOVE_ROOT:
 				this.moveToRoot(info.id);
@@ -359,8 +370,15 @@ public class DictListActivity extends AbstractListActivity {
 	 * Move to be a child of another dictionary. The parent will be selected in this method.
 	 * @param id
 	 */
-	private void moveUnderDictionary(long id) {
-		
+	private void moveUnderDictionary(long movedDictionary, long parentDictionary) {
+		try {
+			DictionaryDS.setAsChildOf(this.db, movedDictionary, parentDictionary);
+			Toast.makeText(this, R.string.dict_list_dict_moved_toast, Toast.LENGTH_LONG).show();
+		} catch (ParentIsTheSameException ex) {
+			Toast.makeText(this, R.string.dict_list_err_parent_is_same, Toast.LENGTH_LONG).show();
+		} catch (ParentIsDescendantException ex) {
+			Toast.makeText(this, R.string.dict_list_err_parent_is_descendant, Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	/**

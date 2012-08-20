@@ -76,16 +76,20 @@
     <string name="dict_list_menu_new_dict">Create Dictionary</string>
     <string name="dict_list_ctx_delete_dict">Delete</string>
     <string name="dict_list_ctx_edit_dict">Edit</string>
-    <string name="dict_list_ctx_show_descendant_dicts">Show Descendants</string>
-    <string name="dict_list_ctx_move_dict_under">Set parent dictionary</string>
-    <string name="dict_list_ctx_move_root">Set as root dictionary</string>
+    <!--<string name="dict_list_ctx_show_descendant_dicts">Show Descendants</string>-->
+    <string name="dict_list_ctx_move_dict_under">Set parent</string>
+    <string name="dict_list_ctx_move_root">Set as root</string>
     <string name="dict_list_dialog_delete_title">Selected dictionary contains %1$s cards. Do you really want to delete it?</string>
     <string name="dict_list_dialog_delete_yes">Yes</string>
     <string name="dict_list_dialog_delete_no">No</string>
     <string name="dict_list_dialog_delete_del_descendants_check">Delete all descendants</string>
     <string name="dict_list_filter_hint">Filter Dictionaries</string>
     <string name="dict_list_dict_deleted_toast">Dictionary was successfully deleted.</string>
-    <string name="dict_list_dict_moved_root_toast">Dictionary was successfully set as root dictionary.</string>    
+    <string name="dict_list_dict_moved_root_toast">Dictionary was successfully set as root dictionary.</string>
+    <string name="dict_list_dict_moved_toast">Dictionary was successfully moved.</string>
+    <string name="dict_list_select_parent_title">Select parent dictionary.</string>
+    <string name="dict_list_err_parent_is_same">Parent and moved dictionary are the same.</string>
+    <string name="dict_list_err_parent_is_descendant">Parent is descendant of the moved dictionary.</string>    
     
     <!-- Dict Multi List -->
     <string name="dict_multilist">Dict Multi List</string>

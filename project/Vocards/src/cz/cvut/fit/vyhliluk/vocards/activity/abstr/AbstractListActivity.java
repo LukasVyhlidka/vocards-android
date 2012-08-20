@@ -2,6 +2,7 @@ package cz.cvut.fit.vyhliluk.vocards.activity.abstr;
 
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
@@ -36,6 +37,13 @@ public class AbstractListActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 
+		this.initDb();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
 		this.initDb();
 	}
 
