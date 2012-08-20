@@ -2,7 +2,7 @@ package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 
 public class BackupDS {
 	// ================= STATIC ATTRIBUTES ======================
@@ -11,48 +11,48 @@ public class BackupDS {
 
 	// ================= STATIC METHODS =========================
 
-	public static long createBackup(VocardsDataSource db, long dictId) {
+	public static long createBackup(VocardsDS db, long dictId) {
 		return createBackup(db, dictId, -1);
 	}
 
-	public static long createBackup(VocardsDataSource db, long dictId, long backupId) {
+	public static long createBackup(VocardsDS db, long dictId, long backupId) {
 		ContentValues val = new ContentValues();
 		if (backupId != -1) {
-			val.put(VocardsDataSource.BACKUP_COLUMN_ID, backupId);
+			val.put(VocardsDS.BACKUP_COL_ID, backupId);
 		}
-		val.put(VocardsDataSource.BACKUP_COLUMN_DICTIONARY, dictId);
-		val.put(VocardsDataSource.BACKUP_COLUMN_STATE, VocardsDataSource.BACKUP_STATE_BACKUPED);
-		return db.insert(VocardsDataSource.BACKUP_TABLE, val);
+		val.put(VocardsDS.BACKUP_COL_DICTIONARY, dictId);
+		val.put(VocardsDS.BACKUP_COL_STATE, VocardsDS.BACKUP_STATE_BACKUPED);
+		return db.insert(VocardsDS.BACKUP_TABLE, val);
 	}
 
-	public static int setDeleted(VocardsDataSource db, long dictId) {
+	public static int setDeleted(VocardsDS db, long dictId) {
 		ContentValues val = new ContentValues();
-		val.put(VocardsDataSource.BACKUP_COLUMN_STATE, VocardsDataSource.BACKUP_STATE_DELETED);
-		val.putNull(VocardsDataSource.BACKUP_COLUMN_DICTIONARY);
+		val.put(VocardsDS.BACKUP_COL_STATE, VocardsDS.BACKUP_STATE_DELETED);
+		val.putNull(VocardsDS.BACKUP_COL_DICTIONARY);
 		return db.update(
-				VocardsDataSource.BACKUP_TABLE,
+				VocardsDS.BACKUP_TABLE,
 				val,
-				VocardsDataSource.BACKUP_COLUMN_DICTIONARY +"=?",
+				VocardsDS.BACKUP_COL_DICTIONARY +"=?",
 				new String[] { dictId + "" });
 	}
 	
-	public static int deleteBackup(VocardsDataSource db, long backupId) {
-		return db.delete(VocardsDataSource.BACKUP_TABLE, backupId);
+	public static int deleteBackup(VocardsDS db, long backupId) {
+		return db.delete(VocardsDS.BACKUP_TABLE, backupId);
 	}
 
-	public static Cursor getDeleted(VocardsDataSource db) {
+	public static Cursor getDeleted(VocardsDS db) {
 		return db.query(
-				VocardsDataSource.BACKUP_TABLE,
+				VocardsDS.BACKUP_TABLE,
 				null,
-				VocardsDataSource.BACKUP_COLUMN_STATE + "=?",
-				new String[] { VocardsDataSource.BACKUP_STATE_DELETED + "" });
+				VocardsDS.BACKUP_COL_STATE + "=?",
+				new String[] { VocardsDS.BACKUP_STATE_DELETED + "" });
 	}
 
-	public static Cursor getByDictId(VocardsDataSource db, long dictId) {
+	public static Cursor getByDictId(VocardsDS db, long dictId) {
 		return db.query(
-				VocardsDataSource.BACKUP_TABLE,
+				VocardsDS.BACKUP_TABLE,
 				null,
-				VocardsDataSource.BACKUP_COLUMN_DICTIONARY + "=?",
+				VocardsDS.BACKUP_COL_DICTIONARY + "=?",
 				new String[] { dictId + "" });
 	}
 

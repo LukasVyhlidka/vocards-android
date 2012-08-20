@@ -3,7 +3,7 @@ package cz.cvut.fit.vyhliluk.vocards.util;
 import android.app.backup.BackupManager;
 import android.content.Context;
 import android.database.Cursor;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 public class DBUtil {
@@ -25,7 +25,7 @@ public class DBUtil {
 		}
 	}
 	
-	public static void dictModif(VocardsDataSource db, Context ctx, long dictId) {
+	public static void dictModif(VocardsDS db, Context ctx, long dictId) {
 		DictionaryDS.setModified(db, dictId);
 		
 		BackupManager bckpMgr = new BackupManager(ctx);

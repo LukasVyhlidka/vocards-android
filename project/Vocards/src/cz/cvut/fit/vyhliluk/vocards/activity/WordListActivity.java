@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
@@ -161,7 +161,7 @@ public class WordListActivity extends AbstractListActivity {
 				new String[] {
 						WordDS.NATIVE_WORD,
 						WordDS.FOREIGN_WORD,
-						VocardsDataSource.CARD_COLUMN_FACTOR
+						VocardsDS.CARD_COL_FACTOR
 				},
 				new int[] {
 						R.id.nativeWord,
@@ -259,7 +259,7 @@ public class WordListActivity extends AbstractListActivity {
 
 		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 			String colName = cursor.getColumnName(columnIndex);
-			if (VocardsDataSource.CARD_COLUMN_FACTOR.equals(colName)) {
+			if (VocardsDS.CARD_COL_FACTOR.equals(colName)) {
 				TextView v = (TextView) view;
 				int factor = cursor.getInt(columnIndex);
 				v.setText(CardUtil.cardFactorPercent(factor));

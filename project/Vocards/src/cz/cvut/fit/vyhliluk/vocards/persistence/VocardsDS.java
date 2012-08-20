@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class VocardsDataSource {
+public class VocardsDS {
 	// ================= STATIC ATTRIBUTES ======================
 
 	public static final String DB_NAME = "vocards";
@@ -14,65 +14,65 @@ public class VocardsDataSource {
 
 	public static final String DB_DEFAULT_ID = "_id";
 
-	public static final String DICTIONARY_TABLE = "dictionary";
-	public static final String DICTIONARY_COLUMN_ID = DB_DEFAULT_ID;
-	public static final String DICTIONARY_COLUMN_NAME = "name";
-	public static final String DICTIONARY_COLUMN_NATIVE_LANG = "native_lang";
-	public static final String DICTIONARY_COLUMN_FOREIGN_LANG = "foreign_lang";
-	public static final String DICTIONARY_COLUMN_MODIFIED = "modified";
+	public static final String DICT_TABLE = "dictionary";
+	public static final String DICT_COL_ID = DB_DEFAULT_ID;
+	public static final String DICT_COL_NAME = "name";
+	public static final String DICT_COL_NATIVE_LANG = "native_lang";
+	public static final String DICT_COL_FOREIGN_LANG = "foreign_lang";
+	public static final String DICT_COLN_MODIFIED = "modified";
 
 	public static final String CARD_TABLE = "card";
-	public static final String CARD_COLUMN_ID = DB_DEFAULT_ID;
-	public static final String CARD_COLUMN_FACTOR = "factor";
-	public static final String CARD_COLUMN_DICTIONARY = "dict_id";
-	public static final String CARD_COLUMN_NATIVE = "native_word";
-	public static final String CARD_COLUMN_FOREIGN = "foreign_word";
+	public static final String CARD_COL_ID = DB_DEFAULT_ID;
+	public static final String CARD_COL_FACTOR = "factor";
+	public static final String CARD_COL_DICTIONARY = "dict_id";
+	public static final String CARD_COL_NATIVE = "native_word";
+	public static final String CARD_COL_FOREIGN = "foreign_word";
 
 	public static final String BACKUP_TABLE = "backup";
-	public static final String BACKUP_COLUMN_ID = DB_DEFAULT_ID;
-	public static final String BACKUP_COLUMN_DICTIONARY = "dict_id";
-	public static final String BACKUP_COLUMN_STATE = "state";
+	public static final String BACKUP_COL_ID = DB_DEFAULT_ID;
+	public static final String BACKUP_COL_DICTIONARY = "dict_id";
+	public static final String BACKUP_COL_STATE = "state";
 	
-	public static final String HIERARCHY_TABLE = "hierarchy";
-	public static final String HIERARCHY_COLUMN_ANCESTOR = "ancestor";
-	public static final String HIERARCHY_COLUMN_DESCENDANT = "descendant";
-	public static final String HIERARCHY_COLUMN_LENGTH = "length";
+	public static final String HIER_TABLE = "hierarchy";
+	public static final String HIER_COL_ANCESTOR = "ancestor";
+	public static final String HIER_COL_DESCENDANT = "descendant";
+	public static final String HIER_COL_LENGTH = "length";
 	
 	public static final int BACKUP_STATE_BACKUPED = 1;
 	public static final int BACKUP_STATE_DELETED = 2;
 	
 	public static final String WORD_DELIM = "|||";
 
-	private static final String CREATE_DICTIONARY = "CREATE TABLE " + DICTIONARY_TABLE + "("
-			+ DICTIONARY_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ DICTIONARY_COLUMN_NAME + " TEXT NOT NULL,"
-			+ DICTIONARY_COLUMN_NATIVE_LANG + " INTEGER NOT NULL,"
-			+ DICTIONARY_COLUMN_FOREIGN_LANG + " INTEGER NOT NULL,"
-			+ DICTIONARY_COLUMN_MODIFIED +" INTEGER"
+	private static final String CREATE_DICTIONARY = "CREATE TABLE " + DICT_TABLE + "("
+			+ DICT_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+			+ DICT_COL_NAME + " TEXT NOT NULL,"
+			+ DICT_COL_NATIVE_LANG + " INTEGER NOT NULL,"
+			+ DICT_COL_FOREIGN_LANG + " INTEGER NOT NULL,"
+			+ DICT_COLN_MODIFIED +" INTEGER"
 			+ ");";
 
 	private static final String CREATE_CARD = "CREATE TABLE " + CARD_TABLE + "("
-			+ CARD_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ CARD_COLUMN_FACTOR + " INTEGER NOT NULL,"
-			+ CARD_COLUMN_DICTIONARY + " INTEGER NOT NULL,"
-			+ CARD_COLUMN_NATIVE +" TEXT NOT NULL,"
-			+ CARD_COLUMN_FOREIGN +" TEXT NOT NULL, "
-			+ "FOREIGN KEY (" + CARD_COLUMN_DICTIONARY + ") REFERENCES " + DICTIONARY_TABLE + "(" + DICTIONARY_COLUMN_ID + ")"
+			+ CARD_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+			+ CARD_COL_FACTOR + " INTEGER NOT NULL,"
+			+ CARD_COL_DICTIONARY + " INTEGER NOT NULL,"
+			+ CARD_COL_NATIVE +" TEXT NOT NULL,"
+			+ CARD_COL_FOREIGN +" TEXT NOT NULL, "
+			+ "FOREIGN KEY (" + CARD_COL_DICTIONARY + ") REFERENCES " + DICT_TABLE + "(" + DICT_COL_ID + ")"
 			+ ");";
 
 	private static final String CREATE_BACKUP = "CREATE TABLE " + BACKUP_TABLE + "("
-			+ BACKUP_COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-			+ BACKUP_COLUMN_DICTIONARY + " INTEGER,"
-			+ BACKUP_COLUMN_STATE +" INTEGER NOT NULL,"
-			+ "FOREIGN KEY ("+ BACKUP_COLUMN_DICTIONARY +") REFERENCES "+ DICTIONARY_TABLE +"("+ DICTIONARY_COLUMN_ID + ")"
+			+ BACKUP_COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+			+ BACKUP_COL_DICTIONARY + " INTEGER,"
+			+ BACKUP_COL_STATE +" INTEGER NOT NULL,"
+			+ "FOREIGN KEY ("+ BACKUP_COL_DICTIONARY +") REFERENCES "+ DICT_TABLE +"("+ DICT_COL_ID + ")"
 			+ ")";
 	
-	private static final String CREATE_HIERARCHY = "CREATE TABLE "+ HIERARCHY_TABLE +"("
-			+ HIERARCHY_COLUMN_ANCESTOR +" INTEGER NOT NULL,"
-			+ HIERARCHY_COLUMN_DESCENDANT +" INTEGER NOT NULL,"
-			+ HIERARCHY_COLUMN_LENGTH +" INTEGER NOT NULL,"
-			+"FOREIGN KEY ("+ HIERARCHY_COLUMN_ANCESTOR +") REFERENCES "+ DICTIONARY_TABLE +"("+ DICTIONARY_COLUMN_ID +"),"
-			+"FOREIGN KEY ("+ HIERARCHY_COLUMN_DESCENDANT +") REFERENCES "+ DICTIONARY_TABLE +"("+ DICTIONARY_COLUMN_ID +")"
+	private static final String CREATE_HIERARCHY = "CREATE TABLE "+ HIER_TABLE +"("
+			+ HIER_COL_ANCESTOR +" INTEGER NOT NULL,"
+			+ HIER_COL_DESCENDANT +" INTEGER NOT NULL,"
+			+ HIER_COL_LENGTH +" INTEGER NOT NULL,"
+			+"FOREIGN KEY ("+ HIER_COL_ANCESTOR +") REFERENCES "+ DICT_TABLE +"("+ DICT_COL_ID +"),"
+			+"FOREIGN KEY ("+ HIER_COL_DESCENDANT +") REFERENCES "+ DICT_TABLE +"("+ DICT_COL_ID +")"
 			+ ")";
 
 	// ================= INSTANCE ATTRIBUTES ====================
@@ -82,7 +82,7 @@ public class VocardsDataSource {
 
 	// ================= CONSTRUCTORS ===========================
 
-	public VocardsDataSource(Context ctx) {
+	public VocardsDS(Context ctx) {
 		helper = new DSOpenHelper(ctx);
 	}
 
@@ -107,7 +107,7 @@ public class VocardsDataSource {
 	}
 
 	public Cursor queryById(String table, long id) {
-		return this.db.query(table, null, VocardsDataSource.DB_DEFAULT_ID + "=?", new String[] { id + "" }, null, null, null);
+		return this.db.query(table, null, VocardsDS.DB_DEFAULT_ID + "=?", new String[] { id + "" }, null, null, null);
 	}
 
 	public Cursor query(String table, String[] columns, String selection, String[] args, String orderBy, String limit) {
@@ -183,15 +183,15 @@ public class VocardsDataSource {
 			if (from < 2) {
 				db.execSQL(CREATE_HIERARCHY);
 				db.beginTransaction();
-				Cursor c = db.query(DICTIONARY_TABLE, null, null, null, null, null, null);
+				Cursor c = db.query(DICT_TABLE, null, null, null, null, null, null);
 				while (!c.isLast()) {
 					c.moveToNext();
-					long id = c.getLong(c.getColumnIndex(DICTIONARY_COLUMN_ID));
+					long id = c.getLong(c.getColumnIndex(DICT_COL_ID));
 					ContentValues val = new ContentValues();
-					val.put(HIERARCHY_COLUMN_ANCESTOR, id);
-					val.put(HIERARCHY_COLUMN_DESCENDANT, id);
-					val.put(HIERARCHY_COLUMN_LENGTH, 0);
-					db.insert(HIERARCHY_TABLE, null, val);
+					val.put(HIER_COL_ANCESTOR, id);
+					val.put(HIER_COL_DESCENDANT, id);
+					val.put(HIER_COL_LENGTH, 0);
+					db.insert(HIER_TABLE, null, val);
 				}
 				db.setTransactionSuccessful();
 				db.endTransaction();

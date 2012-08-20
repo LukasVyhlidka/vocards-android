@@ -14,7 +14,7 @@ import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.ImportActivity;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.StorageUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionarySerialization;
 
@@ -47,7 +47,7 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 
 	@Override
 	protected Integer doInBackground(File... params) {
-		VocardsDataSource db = new VocardsDataSource(this.ctx);
+		VocardsDS db = new VocardsDS(this.ctx);
 		this.pd.setMax(params.length);
 
 		boolean ok = false;

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import android.database.Cursor;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 
@@ -43,7 +43,7 @@ public class DictionarySerialization {
 
 	// ================= STATIC METHODS =========================
 
-	public static JSONObject getDictionariesJson(VocardsDataSource db, Long... dictIds) throws JSONException {
+	public static JSONObject getDictionariesJson(VocardsDS db, Long... dictIds) throws JSONException {
 		JSONObject root = new JSONObject();
 		JSONArray dictArray = new JSONArray();
 
@@ -57,7 +57,7 @@ public class DictionarySerialization {
 		return root;
 	}
 
-	public static JSONObject getDictionaryJson(VocardsDataSource db, long dictId) throws JSONException {
+	public static JSONObject getDictionaryJson(VocardsDS db, long dictId) throws JSONException {
 		JSONObject res = new JSONObject();
 		Cursor dictCursor = null;
 		Cursor wordCursor = null;
@@ -71,7 +71,7 @@ public class DictionarySerialization {
 			res.put(KEY_CARDS, words);
 			wordCursor.moveToNext();
 			while (!wordCursor.isAfterLast()) {
-				words.put(createWordJson(db, wordCursor.getLong(wordCursor.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID))));
+				words.put(createWordJson(db, wordCursor.getLong(wordCursor.getColumnIndex(VocardsDS.CARD_COL_ID))));
 				wordCursor.moveToNext();
 			}
 		} finally {
@@ -81,7 +81,7 @@ public class DictionarySerialization {
 		return res;
 	}
 
-	public static void importDictionaries(VocardsDataSource db, JSONObject root) throws VocardsException {
+	public static void importDictionaries(VocardsDS db, JSONObject root) throws VocardsException {
 		try {
 			JSONArray dicts = root.getJSONArray(DictionarySerialization.KEY_DICTIONARY_LIST);
 			for (int i = 0; i < dicts.length(); i++) {
@@ -93,7 +93,7 @@ public class DictionarySerialization {
 		}
 	}
 
-	public static long importDictionary(VocardsDataSource db, JSONObject dict) throws VocardsException {
+	public static long importDictionary(VocardsDS db, JSONObject dict) throws VocardsException {
 		try {
 			String dictName = dict.getString(KEY_DICTIONARY_NAME);
 			Language natLang = Language.getById(dict.getInt(KEY_NATIVE_LANG));
@@ -138,32 +138,32 @@ public class DictionarySerialization {
 		dictCursor.moveToFirst();
 
 		obj.put(KEY_DICTIONARY_NAME, dictCursor.getString(
-				dictCursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME)
+				dictCursor.getColumnIndex(VocardsDS.DICT_COL_NAME)
 				));
 		obj.put(KEY_NATIVE_LANG, dictCursor.getString(
-				dictCursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG)
+				dictCursor.getColumnIndex(VocardsDS.DICT_COL_NATIVE_LANG)
 				));
 		obj.put(KEY_FOREIGN_LANG, dictCursor.getString(
-				dictCursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG)
+				dictCursor.getColumnIndex(VocardsDS.DICT_COL_FOREIGN_LANG)
 				));
 	}
 
-	private static JSONObject createWordJson(VocardsDataSource db, long cardId) throws JSONException {
+	private static JSONObject createWordJson(VocardsDS db, long cardId) throws JSONException {
 		JSONObject res = new JSONObject();
 
 		Cursor card = WordDS.getCardById(db, cardId);
 
 		card.moveToFirst();
-		res.put(KEY_CARD_FACTOR, card.getInt(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR)));
+		res.put(KEY_CARD_FACTOR, card.getInt(card.getColumnIndex(VocardsDS.CARD_COL_FACTOR)));
 
 		JSONArray natWords = new JSONArray();
-		List<String> natWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_NATIVE)));
+		List<String> natWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDS.CARD_COL_NATIVE)));
 		for (String nat : natWList) {
 			natWords.put(nat);
 		}
 
 		JSONArray forWords = new JSONArray();
-		List<String> forWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDataSource.CARD_COLUMN_FOREIGN)));
+		List<String> forWList = CardUtil.explodeWords(card.getString(card.getColumnIndex(VocardsDS.CARD_COL_FOREIGN)));
 		for (String forw : forWList) {
 			forWords.put(forw);
 		}

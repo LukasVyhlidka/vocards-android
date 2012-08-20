@@ -11,7 +11,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
@@ -125,7 +125,7 @@ public class VocardsActivity extends AbstractActivity {
 			return;
 		}
 		c.moveToFirst();
-		String name = c.getString(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME));
+		String name = c.getString(c.getColumnIndex(VocardsDS.DICT_COL_NAME));
 		c.close();
 
 		c = DictionaryDS.getDictionaryStats(this.db, id);

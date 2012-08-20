@@ -18,7 +18,7 @@ import android.database.Cursor;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.BackupDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionarySerialization;
@@ -51,7 +51,7 @@ public class VocardsBackupAgent extends BackupAgent {
 			}
 		}
 
-		VocardsDataSource db = new VocardsDataSource(this);
+		VocardsDS db = new VocardsDS(this);
 		db.open();
 		try {
 
@@ -73,7 +73,7 @@ public class VocardsBackupAgent extends BackupAgent {
 	@Override
 	public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState) throws IOException {
 		Log.i("Vocards Backup", "Restore start");
-		VocardsDataSource db = new VocardsDataSource(this);
+		VocardsDS db = new VocardsDS(this);
 		db.open();
 		try {
 			db.begin();
@@ -119,12 +119,12 @@ public class VocardsBackupAgent extends BackupAgent {
 
 	// ================= PRIVATE METHODS ========================
 
-	private void wipeDeleted(VocardsDataSource db, BackupDataOutput data) throws IOException {
+	private void wipeDeleted(VocardsDS db, BackupDataOutput data) throws IOException {
 		db.begin();
 		Cursor c = BackupDS.getDeleted(db);
 		c.moveToNext();
 		while (!c.isAfterLast()) {
-			long backupId = c.getLong(c.getColumnIndex(VocardsDataSource.BACKUP_COLUMN_ID));
+			long backupId = c.getLong(c.getColumnIndex(VocardsDS.BACKUP_COL_ID));
 			Log.i("Vocards Backup", "wiping backupId=" + backupId);
 			data.writeEntityHeader(backupId + "", -1);
 			BackupDS.deleteBackup(db, backupId);
@@ -134,12 +134,12 @@ public class VocardsBackupAgent extends BackupAgent {
 		db.commit();
 	}
 
-	private void backupModified(VocardsDataSource db, BackupDataOutput data, long lastBackup) throws IOException {
+	private void backupModified(VocardsDS db, BackupDataOutput data, long lastBackup) throws IOException {
 		Cursor c = DictionaryDS.getModifiedDicts(db, lastBackup);
 		c.moveToNext();
 		try {
 			while (!c.isAfterLast()) {
-				long dictId = c.getLong(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID));
+				long dictId = c.getLong(c.getColumnIndex(VocardsDS.DICT_COL_ID));
 				long backupId = -1;
 
 				Cursor backupCursor = BackupDS.getByDictId(db, dictId);
@@ -147,7 +147,7 @@ public class VocardsBackupAgent extends BackupAgent {
 					backupId = BackupDS.createBackup(db, dictId);
 				} else {
 					backupCursor.moveToFirst();
-					backupId = backupCursor.getLong(backupCursor.getColumnIndex(VocardsDataSource.BACKUP_COLUMN_ID));
+					backupId = backupCursor.getLong(backupCursor.getColumnIndex(VocardsDS.BACKUP_COL_ID));
 				}
 				backupCursor.close();
 

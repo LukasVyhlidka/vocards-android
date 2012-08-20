@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
@@ -136,7 +136,7 @@ public class PractiseActivity extends AbstractActivity {
 			c = WordDS.getRandomWord(this.db, this.dictId);
 			c.moveToFirst();
 			loop++;
-		} while (c.getLong(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID)) == this.cardId && loop < 3);
+		} while (c.getLong(c.getColumnIndex(VocardsDS.CARD_COL_ID)) == this.cardId && loop < 3);
 		this.fetchCursor(c);
 
 		this.loadOneSide();
@@ -144,8 +144,8 @@ public class PractiseActivity extends AbstractActivity {
 
 	private void fetchCursor(Cursor c) {
 		c.moveToFirst();
-		this.cardId = c.getLong(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_ID));
-		this.factor = c.getInt(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR));
+		this.cardId = c.getLong(c.getColumnIndex(VocardsDS.CARD_COL_ID));
+		this.factor = c.getInt(c.getColumnIndex(VocardsDS.CARD_COL_FACTOR));
 		String natWord = c.getString(c.getColumnIndex(WordDS.NATIVE_WORD)) + "\u00A0";
 		String forWord = c.getString(c.getColumnIndex(WordDS.FOREIGN_WORD)) + "\u00A0";
 		c.close();

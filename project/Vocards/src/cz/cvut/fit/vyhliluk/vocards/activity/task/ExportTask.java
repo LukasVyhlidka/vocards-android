@@ -17,7 +17,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.StorageUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionarySerialization;
 
@@ -45,7 +45,7 @@ public class ExportTask extends AsyncTask<Long, String, JSONObject> {
 
 	@Override
 	protected JSONObject doInBackground(Long... params) {
-		VocardsDataSource db = new VocardsDataSource(this.ctx);
+		VocardsDS db = new VocardsDS(this.ctx);
 		db.open();
 		JSONObject root = null;
 		try {

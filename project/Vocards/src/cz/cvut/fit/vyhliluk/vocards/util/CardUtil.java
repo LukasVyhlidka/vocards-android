@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 
 public class CardUtil {
 	// ================= STATIC ATTRIBUTES ======================
@@ -23,7 +23,7 @@ public class CardUtil {
 		while (it.hasNext()) {
 			sb.append(it.next());
 			if (it.hasNext()) {
-				sb.append(VocardsDataSource.WORD_DELIM);
+				sb.append(VocardsDS.WORD_DELIM);
 			}
 		}
 		return sb.toString();
@@ -32,7 +32,7 @@ public class CardUtil {
 	public static List<String> explodeWords(String word) {
 //		return Arrays.asList(word.split(VocardsDataSource.WORD_DELIM));
 		List<String> res = new ArrayList<String>();
-		StringTokenizer tokenizer = new StringTokenizer(word, VocardsDataSource.WORD_DELIM);
+		StringTokenizer tokenizer = new StringTokenizer(word, VocardsDS.WORD_DELIM);
 		while (tokenizer.hasMoreTokens()) {
 			res.add(tokenizer.nextToken());
 		}

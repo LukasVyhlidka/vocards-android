@@ -1,6 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards.activity.abstr;
 
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -12,7 +12,7 @@ public abstract class AbstractActivity extends Activity {
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	protected Resources res = null;
-	protected VocardsDataSource db = null;
+	protected VocardsDS db = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -53,7 +53,7 @@ public abstract class AbstractActivity extends Activity {
 
 	private void initDb() {
 		if (this.db == null) {
-			this.db = new VocardsDataSource(this);
+			this.db = new VocardsDS(this);
 			this.db.open();
 		}
 	}

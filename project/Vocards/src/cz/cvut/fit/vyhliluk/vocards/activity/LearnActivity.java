@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.WordDS;
@@ -107,7 +107,7 @@ public class LearnActivity extends AbstractActivity {
 		this.position = this.wordCursor.getPosition();
 		String natWord = this.wordCursor.getString(this.wordCursor.getColumnIndex(WordDS.NATIVE_WORD)) + "\u00A0";
 		String forWord = this.wordCursor.getString(this.wordCursor.getColumnIndex(WordDS.FOREIGN_WORD)) + "\u00A0";
-		int factor = this.wordCursor.getInt(this.wordCursor.getColumnIndex(VocardsDataSource.CARD_COLUMN_FACTOR));
+		int factor = this.wordCursor.getInt(this.wordCursor.getColumnIndex(VocardsDS.CARD_COL_FACTOR));
 
 		this.wordCardNat.setText(natWord);
 		this.wordCardFor.setText(forWord);

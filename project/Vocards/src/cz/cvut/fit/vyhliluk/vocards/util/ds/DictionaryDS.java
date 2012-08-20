@@ -1,11 +1,11 @@
 package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.CARD_COLUMN_DICTIONARY;
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.CARD_TABLE;
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG;
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_ID;
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_NAME;
-import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG;
+import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS.CARD_COL_DICTIONARY;
+import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS.CARD_TABLE;
+import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS.DICT_COL_FOREIGN_LANG;
+import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS.DICT_COL_ID;
+import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS.DICT_COL_NAME;
+import static cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS.DICT_COL_NATIVE_LANG;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
@@ -13,7 +13,7 @@ import cz.cvut.fit.vyhliluk.vocards.core.ParentIsDescendantException;
 import cz.cvut.fit.vyhliluk.vocards.core.ParentIsTheSameException;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 
 public class DictionaryDS {
 	// ================= STATIC ATTRIBUTES ======================
@@ -22,40 +22,40 @@ public class DictionaryDS {
 	public static final String LEARN_FACTOR = "learn_factor";
 
 	public static final String QUERY_DICT_DESCENDANT_OR_SELF_IDS = "SELECT " +
-			VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " " +
-			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
-			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=?";
+			VocardsDS.HIER_COL_DESCENDANT + " " +
+			"FROM " + VocardsDS.HIER_TABLE + " " +
+			"WHERE " + VocardsDS.HIER_COL_ANCESTOR + "=?";
 
 	public static final String QUERY_DICT_CHILD_IDS = QUERY_DICT_DESCENDANT_OR_SELF_IDS +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1";
+			" AND " + VocardsDS.HIER_COL_LENGTH + "=1";
 
 	public static final String QUERY_DICT_DESCENDANT_IDS = QUERY_DICT_DESCENDANT_OR_SELF_IDS +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "!=0";
+			" AND " + VocardsDS.HIER_COL_LENGTH + "!=0";
 
 	public static final String QUERY_DICT_ROOT = "SELECT " +
-			"c.* FROM " + VocardsDataSource.DICTIONARY_TABLE + " c " +
+			"c.* FROM " + VocardsDS.DICT_TABLE + " c " +
 			"WHERE NOT EXISTS( SELECT " +
-			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
-			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
-			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "= c." + VocardsDataSource.DICTIONARY_COLUMN_ID +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " != " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
+			VocardsDS.HIER_COL_ANCESTOR + " " +
+			"FROM " + VocardsDS.HIER_TABLE + " " +
+			"WHERE " + VocardsDS.HIER_COL_DESCENDANT + "= c." + VocardsDS.DICT_COL_ID +
+			" AND " + VocardsDS.HIER_COL_DESCENDANT + " != " + VocardsDS.HIER_COL_ANCESTOR + " " +
 			")";
 
 	public static final String QUERY_ANCESTOR_OR_SELF_DICT_ID = "SELECT " +
-			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " " +
-			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
-			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
+			VocardsDS.HIER_COL_ANCESTOR + " " +
+			"FROM " + VocardsDS.HIER_TABLE + " " +
+			"WHERE " + VocardsDS.HIER_COL_DESCENDANT + "=?";
 
 	public static final String QUERY_ANCESTOR_DICT_ID = QUERY_ANCESTOR_OR_SELF_DICT_ID +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + ">0";
+			" AND " + VocardsDS.HIER_COL_LENGTH + ">0";
 
 	public static final String QUERY_PARENT_DICT_ID = QUERY_ANCESTOR_OR_SELF_DICT_ID +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=1";
+			" AND " + VocardsDS.HIER_COL_LENGTH + "=1";
 
 	private static final String QUERY_STATS = "SELECT " +
-			"COUNT(" + VocardsDataSource.CARD_COLUMN_ID + ") as " + WORD_COUNT + "," +
-			"AVG(" + VocardsDataSource.CARD_COLUMN_FACTOR + ") as " + LEARN_FACTOR +
-			" FROM " + CARD_TABLE + " WHERE " + CARD_COLUMN_DICTIONARY + " IN (" + QUERY_DICT_DESCENDANT_OR_SELF_IDS + ")";
+			"COUNT(" + VocardsDS.CARD_COL_ID + ") as " + WORD_COUNT + "," +
+			"AVG(" + VocardsDS.CARD_COL_FACTOR + ") as " + LEARN_FACTOR +
+			" FROM " + CARD_TABLE + " WHERE " + CARD_COL_DICTIONARY + " IN (" + QUERY_DICT_DESCENDANT_OR_SELF_IDS + ")";
 
 //	private static final String INSERT_HIERARCHY_FROM_PARENT = "INSERT INTO " + VocardsDataSource.HIERARCHY_TABLE + " " +
 //			"(" +
@@ -69,60 +69,60 @@ public class DictionaryDS {
 //			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
 //			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
 	
-	private static final String INSERT_HIERARCHY_TO_BE_CHILD_OF = "INSERT INTO " + VocardsDataSource.HIERARCHY_TABLE + " (" +
-			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "," +
-			VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "," +
-			VocardsDataSource.HIERARCHY_COLUMN_LENGTH +
+	private static final String INSERT_HIERARCHY_TO_BE_CHILD_OF = "INSERT INTO " + VocardsDS.HIER_TABLE + " (" +
+			VocardsDS.HIER_COL_ANCESTOR + "," +
+			VocardsDS.HIER_COL_DESCENDANT + "," +
+			VocardsDS.HIER_COL_LENGTH +
 			") " +
 			"SELECT " +
-			"a." + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "," +
-			"d." + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "," +
-			"(ld." + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + " + la." + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + " + 1) " +
+			"a." + VocardsDS.HIER_COL_ANCESTOR + "," +
+			"d." + VocardsDS.HIER_COL_DESCENDANT + "," +
+			"(ld." + VocardsDS.HIER_COL_LENGTH + " + la." + VocardsDS.HIER_COL_LENGTH + " + 1) " +
 			"FROM " +
-			VocardsDataSource.HIERARCHY_TABLE + " d," +
-			VocardsDataSource.HIERARCHY_TABLE + " a," +
-			VocardsDataSource.HIERARCHY_TABLE + " ld," +
-			VocardsDataSource.HIERARCHY_TABLE + " la " +
+			VocardsDS.HIER_TABLE + " d," +
+			VocardsDS.HIER_TABLE + " a," +
+			VocardsDS.HIER_TABLE + " ld," +
+			VocardsDS.HIER_TABLE + " la " +
 			"WHERE" +
-			" d." + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=?" +
-			" AND a." + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?" +
-			" AND ld." + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=d." + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR +
-			" AND ld." + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=d." + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT +
-			" AND la." + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=a." + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT +
-			" AND la." + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=a." + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR;
+			" d." + VocardsDS.HIER_COL_ANCESTOR + "=?" +
+			" AND a." + VocardsDS.HIER_COL_DESCENDANT + "=?" +
+			" AND ld." + VocardsDS.HIER_COL_ANCESTOR + "=d." + VocardsDS.HIER_COL_ANCESTOR +
+			" AND ld." + VocardsDS.HIER_COL_DESCENDANT + "=d." + VocardsDS.HIER_COL_DESCENDANT +
+			" AND la." + VocardsDS.HIER_COL_DESCENDANT + "=a." + VocardsDS.HIER_COL_DESCENDANT +
+			" AND la." + VocardsDS.HIER_COL_ANCESTOR + "=a." + VocardsDS.HIER_COL_ANCESTOR;
 
-	private static final String REMOVE_DICT_HIERARCHY = "DELETE FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
-			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + "=? " +
-			"OR " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
+	private static final String REMOVE_DICT_HIERARCHY = "DELETE FROM " + VocardsDS.HIER_TABLE + " " +
+			"WHERE " + VocardsDS.HIER_COL_ANCESTOR + "=? " +
+			"OR " + VocardsDS.HIER_COL_DESCENDANT + "=?";
 
-	private static final String UPDATE_DICT_DESCENDANTS_HIERARCHY = "UPDATE " + VocardsDataSource.HIERARCHY_TABLE + " " +
-			"SET " + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "=" + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + "-1 " +
-			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " IN (" + QUERY_DICT_CHILD_IDS + ")" +
-			" AND " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " != " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT;
+	private static final String UPDATE_DICT_DESCENDANTS_HIERARCHY = "UPDATE " + VocardsDS.HIER_TABLE + " " +
+			"SET " + VocardsDS.HIER_COL_LENGTH + "=" + VocardsDS.HIER_COL_LENGTH + "-1 " +
+			"WHERE " + VocardsDS.HIER_COL_DESCENDANT + " IN (" + QUERY_DICT_CHILD_IDS + ")" +
+			" AND " + VocardsDS.HIER_COL_ANCESTOR + " != " + VocardsDS.HIER_COL_DESCENDANT;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
 	// ================= STATIC METHODS =========================
 
-	public static Cursor getByName(VocardsDataSource db, String name) {
+	public static Cursor getByName(VocardsDS db, String name) {
 		return db.query(
-				VocardsDataSource.DICTIONARY_TABLE,
+				VocardsDS.DICT_TABLE,
 				null,
-				DICTIONARY_COLUMN_NAME + "=?",
+				DICT_COL_NAME + "=?",
 				new String[] { name });
 	}
 
-	public static Cursor getById(VocardsDataSource db, long id) {
+	public static Cursor getById(VocardsDS db, long id) {
 		return db.query(
-				VocardsDataSource.DICTIONARY_TABLE,
-				new String[] { DICTIONARY_COLUMN_ID, DICTIONARY_COLUMN_NAME, DICTIONARY_COLUMN_NATIVE_LANG, DICTIONARY_COLUMN_FOREIGN_LANG },
-				DICTIONARY_COLUMN_ID + "=?",
+				VocardsDS.DICT_TABLE,
+				new String[] { DICT_COL_ID, DICT_COL_NAME, DICT_COL_NATIVE_LANG, DICT_COL_FOREIGN_LANG },
+				DICT_COL_ID + "=?",
 				new String[] { id + "" },
 				null,
 				"1");
 	}
 
-	public static int getWordCount(VocardsDataSource db, long dictId) {
+	public static int getWordCount(VocardsDS db, long dictId) {
 		Cursor c = getDictionaryStats(db, dictId);
 		c.moveToFirst();
 		int count = c.getInt(c.getColumnIndex(WORD_COUNT));
@@ -130,11 +130,11 @@ public class DictionaryDS {
 		return count;
 	}
 
-	public static Cursor getDictionaryStats(VocardsDataSource db, long dictId) {
+	public static Cursor getDictionaryStats(VocardsDS db, long dictId) {
 		return db.rawQuery(QUERY_STATS, new String[] { dictId + "" });
 	}
 
-	public static double getDictFactor(VocardsDataSource db, long dictId) {
+	public static double getDictFactor(VocardsDS db, long dictId) {
 		Cursor c = getDictionaryStats(db, dictId);
 		c.moveToFirst();
 		double res = c.getDouble(c.getColumnIndex(LEARN_FACTOR));
@@ -142,70 +142,70 @@ public class DictionaryDS {
 		return res;
 	}
 
-	public static Cursor getChildDictionaries(VocardsDataSource db, Long rootDictId) {
+	public static Cursor getChildDictionaries(VocardsDS db, Long rootDictId) {
 		if (rootDictId == null) {
 			return db.rawQuery(QUERY_DICT_ROOT, new String[] {});
 		} else {
 			return db.query(
-					VocardsDataSource.DICTIONARY_TABLE,
+					VocardsDS.DICT_TABLE,
 					null,
-					VocardsDataSource.DICTIONARY_COLUMN_ID + " IN (" + QUERY_DICT_CHILD_IDS + ")",
+					VocardsDS.DICT_COL_ID + " IN (" + QUERY_DICT_CHILD_IDS + ")",
 					new String[] { rootDictId + "" });
 		}
 	}
 
-	public static Cursor getDescendantDictionaries(VocardsDataSource db, Long dictId) {
+	public static Cursor getDescendantDictionaries(VocardsDS db, Long dictId) {
 		return db.query(
-				VocardsDataSource.DICTIONARY_TABLE,
+				VocardsDS.DICT_TABLE,
 				null,
-				VocardsDataSource.DICTIONARY_COLUMN_ID + " IN (" + QUERY_DICT_DESCENDANT_IDS + ")",
+				VocardsDS.DICT_COL_ID + " IN (" + QUERY_DICT_DESCENDANT_IDS + ")",
 				new String[] { dictId + "" });
 	}
 
-	public static Cursor getParentDictionary(VocardsDataSource db, Long dictId) {
+	public static Cursor getParentDictionary(VocardsDS db, Long dictId) {
 		return db.query(
-				VocardsDataSource.DICTIONARY_TABLE,
+				VocardsDS.DICT_TABLE,
 				null,
-				VocardsDataSource.DICTIONARY_COLUMN_ID + "= (" + QUERY_PARENT_DICT_ID + ")",
+				VocardsDS.DICT_COL_ID + "= (" + QUERY_PARENT_DICT_ID + ")",
 				new String[] { dictId + "" });
 	}
 
-	public static Cursor getDictionaries(VocardsDataSource db) {
-		Cursor c = db.query(VocardsDataSource.DICTIONARY_TABLE,
+	public static Cursor getDictionaries(VocardsDS db) {
+		Cursor c = db.query(VocardsDS.DICT_TABLE,
 				new String[] {
-						VocardsDataSource.DICTIONARY_COLUMN_ID,
-						VocardsDataSource.DICTIONARY_COLUMN_NAME,
-						VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG,
-						VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG },
+						VocardsDS.DICT_COL_ID,
+						VocardsDS.DICT_COL_NAME,
+						VocardsDS.DICT_COL_NATIVE_LANG,
+						VocardsDS.DICT_COL_FOREIGN_LANG },
 				null,
 				null,
-				VocardsDataSource.DICTIONARY_COLUMN_NAME);
+				VocardsDS.DICT_COL_NAME);
 		return c;
 	}
 
-	public static Cursor getModifiedDicts(VocardsDataSource db, long lastBackup) {
+	public static Cursor getModifiedDicts(VocardsDS db, long lastBackup) {
 		return db.query(
-				VocardsDataSource.DICTIONARY_TABLE,
+				VocardsDS.DICT_TABLE,
 				null,
-				VocardsDataSource.DICTIONARY_COLUMN_MODIFIED + ">? OR " + VocardsDataSource.DICTIONARY_COLUMN_MODIFIED + " IS NULL",
+				VocardsDS.DICT_COLN_MODIFIED + ">? OR " + VocardsDS.DICT_COLN_MODIFIED + " IS NULL",
 				new String[] { lastBackup + "" });
 	}
 
-	public static long createDictionary(VocardsDataSource db, String name, Language nativeLang, Language foreignLang,
+	public static long createDictionary(VocardsDS db, String name, Language nativeLang, Language foreignLang,
 			Long parentDictId) {
 		db.begin();
 
 		ContentValues val = new ContentValues();
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_NAME, name);
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG, nativeLang.getId());
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG, foreignLang.getId());
-		long id = db.insert(VocardsDataSource.DICTIONARY_TABLE, val);
+		val.put(VocardsDS.DICT_COL_NAME, name);
+		val.put(VocardsDS.DICT_COL_NATIVE_LANG, nativeLang.getId());
+		val.put(VocardsDS.DICT_COL_FOREIGN_LANG, foreignLang.getId());
+		long id = db.insert(VocardsDS.DICT_TABLE, val);
 
 		val = new ContentValues();
-		val.put(VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR, id);
-		val.put(VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT, id);
-		val.put(VocardsDataSource.HIERARCHY_COLUMN_LENGTH, 0);
-		db.insert(VocardsDataSource.HIERARCHY_TABLE, val);
+		val.put(VocardsDS.HIER_COL_ANCESTOR, id);
+		val.put(VocardsDS.HIER_COL_DESCENDANT, id);
+		val.put(VocardsDS.HIER_COL_LENGTH, 0);
+		db.insert(VocardsDS.HIER_TABLE, val);
 
 		if (parentDictId != null) {
 //			db.execSql(INSERT_HIERARCHY_FROM_PARENT, new String[] { id + "", parentDictId + "" });
@@ -220,13 +220,13 @@ public class DictionaryDS {
 		return id;
 	}
 
-	public static void setModified(VocardsDataSource db, long dictId) {
+	public static void setModified(VocardsDS db, long dictId) {
 		ContentValues val = new ContentValues();
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_MODIFIED, System.currentTimeMillis());
+		val.put(VocardsDS.DICT_COLN_MODIFIED, System.currentTimeMillis());
 		db.update(
-				VocardsDataSource.DICTIONARY_TABLE,
+				VocardsDS.DICT_TABLE,
 				val,
-				VocardsDataSource.DICTIONARY_COLUMN_ID + "=?",
+				VocardsDS.DICT_COL_ID + "=?",
 				new String[] { dictId + "" });
 	}
 
@@ -236,7 +236,7 @@ public class DictionaryDS {
 	 * @param dictId
 	 * @return
 	 */
-	public static int deleteDict(VocardsDataSource db, long dictId, boolean descendants) {
+	public static int deleteDict(VocardsDS db, long dictId, boolean descendants) {
 		int res = 0;
 
 		db.begin();
@@ -244,7 +244,7 @@ public class DictionaryDS {
 			Cursor descs = getDescendantDictionaries(db, dictId);
 			descs.moveToFirst();
 			while (!descs.isAfterLast()) {
-				long descId = descs.getLong(descs.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID));
+				long descId = descs.getLong(descs.getColumnIndex(VocardsDS.DICT_COL_ID));
 				deleteDict(db, descId, false);
 				descs.moveToNext();
 			}
@@ -256,31 +256,31 @@ public class DictionaryDS {
 		db.execSql(REMOVE_DICT_HIERARCHY, new String[] { dictId + "", dictId + "" });
 
 		res += WordDS.removeCardsByDict(db, dictId);
-		res += db.delete(VocardsDataSource.DICTIONARY_TABLE, dictId);
+		res += db.delete(VocardsDS.DICT_TABLE, dictId);
 		db.commit();
 
 		return res;
 	}
 
-	public static int updateDictionary(VocardsDataSource db, long id, String name, Language nativeLang, Language foreignLang) {
+	public static int updateDictionary(VocardsDS db, long id, String name, Language nativeLang, Language foreignLang) {
 		ContentValues val = new ContentValues();
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_NAME, name);
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG, nativeLang.getId());
-		val.put(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG, foreignLang.getId());
-		return db.update(VocardsDataSource.DICTIONARY_TABLE, val, VocardsDataSource.DICTIONARY_COLUMN_ID + "=?", new String[] { id + "" });
+		val.put(VocardsDS.DICT_COL_NAME, name);
+		val.put(VocardsDS.DICT_COL_NATIVE_LANG, nativeLang.getId());
+		val.put(VocardsDS.DICT_COL_FOREIGN_LANG, foreignLang.getId());
+		return db.update(VocardsDS.DICT_TABLE, val, VocardsDS.DICT_COL_ID + "=?", new String[] { id + "" });
 	}
 
-	public static int setAsRoot(VocardsDataSource db, long id) {
-		String where = VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + " IN (" +
+	public static int setAsRoot(VocardsDS db, long id) {
+		String where = VocardsDS.HIER_COL_DESCENDANT + " IN (" +
 				QUERY_DICT_DESCENDANT_OR_SELF_IDS +
 				") " +
-				"AND " + VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + " IN (" +
+				"AND " + VocardsDS.HIER_COL_ANCESTOR + " IN (" +
 				QUERY_ANCESTOR_DICT_ID +
 				")";
 
 		db.begin();
 		int deleted = db.delete(
-				VocardsDataSource.HIERARCHY_TABLE,
+				VocardsDS.HIER_TABLE,
 				where,
 				new String[] { id + "", id + "" }
 				);
@@ -288,7 +288,7 @@ public class DictionaryDS {
 		return deleted;
 	}
 
-	public static void setAsChildOf(VocardsDataSource db, long movedDictId, long parentDictId) 
+	public static void setAsChildOf(VocardsDS db, long movedDictId, long parentDictId) 
 			throws ParentIsTheSameException, ParentIsDescendantException {
 		db.begin();
 
@@ -301,7 +301,7 @@ public class DictionaryDS {
 		Cursor descs = getDescendantDictionaries(db, movedDictId);
 		descs.moveToFirst();
 		while (!descs.isAfterLast()) {
-			long descId = descs.getLong(descs.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID));
+			long descId = descs.getLong(descs.getColumnIndex(VocardsDS.DICT_COL_ID));
 			if (descId == parentDictId) {
 				descs.close();
 				throw new ParentIsDescendantException("Parent is a descendant of moved dictionary!");

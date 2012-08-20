@@ -18,7 +18,7 @@ import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.adapter.LanguageAdapter;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
@@ -109,13 +109,13 @@ public class DictAddActivity extends AbstractActivity {
 
 			Cursor c = DictionaryDS.getById(this.db, this.dictId);
 			c.moveToFirst();
-			this.nameEdit.setText(c.getString(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME)));
+			this.nameEdit.setText(c.getString(c.getColumnIndex(VocardsDS.DICT_COL_NAME)));
 
-			int natLang = c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG));
+			int natLang = c.getInt(c.getColumnIndex(VocardsDS.DICT_COL_NATIVE_LANG));
 			int natLangPos = this.langAdapter.getPosition(Language.getById(natLang));
 			this.nativeSpinner.setSelection(natLangPos);
 
-			int forLang = c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG));
+			int forLang = c.getInt(c.getColumnIndex(VocardsDS.DICT_COL_FOREIGN_LANG));
 			int forLangPos = this.langAdapter.getPosition(Language.getById(forLang));
 			this.foreignSpinner.setSelection(forLangPos);
 			

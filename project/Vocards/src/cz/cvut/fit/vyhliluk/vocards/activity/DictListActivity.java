@@ -29,7 +29,7 @@ import cz.cvut.fit.vyhliluk.vocards.activity.task.ExportTask;
 import cz.cvut.fit.vyhliluk.vocards.core.ParentIsDescendantException;
 import cz.cvut.fit.vyhliluk.vocards.core.ParentIsTheSameException;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
@@ -299,7 +299,7 @@ public class DictListActivity extends AbstractListActivity {
 		if (this.parentDictId != null) {
 			Cursor pDict = DictionaryDS.getById(this.db, this.parentDictId);
 			pDict.moveToFirst();
-			String dictName = pDict.getString(pDict.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME));
+			String dictName = pDict.getString(pDict.getColumnIndex(VocardsDS.DICT_COL_NAME));
 			String text = getString(R.string.dict_list_children_title, dictName);
 
 			this.parentFolderNameText.setText(text);
@@ -405,7 +405,7 @@ public class DictListActivity extends AbstractListActivity {
 			if (pDict.isAfterLast()) {
 				parentDictId = null;
 			} else {
-				parentDictId = pDict.getLong(pDict.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID));
+				parentDictId = pDict.getLong(pDict.getColumnIndex(VocardsDS.DICT_COL_ID));
 			}
 			pDict.close();
 			refreshListAdapter();
@@ -445,17 +445,17 @@ public class DictListActivity extends AbstractListActivity {
 			DictListViewHolder h = (DictListViewHolder) view.getTag();
 
 			Language natLang = Language.getById(cursor.getInt(cursor.getColumnIndex(
-					VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG)));
+					VocardsDS.DICT_COL_NATIVE_LANG)));
 			h.nativeFlag.setImageResource(natLang.getIconId());
 
 			Language forLang = Language.getById(cursor.getInt(cursor.getColumnIndex(
-					VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG)));
+					VocardsDS.DICT_COL_FOREIGN_LANG)));
 			h.foreignFlag.setImageResource(forLang.getIconId());
 
-			String dictText = cursor.getString(cursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NAME));
+			String dictText = cursor.getString(cursor.getColumnIndex(VocardsDS.DICT_COL_NAME));
 			h.dictText.setText(dictText);
 
-			h.goInto.setTag(cursor.getLong(cursor.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_ID)));
+			h.goInto.setTag(cursor.getLong(cursor.getColumnIndex(VocardsDS.DICT_COL_ID)));
 		}
 
 		@Override

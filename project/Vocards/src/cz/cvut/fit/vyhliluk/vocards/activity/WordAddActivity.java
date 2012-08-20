@@ -23,7 +23,7 @@ import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractActivity;
 import cz.cvut.fit.vyhliluk.vocards.activity.task.TranslateTask;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.AppStatus;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
@@ -130,8 +130,8 @@ public class WordAddActivity extends AbstractActivity {
 			Cursor c = WordDS.getCardById(db, this.cardId);
 			c.moveToFirst();
 			
-			List<String> natWords = CardUtil.explodeWords(c.getString(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_NATIVE)));
-			List<String> forWords = CardUtil.explodeWords(c.getString(c.getColumnIndex(VocardsDataSource.CARD_COLUMN_FOREIGN)));
+			List<String> natWords = CardUtil.explodeWords(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_NATIVE)));
+			List<String> forWords = CardUtil.explodeWords(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_FOREIGN)));
 			
 			c.close();
 
@@ -147,8 +147,8 @@ public class WordAddActivity extends AbstractActivity {
 
 		Cursor c = DictionaryDS.getById(db, dictId);
 		c.moveToFirst();
-		Language from = Language.getById(c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_NATIVE_LANG)));
-		Language to = Language.getById(c.getInt(c.getColumnIndex(VocardsDataSource.DICTIONARY_COLUMN_FOREIGN_LANG)));
+		Language from = Language.getById(c.getInt(c.getColumnIndex(VocardsDS.DICT_COL_NATIVE_LANG)));
+		Language to = Language.getById(c.getInt(c.getColumnIndex(VocardsDS.DICT_COL_FOREIGN_LANG)));
 		c.close();
 		if (!Language.NONE.equals(from) && !Language.NONE.equals(to)) {
 			this.translateTask = new MyTranslateTask(from, to);

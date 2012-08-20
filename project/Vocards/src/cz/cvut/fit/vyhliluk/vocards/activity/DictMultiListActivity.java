@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.abstr.AbstractListActivity;
-import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDataSource;
+import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
@@ -66,7 +66,7 @@ public class DictMultiListActivity extends AbstractListActivity {
 				android.R.layout.simple_list_item_multiple_choice,
 				null,
 				new String[] {
-						VocardsDataSource.DICTIONARY_COLUMN_NAME
+						VocardsDS.DICT_COL_NAME
 				},
 				new int[] {
 						android.R.id.text1
