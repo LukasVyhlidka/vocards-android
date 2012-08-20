@@ -193,6 +193,7 @@ public class DictListActivity extends AbstractListActivity {
 				break;
 			case CTX_MENU_MOVE_UNDER:
 				this.movedDictionaryId = info.id;
+				Toast.makeText(this, R.string.dict_list_select_parent_title, Toast.LENGTH_LONG).show();
 				Intent i = new Intent(this, DictListActivity.class);
 				i.putExtra(EXTRAS_MESSAGE, res.getString(R.string.dict_list_select_parent_title));
 				i.putExtra(EXTRAS_ONLY_DICT_SELECTION, true);
