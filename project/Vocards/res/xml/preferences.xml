@@ -22,5 +22,13 @@
             android:key="translation"
             android:title="@string/settings_translation_title" />
     </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/settings_info">
+        <Preference 
+            android:title="@string/settings_info_lastbackup_title"
+            android:summary="@string/settings_info_lastbackup_default"
+            android:enabled="false"
+            android:key="last_backup"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

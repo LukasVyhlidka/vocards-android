@@ -112,6 +112,9 @@
     <string name="settings_card_font_size_title">Card font size</string>
     <string name="settings_practice_direction_title">Practise Direction</string>
     <string name="settings_translation_title">Enable Translation</string>
+    <string name="settings_info">Info</string>
+    <string name="settings_info_lastbackup_title">Last Backup</string>
+    <string name="settings_info_lastbackup_default">Never</string>
     
     <!-- Export -->
     <string name="export_sdcard_not_mounted">Can\'t export your dictionaries because SD Card is not mounted.</string>

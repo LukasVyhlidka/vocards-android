@@ -1,10 +1,14 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import cz.cvut.fit.vyhliluk.vocards.R;
@@ -18,6 +22,7 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	private EditTextPreference fontSizePref = null;
 	private ListPreference practDirPref = null;
+	private Preference lastBackup = null;
 
 	// ================= STATIC METHODS =========================
 
@@ -57,11 +62,19 @@ public class SettingsActivity extends PreferenceActivity implements
 	private void init() {
 		this.fontSizePref = (EditTextPreference) findPreference(Settings.KEY_CARD_FONT_SIZE);
 		this.practDirPref = (ListPreference) findPreference(Settings.KEY_PRACTISE_DIRECTION);
+		this.lastBackup = (Preference) findPreference(Settings.KEY_LAST_BACKUP);
 
 		String dirName = this.getResources().getStringArray(R.array.practise_direction_array_names)[Settings.getPractiseDirection()];
 
 		this.fontSizePref.setSummary(Settings.getCardFontSize() + "");
 		this.practDirPref.setSummary(dirName);
+		
+		long lastBackup = Settings.getLastBackup();
+		if (lastBackup != 0) {
+			Date lastBackupDate = new Date(Settings.getLastBackup());
+			String lastBackupDateStr = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(lastBackupDate);
+			this.lastBackup.setSummary(lastBackupDateStr);
+		}
 	}
 
 	private String getPractiseDirectionName() {

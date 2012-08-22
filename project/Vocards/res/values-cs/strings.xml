@@ -112,6 +112,9 @@
     <string name="settings_card_font_size_title">Velikost písma kartiček</string>
     <string name="settings_practice_direction_title">Směr zkoušení</string>
     <string name="settings_translation_title">Povol překlady</string>
+    <string name="settings_info">Informace</string>
+    <string name="settings_info_lastbackup_title">Poslední záloha</string>
+    <string name="settings_info_lastbackup_default">Nikdy</string>
     
     <!-- Export -->
     <string name="export_sdcard_not_mounted">Nemohu exportovat Vaše slovníky, protože není připojena SD karta.</string>

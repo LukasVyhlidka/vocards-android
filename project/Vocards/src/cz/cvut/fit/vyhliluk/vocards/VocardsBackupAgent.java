@@ -76,6 +76,7 @@ public class VocardsBackupAgent extends BackupAgent {
 			db.endTransaction();
 			db.close();
 			Settings.setBackupAgentCalled(false);
+			Settings.setLastBackup(System.currentTimeMillis());
 		}
 	}
 

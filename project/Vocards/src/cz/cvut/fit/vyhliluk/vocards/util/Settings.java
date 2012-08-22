@@ -21,6 +21,7 @@ public class Settings {
 	public static final String KEY_PRACTISE_DIRECTION = "practise_direction";
 	public static final String KEY_CARD_FONT_SIZE = "card_font_size";
 	public static final String KEY_TRANSLATION = "translation";
+	public static final String KEY_LAST_BACKUP = "last_backup";
 	public static final String KEY_BACKUP_AGENT_CALLED = "backupAgentCalled";
 
 	public static final long UNDEFINED_ACTIVE_DICT_ID = -1;
@@ -59,6 +60,14 @@ public class Settings {
 	
 	public static void setTranslation(boolean trans) {
 		putBool(KEY_TRANSLATION, trans);
+	}
+	
+	public static long getLastBackup() {
+		return getLong(KEY_LAST_BACKUP, 0);
+	}
+	
+	public static void setLastBackup(long lastBackup) {
+		putLong(KEY_LAST_BACKUP, lastBackup);
 	}
 	
 	public static boolean getBackupAgentCalled() {
