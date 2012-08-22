@@ -32,10 +32,10 @@ public class BackupDS {
 		return db.update(
 				VocardsDS.BACKUP_TABLE,
 				val,
-				VocardsDS.BACKUP_COL_DICTIONARY +"=?",
+				VocardsDS.BACKUP_COL_DICTIONARY + "=?",
 				new String[] { dictId + "" });
 	}
-	
+
 	public static int deleteBackup(VocardsDS db, long backupId) {
 		return db.delete(VocardsDS.BACKUP_TABLE, backupId);
 	}
@@ -54,6 +54,10 @@ public class BackupDS {
 				null,
 				VocardsDS.BACKUP_COL_DICTIONARY + "=?",
 				new String[] { dictId + "" });
+	}
+
+	public static Cursor getBackups(VocardsDS db) {
+		return db.query(VocardsDS.BACKUP_TABLE, null, null, null);
 	}
 
 	// ================= CONSTRUCTORS ===========================

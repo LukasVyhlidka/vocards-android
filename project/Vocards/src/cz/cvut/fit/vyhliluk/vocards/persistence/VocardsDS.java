@@ -10,7 +10,7 @@ public class VocardsDS {
 	// ================= STATIC ATTRIBUTES ======================
 
 	public static final String DB_NAME = "vocards";
-	public static final int DB_VERSION = 2;
+	public static final int DB_VERSION = 3;
 
 	public static final String DB_DEFAULT_ID = "_id";
 
@@ -19,7 +19,7 @@ public class VocardsDS {
 	public static final String DICT_COL_NAME = "name";
 	public static final String DICT_COL_NATIVE_LANG = "native_lang";
 	public static final String DICT_COL_FOREIGN_LANG = "foreign_lang";
-	public static final String DICT_COLN_MODIFIED = "modified";
+	public static final String DICT_COL_MODIFIED = "modified";
 
 	public static final String CARD_TABLE = "card";
 	public static final String CARD_COL_ID = DB_DEFAULT_ID;
@@ -48,7 +48,7 @@ public class VocardsDS {
 			+ DICT_COL_NAME + " TEXT NOT NULL,"
 			+ DICT_COL_NATIVE_LANG + " INTEGER NOT NULL,"
 			+ DICT_COL_FOREIGN_LANG + " INTEGER NOT NULL,"
-			+ DICT_COLN_MODIFIED +" INTEGER"
+			+ DICT_COL_MODIFIED +" INTEGER NOT NULL DEFAULT 0"
 			+ ");";
 
 	private static final String CREATE_CARD = "CREATE TABLE " + CARD_TABLE + "("
@@ -134,16 +134,15 @@ public class VocardsDS {
 		this.db.execSQL(sql, args);
 	}
 
-	public void begin() {
+	public void beginTransaction() {
 		this.db.beginTransaction();
 	}
-
-	public void commit() {
+	
+	public void setTransactionSuccessful() {
 		this.db.setTransactionSuccessful();
-		this.db.endTransaction();
 	}
-
-	public void rollback() {
+	
+	public void endTransaction() {
 		this.db.endTransaction();
 	}
 
@@ -193,6 +192,21 @@ public class VocardsDS {
 					val.put(HIER_COL_LENGTH, 0);
 					db.insert(HIER_TABLE, null, val);
 				}
+				db.setTransactionSuccessful();
+				db.endTransaction();
+			}
+			
+			if (from < 3) {
+				db.beginTransaction();
+				
+				ContentValues val = new ContentValues();
+				val.put(VocardsDS.DICT_COL_MODIFIED, System.currentTimeMillis());
+				db.update(
+						VocardsDS.DICT_TABLE, 
+						val, 
+						VocardsDS.DICT_COL_MODIFIED +" IS NULL", 
+						null);
+				
 				db.setTransactionSuccessful();
 				db.endTransaction();
 			}

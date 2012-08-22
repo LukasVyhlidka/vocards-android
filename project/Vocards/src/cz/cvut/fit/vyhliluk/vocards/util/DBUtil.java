@@ -1,47 +1,52 @@
 package cz.cvut.fit.vyhliluk.vocards.util;
 
 import android.app.backup.BackupManager;
-import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
+import cz.cvut.fit.vyhliluk.vocards.VocardsApp;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
 
 public class DBUtil {
-	//================= STATIC ATTRIBUTES ======================
+	// ================= STATIC ATTRIBUTES ======================
 
-	//================= INSTANCE ATTRIBUTES ====================
+	// ================= INSTANCE ATTRIBUTES ====================
 
-	//================= STATIC METHODS =========================
-	
+	// ================= STATIC METHODS =========================
+
 	public static void closeExistingCursor(Cursor c) {
 		if (c != null) {
 			closeCursor(c);
 		}
 	}
-	
+
 	public static void closeCursor(Cursor c) {
-		if (! c.isClosed()) {
+		if (!c.isClosed()) {
 			c.close();
 		}
 	}
-	
-	public static void dictModif(VocardsDS db, Context ctx, long dictId) {
+
+	public static void dictModif(VocardsDS db, long dictId) {
 		DictionaryDS.setModified(db, dictId);
-		
-		BackupManager bckpMgr = new BackupManager(ctx);
-		bckpMgr.dataChanged();
+
+		if (!Settings.getBackupAgentCalled()) {
+			Log.i("DBUtil", "Calling backup agent");
+			BackupManager bckpMgr = new BackupManager(VocardsApp.getInstance());
+			bckpMgr.dataChanged();
+			Settings.setBackupAgentCalled(true);
+		}
 	}
 
-	//================= CONSTRUCTORS ===========================
+	// ================= CONSTRUCTORS ===========================
 
-	//================= OVERRIDEN METHODS ======================
+	// ================= OVERRIDEN METHODS ======================
 
-	//================= INSTANCE METHODS =======================
+	// ================= INSTANCE METHODS =======================
 
-	//================= PRIVATE METHODS ========================
+	// ================= PRIVATE METHODS ========================
 
-	//================= GETTERS/SETTERS ========================
+	// ================= GETTERS/SETTERS ========================
 
-	//================= INNER CLASSES ==========================
+	// ================= INNER CLASSES ==========================
 
 }

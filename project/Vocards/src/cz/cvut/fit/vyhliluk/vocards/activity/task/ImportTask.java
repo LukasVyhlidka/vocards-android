@@ -53,7 +53,7 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 		boolean ok = false;
 		try {
 			db.open();
-			db.begin();
+			db.beginTransaction();
 			
 			for (File f : params) {
 				String content = StorageUtil.readEntireFile(f);
@@ -73,10 +73,9 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 			ex.printStackTrace();
 		} finally {
 			if (ok) {
-				db.commit();
-			} else {
-				db.rollback();
+				db.setTransactionSuccessful();
 			}
+			db.endTransaction();
 			db.close();
 		}
 

@@ -21,6 +21,7 @@ public class Settings {
 	public static final String KEY_PRACTISE_DIRECTION = "practise_direction";
 	public static final String KEY_CARD_FONT_SIZE = "card_font_size";
 	public static final String KEY_TRANSLATION = "translation";
+	public static final String KEY_BACKUP_AGENT_CALLED = "backupAgentCalled";
 
 	public static final long UNDEFINED_ACTIVE_DICT_ID = -1;
 
@@ -58,6 +59,14 @@ public class Settings {
 	
 	public static void setTranslation(boolean trans) {
 		putBool(KEY_TRANSLATION, trans);
+	}
+	
+	public static boolean getBackupAgentCalled() {
+		return getBool(KEY_BACKUP_AGENT_CALLED, false);
+	}
+	
+	public static void setBackupAgentCalled(boolean value) {
+		putBool(KEY_BACKUP_AGENT_CALLED, value);
 	}
 
 	// ================= CONSTRUCTORS ===========================

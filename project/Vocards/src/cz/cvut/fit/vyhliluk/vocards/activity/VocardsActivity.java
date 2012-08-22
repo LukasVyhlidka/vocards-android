@@ -122,6 +122,7 @@ public class VocardsActivity extends AbstractActivity {
 		if (c.getCount() != 1) { // selected dictionary is not in db
 			Settings.removeActiveDictionary();
 			this.dictionaryUnselected();
+			c.close();
 			return;
 		}
 		c.moveToFirst();

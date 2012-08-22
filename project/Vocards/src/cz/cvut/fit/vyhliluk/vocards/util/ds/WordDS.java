@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.util.Log;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
+import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 
 public class WordDS {
 	// ================= STATIC ATTRIBUTES ======================
@@ -107,7 +108,7 @@ public class WordDS {
 	}
 
 	public static long createCard(VocardsDS db, List<String> natWords, List<String> forWords, int factor, long dictId) {
-		db.begin();
+		db.beginTransaction();
 
 		ContentValues cardValues = new ContentValues();
 		cardValues.put(VocardsDS.CARD_COL_DICTIONARY, dictId);
@@ -116,28 +117,28 @@ public class WordDS {
 		cardValues.put(VocardsDS.CARD_COL_FOREIGN, CardUtil.implodeWords(forWords));
 		long cardId = db.insert(VocardsDS.CARD_TABLE, cardValues);
 
+		DBUtil.dictModif(db, dictId);
+		
 		if (cardId != -1) {
-			db.commit();
-			return cardId;
-		} else {
-			db.rollback();
-			return -1;
+			db.setTransactionSuccessful();
 		}
+		db.endTransaction();
+		return cardId;
 	}
 
 	public static int removeCard(VocardsDS db, long cardId) {
-		db.begin();
+		db.beginTransaction();
 
 		int res = 0;
 		res += db.delete(VocardsDS.CARD_TABLE, cardId);
 
-		db.commit();
-
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		return res;
 	}
 
 	public static int removeCardsByDict(VocardsDS db, long dictId) {
-		db.begin();
+		db.beginTransaction();
 
 		int res = 0;
 		Cursor c = db.query(VocardsDS.CARD_TABLE, null, VocardsDS.CARD_COL_DICTIONARY + "=?", new String[] { dictId + "" });
@@ -146,10 +147,10 @@ public class WordDS {
 			res += removeCard(db, c.getLong(c.getColumnIndex(VocardsDS.CARD_COL_ID)));
 			c.moveToNext();
 		}
-
 		c.close();
 
-		db.commit();
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		return res;
 	}
 
@@ -161,7 +162,7 @@ public class WordDS {
 	}
 
 	public static void updateCard(VocardsDS db, long cardId, List<String> natWords, List<String> forWords) {
-		db.begin();
+		db.beginTransaction();
 
 		ContentValues val = new ContentValues();
 		val.put(VocardsDS.CARD_COL_FACTOR, CardUtil.MIN_FACTOR);
@@ -169,8 +170,16 @@ public class WordDS {
 		val.put(VocardsDS.CARD_COL_FOREIGN, CardUtil.implodeWords(forWords));
 
 		db.update(VocardsDS.CARD_TABLE, val, VocardsDS.CARD_COL_ID + "=?", new String[] { cardId + "" });
+		
+		//Get card dictionary because of set modified
+		Cursor card = getCardById(db, cardId);
+		card.moveToFirst();
+		long dictId = card.getLong(card.getColumnIndex(VocardsDS.CARD_COL_DICTIONARY));
+		card.close();
+		DBUtil.dictModif(db, dictId);
 
-		db.commit();
+		db.setTransactionSuccessful();
+		db.endTransaction();
 	}
 
 	// ================= CONSTRUCTORS ===========================

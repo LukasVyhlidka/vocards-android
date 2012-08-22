@@ -26,7 +26,6 @@ import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
 import cz.cvut.fit.vyhliluk.vocards.util.AppStatus;
 import cz.cvut.fit.vyhliluk.vocards.util.CardUtil;
-import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.Settings;
 import cz.cvut.fit.vyhliluk.vocards.util.StringUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionaryDS;
@@ -252,7 +251,7 @@ public class WordAddActivity extends AbstractActivity {
 				WordDS.updateCard(db, cardId, natWords, forWords);
 			}
 
-			DBUtil.dictModif(db, WordAddActivity.this, dictId);
+//			DBUtil.dictModif(db, WordAddActivity.this, dictId);
 
 			Intent i = new Intent(WordAddActivity.this, WordListActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -14,6 +14,7 @@ import cz.cvut.fit.vyhliluk.vocards.core.ParentIsTheSameException;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.enums.Language;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
+import cz.cvut.fit.vyhliluk.vocards.util.DBUtil;
 
 public class DictionaryDS {
 	// ================= STATIC ATTRIBUTES ======================
@@ -56,18 +57,6 @@ public class DictionaryDS {
 			"COUNT(" + VocardsDS.CARD_COL_ID + ") as " + WORD_COUNT + "," +
 			"AVG(" + VocardsDS.CARD_COL_FACTOR + ") as " + LEARN_FACTOR +
 			" FROM " + CARD_TABLE + " WHERE " + CARD_COL_DICTIONARY + " IN (" + QUERY_DICT_DESCENDANT_OR_SELF_IDS + ")";
-
-//	private static final String INSERT_HIERARCHY_FROM_PARENT = "INSERT INTO " + VocardsDataSource.HIERARCHY_TABLE + " " +
-//			"(" +
-//			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + ", " +
-//			VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + ", " +
-//			VocardsDataSource.HIERARCHY_COLUMN_LENGTH +
-//			") SELECT " +
-//			VocardsDataSource.HIERARCHY_COLUMN_ANCESTOR + ", " +
-//			"?, " +
-//			"(" + VocardsDataSource.HIERARCHY_COLUMN_LENGTH + " + 1) " +
-//			"FROM " + VocardsDataSource.HIERARCHY_TABLE + " " +
-//			"WHERE " + VocardsDataSource.HIERARCHY_COLUMN_DESCENDANT + "=?";
 	
 	private static final String INSERT_HIERARCHY_TO_BE_CHILD_OF = "INSERT INTO " + VocardsDS.HIER_TABLE + " (" +
 			VocardsDS.HIER_COL_ANCESTOR + "," +
@@ -187,13 +176,13 @@ public class DictionaryDS {
 		return db.query(
 				VocardsDS.DICT_TABLE,
 				null,
-				VocardsDS.DICT_COLN_MODIFIED + ">? OR " + VocardsDS.DICT_COLN_MODIFIED + " IS NULL",
+				VocardsDS.DICT_COL_MODIFIED + ">?",
 				new String[] { lastBackup + "" });
 	}
 
 	public static long createDictionary(VocardsDS db, String name, Language nativeLang, Language foreignLang,
 			Long parentDictId) {
-		db.begin();
+		db.beginTransaction();
 
 		ContentValues val = new ContentValues();
 		val.put(VocardsDS.DICT_COL_NAME, name);
@@ -215,14 +204,18 @@ public class DictionaryDS {
 				Log.e("dict creation", "setAsChildOf method error.", ex);
 			}
 		}
+		
+//		setModified(db, id);
+		DBUtil.dictModif(db, id);
 
-		db.commit();
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		return id;
 	}
 
 	public static void setModified(VocardsDS db, long dictId) {
 		ContentValues val = new ContentValues();
-		val.put(VocardsDS.DICT_COLN_MODIFIED, System.currentTimeMillis());
+		val.put(VocardsDS.DICT_COL_MODIFIED, System.currentTimeMillis());
 		db.update(
 				VocardsDS.DICT_TABLE,
 				val,
@@ -239,7 +232,7 @@ public class DictionaryDS {
 	public static int deleteDict(VocardsDS db, long dictId, boolean descendants) {
 		int res = 0;
 
-		db.begin();
+		db.beginTransaction();
 		if (descendants) {
 			Cursor descs = getDescendantDictionaries(db, dictId);
 			descs.moveToFirst();
@@ -257,17 +250,27 @@ public class DictionaryDS {
 
 		res += WordDS.removeCardsByDict(db, dictId);
 		res += db.delete(VocardsDS.DICT_TABLE, dictId);
-		db.commit();
+		db.setTransactionSuccessful();
+		db.endTransaction();
 
 		return res;
 	}
 
 	public static int updateDictionary(VocardsDS db, long id, String name, Language nativeLang, Language foreignLang) {
+		db.beginTransaction();
+		
 		ContentValues val = new ContentValues();
 		val.put(VocardsDS.DICT_COL_NAME, name);
 		val.put(VocardsDS.DICT_COL_NATIVE_LANG, nativeLang.getId());
 		val.put(VocardsDS.DICT_COL_FOREIGN_LANG, foreignLang.getId());
-		return db.update(VocardsDS.DICT_TABLE, val, VocardsDS.DICT_COL_ID + "=?", new String[] { id + "" });
+		int res = db.update(VocardsDS.DICT_TABLE, val, VocardsDS.DICT_COL_ID + "=?", new String[] { id + "" });
+		
+//		setModified(db, id);
+		DBUtil.dictModif(db, id);
+		
+		db.setTransactionSuccessful();
+		db.endTransaction();
+		return res;
 	}
 
 	public static int setAsRoot(VocardsDS db, long id) {
@@ -278,19 +281,22 @@ public class DictionaryDS {
 				QUERY_ANCESTOR_DICT_ID +
 				")";
 
-		db.begin();
+		db.beginTransaction();
 		int deleted = db.delete(
 				VocardsDS.HIER_TABLE,
 				where,
 				new String[] { id + "", id + "" }
 				);
-		db.commit();
+//		setModified(db, id);
+		DBUtil.dictModif(db, id);
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		return deleted;
 	}
 
 	public static void setAsChildOf(VocardsDS db, long movedDictId, long parentDictId) 
 			throws ParentIsTheSameException, ParentIsDescendantException {
-		db.begin();
+		db.beginTransaction();
 
 		//Verify that moved and parent dictionaries are not the same!
 		if (movedDictId == parentDictId) {
@@ -313,7 +319,32 @@ public class DictionaryDS {
 		setAsRoot(db, movedDictId);
 		db.execSql(INSERT_HIERARCHY_TO_BE_CHILD_OF, new String[] { movedDictId + "", parentDictId + "" });
 		
-		db.commit();
+//		setModified(db, movedDictId);
+		DBUtil.dictModif(db, movedDictId);
+		
+		db.setTransactionSuccessful();
+		db.endTransaction();
+	}
+	
+	public static Cursor getHierarchies(VocardsDS db) {
+		return db.query(
+				VocardsDS.HIER_TABLE, 
+				null, 
+				null,
+				null);
+	}
+	
+	public static void createHierarchy(VocardsDS db, long ancestor, long descendant, int length) {
+		db.beginTransaction();
+		
+		ContentValues val = new ContentValues();
+		val.put(VocardsDS.HIER_COL_ANCESTOR, ancestor);
+		val.put(VocardsDS.HIER_COL_DESCENDANT, descendant);
+		val.put(VocardsDS.HIER_COL_LENGTH, length);
+		db.insert(VocardsDS.HIER_TABLE, val);
+		
+		db.setTransactionSuccessful();
+		db.endTransaction();
 	}
 
 	// ================= CONSTRUCTORS ===========================
