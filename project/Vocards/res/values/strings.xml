@@ -52,9 +52,12 @@
     <string name="word_list_new_word">New Word</string>
     <string name="word_list_ctx_delete">Delete</string>
     <string name="word_list_ctx_edit">Edit</string>
+    <string name="word_list_ctx_move">Move</string>
     <string name="word_list_deleted_toast">Word was successfully deleted.</string>
     <string name="word_list_empty_word_toast">Please, enter a native word text.</string>
     <string name="word_list_select_order_dialog_title">Please, select the desired word ordering.</string>
+    <string name="word_list_select_parent_title">Select parent dictionary.</string>
+    <string name="word_list_word_moved_toast">Words were successfully moved.</string>
     
     <!-- Add Word -->
     <string name="add_word">New Word</string>

@@ -52,9 +52,12 @@
     <string name="word_list_new_word">Nové slovo</string>
     <string name="word_list_ctx_delete">Smaž</string>
     <string name="word_list_ctx_edit">Uprav</string>
+    <string name="word_list_ctx_move">Přesuň</string>
     <string name="word_list_deleted_toast">Slovo bylo úspěšně smazáno.</string>
     <string name="word_list_empty_word_toast">Zadejte slovo v rodném jazyce, prosím.</string>
     <string name="word_list_select_order_dialog_title">Zadejte požadované řazení.</string>
+    <string name="word_list_select_parent_title">Vyberte rodičovský slovník.</string>
+    <string name="word_list_word_moved_toast">Slova byla úspěšně přesunuta.</string>
     
     <!-- Add Word -->
     <string name="add_word">Nové slovo</string>

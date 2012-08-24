@@ -25,7 +25,7 @@ public class WordDS {
 			"WHERE " + VocardsDS.CARD_COL_DICTIONARY + " IN (" +
 			" SELECT " + VocardsDS.HIER_COL_DESCENDANT + " " +
 			"FROM " + VocardsDS.HIER_TABLE + " " +
-			"WHERE " + VocardsDS.HIER_COL_ANCESTOR +"=?" +
+			"WHERE " + VocardsDS.HIER_COL_ANCESTOR + "=?" +
 			")";
 
 	private static final String QUERY_WORDS_ORD = QUERY_WORDS +
@@ -60,7 +60,7 @@ public class WordDS {
 	}
 
 	public static Cursor getOrdWordsByDictId(VocardsDS db, long id) {
-		return getOrdWordsByDictId(db, id, "lower("+VocardsDS.CARD_COL_NATIVE +")");
+		return getOrdWordsByDictId(db, id, "lower(" + VocardsDS.CARD_COL_NATIVE + ")");
 	}
 
 	public static Cursor getOrdWordsByDictId(VocardsDS db, long id, String orderBy) {
@@ -118,7 +118,7 @@ public class WordDS {
 		long cardId = db.insert(VocardsDS.CARD_TABLE, cardValues);
 
 		DBUtil.dictModif(db, dictId);
-		
+
 		if (cardId != -1) {
 			db.setTransactionSuccessful();
 		}
@@ -170,12 +170,27 @@ public class WordDS {
 		val.put(VocardsDS.CARD_COL_FOREIGN, CardUtil.implodeWords(forWords));
 
 		db.update(VocardsDS.CARD_TABLE, val, VocardsDS.CARD_COL_ID + "=?", new String[] { cardId + "" });
-		
-		//Get card dictionary because of set modified
+
+		// Get card dictionary because of set modified
 		Cursor card = getCardById(db, cardId);
 		card.moveToFirst();
 		long dictId = card.getLong(card.getColumnIndex(VocardsDS.CARD_COL_DICTIONARY));
 		card.close();
+		DBUtil.dictModif(db, dictId);
+
+		db.setTransactionSuccessful();
+		db.endTransaction();
+	}
+
+	public static void moveCards(VocardsDS db, List<Long> cardIds, long dictId) {
+		db.beginTransaction();
+
+		ContentValues val = new ContentValues();
+		val.put(VocardsDS.CARD_COL_DICTIONARY, dictId);
+		for (Long id : cardIds) {
+			db.update(VocardsDS.CARD_TABLE, val, VocardsDS.CARD_COL_ID + "=?", new String[] { id + "" });
+		}
+
 		DBUtil.dictModif(db, dictId);
 
 		db.setTransactionSuccessful();

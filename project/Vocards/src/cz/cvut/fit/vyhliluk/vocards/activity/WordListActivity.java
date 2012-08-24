@@ -1,5 +1,8 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +44,9 @@ public class WordListActivity extends AbstractListActivity {
 
 	public static final int CTX_DELETE_WORD = 0;
 	public static final int CTX_EDIT_WORD = 1;
+	public static final int CTX_MOVE_WORD = 2;
+
+	private static final int REQ_PARENT_DICT = 0;
 
 	// ================= INSTANCE ATTRIBUTES ====================
 
@@ -52,9 +58,15 @@ public class WordListActivity extends AbstractListActivity {
 	private MenuItem menuFilter = null;
 
 	private long selectedDictId;
-	
+
 	private String orderBy = null;
 	private AlertDialog alertDialog = null;
+
+	/**
+	 * This is used for storing the moved word Ids when user selects the parent
+	 * dictionary
+	 */
+	private List<Long> movedWordIds = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -81,11 +93,11 @@ public class WordListActivity extends AbstractListActivity {
 
 		this.refreshListAdapter();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
+
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		adapter.getCursor().close();
 	}
@@ -96,7 +108,7 @@ public class WordListActivity extends AbstractListActivity {
 
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, res.getString(R.string.word_list_menu_show_filter));
 		this.menuFilter.setIcon(R.drawable.icon_filter);
-		
+
 		menu.add(none, MENU_NEW_WORD, none, res.getString(R.string.word_list_menu_new_word)).setIcon(R.drawable.icon_new);
 		menu.add(none, MENU_ORDER, none, res.getString(R.string.word_list_menu_order)).setIcon(R.drawable.icon_sort);
 
@@ -126,6 +138,7 @@ public class WordListActivity extends AbstractListActivity {
 		int none = Menu.NONE;
 		menu.add(none, CTX_EDIT_WORD, none, R.string.word_list_ctx_edit);
 		menu.add(none, CTX_DELETE_WORD, none, R.string.word_list_ctx_delete);
+		menu.add(none, CTX_MOVE_WORD, none, R.string.word_list_ctx_move);
 	}
 
 	@Override
@@ -138,9 +151,24 @@ public class WordListActivity extends AbstractListActivity {
 			case CTX_EDIT_WORD:
 				this.editCard(info.id);
 				break;
+			case CTX_MOVE_WORD:
+				this.moveCards(Arrays.asList(info.id));
+				break;
 		}
 
 		return super.onContextItemSelected(item);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (requestCode == REQ_PARENT_DICT) {
+			if (resultCode == RESULT_OK) {
+				long dictId = data.getExtras().getLong(DictListActivity.KEY_RESULT_DICT_ID);
+				this.moveCards(this.movedWordIds, dictId);
+			}
+		}
 	}
 
 	// ================= INSTANCE METHODS =======================
@@ -168,7 +196,7 @@ public class WordListActivity extends AbstractListActivity {
 						R.id.foreignWord,
 						R.id.factor
 				});
-		
+
 		this.filterEdit.addTextChangedListener(this.filterEditWatcher);
 
 		listAdapter.setViewBinder(this.wordListBinder);
@@ -198,11 +226,26 @@ public class WordListActivity extends AbstractListActivity {
 		Toast.makeText(this, R.string.word_list_deleted_toast, Toast.LENGTH_SHORT).show();
 		this.refreshListAdapter();
 	}
-	
+
 	private void editCard(long id) {
 		Intent i = new Intent(this, WordAddActivity.class);
 		i.putExtra(WordAddActivity.EXTRAS_CARD_ID, id);
 		startActivity(i);
+	}
+
+	private void moveCards(List<Long> wordIds) {
+		this.movedWordIds = wordIds;
+
+		Intent i = new Intent(this, DictListActivity.class);
+		i.putExtra(DictListActivity.EXTRAS_ONLY_DICT_SELECTION, true);
+		i.putExtra(DictListActivity.EXTRAS_MESSAGE, getString(R.string.word_list_select_parent_title));
+		startActivityForResult(i, REQ_PARENT_DICT);
+	}
+
+	private void moveCards(List<Long> wordIds, long parentDictId) {
+		WordDS.moveCards(db, wordIds, parentDictId);
+		Toast.makeText(this, R.string.word_list_word_moved_toast, Toast.LENGTH_LONG).show();
+		this.refreshListAdapter();
 	}
 
 	/**
@@ -221,7 +264,7 @@ public class WordListActivity extends AbstractListActivity {
 			this.menuFilter.setTitle(res.getString(R.string.word_list_menu_show_filter));
 		}
 	}
-	
+
 	private void showSelectOrderDialog() {
 		String[] labels = res.getStringArray(R.array.word_list_ordering_labels);
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -245,7 +288,7 @@ public class WordListActivity extends AbstractListActivity {
 		}
 		startActivity(i);
 	}
-	
+
 	private SimpleCursorAdapter getActualAdapter() {
 		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
 		return adapter;
@@ -281,27 +324,27 @@ public class WordListActivity extends AbstractListActivity {
 			createWord(natWord);
 		}
 	};
-	
+
 	private TextWatcher filterEditWatcher = new TextWatcher() {
-		
+
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			SimpleCursorAdapter a = getActualAdapter();
 			a.getFilter().filter(s);
 		}
-		
+
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 		public void afterTextChanged(Editable s) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
-	
+
 	FilterQueryProvider listFilterProvider = new FilterQueryProvider() {
-		
+
 		public Cursor runQuery(CharSequence constraint) {
 			return WordDS.getWordsByDictIdFilter(db, selectedDictId, constraint.toString());
 		}
