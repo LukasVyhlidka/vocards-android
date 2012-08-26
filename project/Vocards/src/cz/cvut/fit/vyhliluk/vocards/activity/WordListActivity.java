@@ -1,9 +1,13 @@
 package cz.cvut.fit.vyhliluk.vocards.activity;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -17,12 +21,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.FilterQueryProvider;
-import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorAdapter.ViewBinder;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cz.cvut.fit.vyhliluk.vocards.R;
@@ -41,6 +49,8 @@ public class WordListActivity extends AbstractListActivity {
 	public static final int MENU_SHOW_HIDE_FILTER = 0;
 	public static final int MENU_NEW_WORD = 1;
 	public static final int MENU_ORDER = 2;
+	public static final int MENU_SELECTION_CHANGE = 3;
+	public static final int MENU_MOVE_SELECTED = 4;
 
 	public static final int CTX_DELETE_WORD = 0;
 	public static final int CTX_EDIT_WORD = 1;
@@ -66,7 +76,7 @@ public class WordListActivity extends AbstractListActivity {
 	 * This is used for storing the moved word Ids when user selects the parent
 	 * dictionary
 	 */
-	private List<Long> movedWordIds = null;
+	private Collection<Long> movedWordIds = null;
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -98,7 +108,7 @@ public class WordListActivity extends AbstractListActivity {
 	protected void onPause() {
 		super.onPause();
 
-		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		WordListAdapter adapter = (WordListAdapter) this.getListAdapter();
 		adapter.getCursor().close();
 	}
 
@@ -109,8 +119,10 @@ public class WordListActivity extends AbstractListActivity {
 		this.menuFilter = menu.add(none, MENU_SHOW_HIDE_FILTER, none, res.getString(R.string.word_list_menu_show_filter));
 		this.menuFilter.setIcon(R.drawable.icon_filter);
 
-		menu.add(none, MENU_NEW_WORD, none, res.getString(R.string.word_list_menu_new_word)).setIcon(R.drawable.icon_new);
-		menu.add(none, MENU_ORDER, none, res.getString(R.string.word_list_menu_order)).setIcon(R.drawable.icon_sort);
+		menu.add(none, MENU_NEW_WORD, none, R.string.word_list_menu_new_word).setIcon(R.drawable.icon_new);
+		menu.add(none, MENU_ORDER, none, R.string.word_list_menu_order).setIcon(R.drawable.icon_sort);
+		menu.add(none, MENU_SELECTION_CHANGE, none, R.string.word_list_menu_selection_change).setIcon(R.drawable.icon_list);
+		menu.add(none, MENU_MOVE_SELECTED, none, R.string.word_list_menu_move_selected).setIcon(R.drawable.icon_move);
 
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -127,8 +139,21 @@ public class WordListActivity extends AbstractListActivity {
 			case MENU_ORDER:
 				this.showSelectOrderDialog();
 				break;
+			case MENU_SELECTION_CHANGE:
+				this.getActualAdapter().changeSelectionMode();
+				break;
+			case MENU_MOVE_SELECTED:
+				this.moveCards(this.getActualAdapter().getSelectedIds());
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem moveSel = menu.findItem(MENU_MOVE_SELECTED);
+		moveSel.setVisible(this.getActualAdapter().isMulti());
+		
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -140,6 +165,8 @@ public class WordListActivity extends AbstractListActivity {
 		menu.add(none, CTX_DELETE_WORD, none, R.string.word_list_ctx_delete);
 		menu.add(none, CTX_MOVE_WORD, none, R.string.word_list_ctx_move);
 	}
+
+	
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -182,24 +209,10 @@ public class WordListActivity extends AbstractListActivity {
 
 		this.selectedDictId = Settings.getActiveDictionaryId();
 
-		SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(
-				this,
-				R.layout.inf_word_item,
-				null,
-				new String[] {
-						WordDS.NATIVE_WORD,
-						WordDS.FOREIGN_WORD,
-						VocardsDS.CARD_COL_FACTOR
-				},
-				new int[] {
-						R.id.nativeWord,
-						R.id.foreignWord,
-						R.id.factor
-				});
+		WordListAdapter listAdapter = new WordListAdapter(this, null);
 
 		this.filterEdit.addTextChangedListener(this.filterEditWatcher);
 
-		listAdapter.setViewBinder(this.wordListBinder);
 		listAdapter.setFilterQueryProvider(this.listFilterProvider);
 		this.setListAdapter(listAdapter);
 		this.registerForContextMenu(this.getListView());
@@ -208,7 +221,7 @@ public class WordListActivity extends AbstractListActivity {
 	}
 
 	private void refreshListAdapter() {
-		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+		WordListAdapter adapter = (WordListAdapter) this.getListAdapter();
 		DBUtil.closeExistingCursor(adapter.getCursor());
 
 		Cursor c = null;
@@ -233,7 +246,7 @@ public class WordListActivity extends AbstractListActivity {
 		startActivity(i);
 	}
 
-	private void moveCards(List<Long> wordIds) {
+	private void moveCards(Collection<Long> wordIds) {
 		this.movedWordIds = wordIds;
 
 		Intent i = new Intent(this, DictListActivity.class);
@@ -242,7 +255,7 @@ public class WordListActivity extends AbstractListActivity {
 		startActivityForResult(i, REQ_PARENT_DICT);
 	}
 
-	private void moveCards(List<Long> wordIds, long parentDictId) {
+	private void moveCards(Collection<Long> wordIds, long parentDictId) {
 		WordDS.moveCards(db, wordIds, parentDictId);
 		Toast.makeText(this, R.string.word_list_word_moved_toast, Toast.LENGTH_LONG).show();
 		this.refreshListAdapter();
@@ -289,28 +302,14 @@ public class WordListActivity extends AbstractListActivity {
 		startActivity(i);
 	}
 
-	private SimpleCursorAdapter getActualAdapter() {
-		SimpleCursorAdapter adapter = (SimpleCursorAdapter) this.getListAdapter();
+	private WordListAdapter getActualAdapter() {
+		WordListAdapter adapter = (WordListAdapter) this.getListAdapter();
 		return adapter;
 	}
 
 	// ================= GETTERS/SETTERS ========================
 
 	// ================= INNER CLASSES ==========================
-
-	ViewBinder wordListBinder = new ViewBinder() {
-
-		public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-			String colName = cursor.getColumnName(columnIndex);
-			if (VocardsDS.CARD_COL_FACTOR.equals(colName)) {
-				TextView v = (TextView) view;
-				int factor = cursor.getInt(columnIndex);
-				v.setText(CardUtil.cardFactorPercent(factor));
-				return true;
-			}
-			return false;
-		}
-	};
 
 	OnClickListener addWordClickListener = new OnClickListener() {
 
@@ -328,7 +327,7 @@ public class WordListActivity extends AbstractListActivity {
 	private TextWatcher filterEditWatcher = new TextWatcher() {
 
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			SimpleCursorAdapter a = getActualAdapter();
+			WordListAdapter a = getActualAdapter();
 			a.getFilter().filter(s);
 		}
 
@@ -349,5 +348,103 @@ public class WordListActivity extends AbstractListActivity {
 			return WordDS.getWordsByDictIdFilter(db, selectedDictId, constraint.toString());
 		}
 	};
+	
+	private class WordListAdapter extends CursorAdapter {
+		
+		private boolean multi = false;
+		private Set<Long> selectedIds = new HashSet<Long>();
+
+		public WordListAdapter(Context context, Cursor c) {
+			super(context, c);
+		}
+		
+		public void changeSelectionMode() {
+			this.multi = !this.multi;
+			this.selectedIds.clear();
+			if (this.multi) {
+				getListView().setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+				refreshListAdapter();
+			} else {
+				getListView().setChoiceMode(ListView.CHOICE_MODE_NONE);
+				refreshListAdapter();
+			}
+		}
+		
+		public boolean isMulti() {
+			return this.multi;
+		}
+		
+		public Collection<Long> getSelectedIds() {
+			return new LinkedList<Long>(this.selectedIds);
+		}
+
+		@Override
+		public void bindView(View view, Context ctx, Cursor c) {
+			WordListViewHolder holder = (WordListViewHolder) view.getTag();
+			
+			long id = c.getLong(c.getColumnIndex(VocardsDS.CARD_COL_ID));
+			
+			holder.checkbox.setVisibility(multi ? View.VISIBLE : View.GONE);
+			holder.natWord.setText(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_NATIVE)));
+			holder.forWord.setText(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_FOREIGN)));
+			
+			int factor = c.getInt(c.getColumnIndex(VocardsDS.CARD_COL_FOREIGN));
+			holder.factor.setText(CardUtil.cardFactorPercent(factor));
+			
+			holder.checkbox.setTag(id);
+			holder.checkbox.setChecked(this.selectedIds.contains(id));
+		}
+
+		@Override
+		public View newView(Context ctx, Cursor c, ViewGroup group) {
+			View view = View.inflate(ctx, R.layout.inf_word_item, null);
+
+			WordListViewHolder holder = new WordListViewHolder();
+			holder.checkbox = (CheckBox) view.findViewById(R.id.checkbox);
+			holder.natWord = (TextView) view.findViewById(R.id.nativeWord);
+			holder.forWord = (TextView) view.findViewById(R.id.foreignWord);
+			holder.factor = (TextView) view.findViewById(R.id.factor);
+			
+			view.setTag(holder);
+			holder.checkbox.setOnCheckedChangeListener(this.checkboxSelChangeListener);
+			holder.checkbox.setOnClickListener(this.checkboxClickListener);
+
+			return view;
+		}
+		
+		private class WordListViewHolder {
+			public CheckBox checkbox;
+			public TextView natWord;
+			public TextView forWord;
+			public TextView factor;
+		}
+		
+		private OnClickListener checkboxClickListener = new OnClickListener() {
+			
+			public void onClick(View v) {
+				CheckBox cb = (CheckBox) v;
+				long id = (Long) cb.getTag();
+				if (cb.isChecked()) {
+					selectedIds.add(id);
+				} else {
+					selectedIds.remove(id);
+				}
+			}
+		};
+		
+		private OnCheckedChangeListener checkboxSelChangeListener = new OnCheckedChangeListener() {
+			
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				Log.d("onCheckedChanged", isChecked+"");
+//				long id = (Long) buttonView.getTag();
+//				if (isChecked) {
+//					selectedIds.add(id);
+//				} else {
+//					selectedIds.remove(id);
+//				}
+			}
+		};
+		
+	}
 
 }

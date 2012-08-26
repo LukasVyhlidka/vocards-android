@@ -48,6 +48,8 @@
     <string name="word_list_menu_hide_filter">Skryj filtr</string>
     <string name="word_list_menu_new_word">Vytvoř slovo</string>
     <string name="word_list_menu_order">Řazení</string>
+    <string name="word_list_menu_selection_change">Změň výběr</string>
+    <string name="word_list_menu_move_selected">Přesuň vybrané</string>
     <string name="word_list_filter_hint">Filtruj slova</string>
     <string name="word_list_new_word">Nové slovo</string>
     <string name="word_list_ctx_delete">Smaž</string>
@@ -69,6 +71,7 @@
     <string name="add_word_edit">Uprav slovo</string>
     <string name="add_word_translation_pick_title">Vyberte překlad:</string>
     <string name="add_word_empty_word_toast">Vyplňte slovo v rodném a cizím jazyce, prosím.</string>
+    <string name="add_word_translate_error_toast">Nepodařilo se připojit k serveru. Je vaše internetové připojení v pořádku?</string>
     
     <!-- Dict List -->
     <string name="dict_list">Seznam slovníků</string>

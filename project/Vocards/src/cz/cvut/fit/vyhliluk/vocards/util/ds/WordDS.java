@@ -1,5 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
+import java.util.Collection;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -182,7 +183,7 @@ public class WordDS {
 		db.endTransaction();
 	}
 
-	public static void moveCards(VocardsDS db, List<Long> cardIds, long dictId) {
+	public static void moveCards(VocardsDS db, Collection<Long> cardIds, long dictId) {
 		db.beginTransaction();
 
 		ContentValues val = new ContentValues();
