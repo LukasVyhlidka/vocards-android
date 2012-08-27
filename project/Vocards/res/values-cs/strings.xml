@@ -75,14 +75,14 @@
     
     <!-- Dict List -->
     <string name="dict_list">Seznam slovníků</string>
-    <string name="dict_list_children_title">Děti slovníku %1$s</string>
+    <string name="dict_list_children_title">Podslovníky slovníku %1$s</string>
     <string name="dict_list_new_dict_hint">Jméno nového slovníku</string>
     <string name="dict_list_menu_show_filter">Ukaž filtr</string>
     <string name="dict_list_menu_hide_filter">Skryj filtr</string>
     <string name="dict_list_menu_new_dict">Vytvoř slovník</string>
     <string name="dict_list_ctx_delete_dict">Smaž</string>
     <string name="dict_list_ctx_edit_dict">Uprav</string>
-    <!--<string name="dict_list_ctx_show_descendant_dicts">Ukaž potomky</string>-->
+    <string name="dict_list_ctx_show_descendant_dicts">Ukaž podslovníky</string>
     <string name="dict_list_ctx_move_dict_under">Nastav rodiče</string>
     <string name="dict_list_ctx_move_root">Nastav jako kořen</string>
     <string name="dict_list_dialog_delete_title">Vybraný slovník obsahuje %1$s kartiček. Opravdu ho chcete smazat?</string>

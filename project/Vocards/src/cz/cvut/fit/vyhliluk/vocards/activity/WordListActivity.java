@@ -249,6 +249,8 @@ public class WordListActivity extends AbstractListActivity {
 	private void moveCards(Collection<Long> wordIds) {
 		this.movedWordIds = wordIds;
 
+		Toast.makeText(this, R.string.word_list_select_parent_title, Toast.LENGTH_LONG).show();
+		
 		Intent i = new Intent(this, DictListActivity.class);
 		i.putExtra(DictListActivity.EXTRAS_ONLY_DICT_SELECTION, true);
 		i.putExtra(DictListActivity.EXTRAS_MESSAGE, getString(R.string.word_list_select_parent_title));

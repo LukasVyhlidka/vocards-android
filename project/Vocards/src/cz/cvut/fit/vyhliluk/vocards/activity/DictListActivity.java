@@ -48,8 +48,10 @@ public class DictListActivity extends AbstractListActivity {
 
 	public static final int CTX_MENU_DELETE = 50;
 	public static final int CTX_MENU_EDIT = 51;
+	public static final int CTX_MENU_SHOW_CHILDREN = 52;
 	public static final int CTX_MENU_MOVE_UNDER = 53;
 	public static final int CTX_MENU_MOVE_ROOT = 54;
+	
 
 	public static final String EXTRAS_MESSAGE = "message";
 	public static final String EXTRAS_ONLY_DICT_SELECTION = "onlyDictSelection";
@@ -102,8 +104,12 @@ public class DictListActivity extends AbstractListActivity {
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+		if (this.parentDictId != null) {
+			this.goUpClickListener.onClick(this.goUpView);
+		} else {
+			super.onBackPressed();
+			overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+		}
 	}
 
 	@Override
@@ -174,6 +180,7 @@ public class DictListActivity extends AbstractListActivity {
 
 		menu.add(none, CTX_MENU_DELETE, none, R.string.dict_list_ctx_delete_dict);
 		menu.add(none, CTX_MENU_EDIT, none, R.string.dict_list_ctx_edit_dict);
+		menu.add(none, CTX_MENU_SHOW_CHILDREN, none, R.string.dict_list_ctx_show_descendant_dicts);
 		menu.add(none, CTX_MENU_MOVE_UNDER, none, R.string.dict_list_ctx_move_dict_under);
 		menu.add(none, CTX_MENU_MOVE_ROOT, none, R.string.dict_list_ctx_move_root);
 
@@ -190,6 +197,9 @@ public class DictListActivity extends AbstractListActivity {
 				break;
 			case CTX_MENU_EDIT:
 				this.editDict(info.id);
+				break;
+			case CTX_MENU_SHOW_CHILDREN:
+				this.showDescendants(info.id);
 				break;
 			case CTX_MENU_MOVE_UNDER:
 				this.movedDictionaryId = info.id;

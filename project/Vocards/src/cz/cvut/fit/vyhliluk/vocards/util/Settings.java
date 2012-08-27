@@ -51,7 +51,13 @@ public class Settings {
 	}
 
 	public static int getCardFontSize() {
-		return Integer.parseInt(getString(KEY_CARD_FONT_SIZE, "15"));
+		String def = "15";
+		String str = getString(KEY_CARD_FONT_SIZE, def);
+		if (StringUtil.isEmpty(str)) {
+			remove(KEY_CARD_FONT_SIZE);
+			str = def;
+		}
+		return Integer.parseInt(def);
 	}
 	
 	public static boolean getTranslation() {
@@ -115,6 +121,12 @@ public class Settings {
 	}
 
 	private static void removeLong(String key) {
+		Editor e = getEditor();
+		e.remove(key);
+		e.commit();
+	}
+	
+	private static void remove(String key) {
 		Editor e = getEditor();
 		e.remove(key);
 		e.commit();

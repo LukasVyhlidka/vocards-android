@@ -75,14 +75,14 @@
     
     <!-- Dict List -->
     <string name="dict_list">Dict List</string>
-    <string name="dict_list_children_title">Children of %1$s</string>
+    <string name="dict_list_children_title">Subdictionaries of %1$s</string>
     <string name="dict_list_new_dict_hint">New Dictionary Name</string>
     <string name="dict_list_menu_show_filter">Show Filter</string>
     <string name="dict_list_menu_hide_filter">Hide Filter</string>
     <string name="dict_list_menu_new_dict">Create Dictionary</string>
     <string name="dict_list_ctx_delete_dict">Delete</string>
     <string name="dict_list_ctx_edit_dict">Edit</string>
-    <!--<string name="dict_list_ctx_show_descendant_dicts">Show Descendants</string>-->
+    <string name="dict_list_ctx_show_descendant_dicts">Show Subdictionaries</string>
     <string name="dict_list_ctx_move_dict_under">Set parent</string>
     <string name="dict_list_ctx_move_root">Set as root</string>
     <string name="dict_list_dialog_delete_title">Selected dictionary contains %1$s cards. Do you really want to delete it?</string>
