@@ -43,6 +43,7 @@
     
     <!-- Word List -->
     <string name="word_list">Word List</string>
+    <string name="word_list_empty">There are no words, yet.\n\nPress menu to add them.</string>
     <string name="word_list_new_word_hint">Word in Native Language</string>
     <string name="word_list_menu_show_filter">Show Filter</string>
     <string name="word_list_menu_hide_filter">Hide Filter</string>
@@ -75,6 +76,7 @@
     
     <!-- Dict List -->
     <string name="dict_list">Dict List</string>
+    <string name="dict_list_empty">There are no dictionaries, yet.\n\nPress menu to add them.</string>
     <string name="dict_list_children_title">Subdictionaries of %1$s</string>
     <string name="dict_list_new_dict_hint">New Dictionary Name</string>
     <string name="dict_list_menu_show_filter">Show Filter</string>

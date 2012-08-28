@@ -66,6 +66,7 @@ public class DictListActivity extends AbstractListActivity {
 	private MenuItem menuFilter = null;
 	private View goUpView = null;
 	private TextView parentFolderNameText = null;
+	private TextView emptyText = null;
 
 	private ExportTask exportTask = null;
 	private AlertDialog alertDialog = null;
@@ -107,6 +108,7 @@ public class DictListActivity extends AbstractListActivity {
 		if (this.parentDictId != null) {
 			this.goUpClickListener.onClick(this.goUpView);
 		} else {
+			this.emptyText.setText("");
 			super.onBackPressed();
 			overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 		}
@@ -220,9 +222,12 @@ public class DictListActivity extends AbstractListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		Intent i = getIntent();
-		i.putExtra(KEY_RESULT_DICT_ID, id);
-		setResult(RESULT_OK, i);
+//		Intent i = getIntent();
+//		i.putExtra(KEY_RESULT_DICT_ID, id);
+//		setResult(RESULT_OK, i);
+		
+		this.emptyText.setText("");
+		
 		finish();
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
@@ -251,6 +256,7 @@ public class DictListActivity extends AbstractListActivity {
 		this.filterEdit = (EditText) findViewById(R.id.filterEdit);
 		this.goUpView = findViewById(R.id.goUp);
 		this.parentFolderNameText = (TextView) findViewById(R.id.parentFolderName);
+		this.emptyText = (TextView) findViewById(android.R.id.empty);
 
 		if (!this.onlyDictSelection) {
 			this.registerForContextMenu(this.getListView());

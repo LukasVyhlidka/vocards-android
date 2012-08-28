@@ -62,6 +62,8 @@ public class WordListActivity extends AbstractListActivity {
 
 	private EditText filterEdit = null;
 	private EditText newWordEdit = null;
+	
+	private TextView emptyText = null;
 
 	private Button addWordBtn = null;
 
@@ -93,6 +95,7 @@ public class WordListActivity extends AbstractListActivity {
 
 	@Override
 	public void onBackPressed() {
+		this.emptyText.setText("");
 		super.onBackPressed();
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
 	}
@@ -206,6 +209,7 @@ public class WordListActivity extends AbstractListActivity {
 		this.filterEdit = (EditText) findViewById(R.id.filterEdit);
 		this.newWordEdit = (EditText) findViewById(R.id.editNewWord);
 		this.addWordBtn = (Button) findViewById(R.id.buttonAdd);
+		this.emptyText = (TextView) findViewById(android.R.id.empty);
 
 		this.selectedDictId = Settings.getActiveDictionaryId();
 

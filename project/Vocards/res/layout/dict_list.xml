@@ -40,5 +40,14 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/goUp" />
+    
+    <TextView android:id="@android:id/empty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/parentFolderName"
+        android:layout_marginTop="20dp"
+        android:text="@string/dict_list_empty"
+        android:gravity="center_horizontal"
+        android:visibility="gone" />
 
 </RelativeLayout>

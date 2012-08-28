@@ -43,6 +43,7 @@
     
     <!-- Word List -->
     <string name="word_list">Seznam kartiček</string>
+    <string name="word_list_empty">Zatím zde nejsou žádná slova.\n\nStiskněte menu pro přidání.</string>
     <string name="word_list_new_word_hint">Slovo v rodném jazyce</string>
     <string name="word_list_menu_show_filter">Ukaž filtr</string>
     <string name="word_list_menu_hide_filter">Skryj filtr</string>
@@ -75,6 +76,7 @@
     
     <!-- Dict List -->
     <string name="dict_list">Seznam slovníků</string>
+    <string name="dict_list_empty">Nejsou zde zatím žádne slovníky. Stiskněte menu pro vytvoření.</string>
     <string name="dict_list_children_title">Podslovníky slovníku %1$s</string>
     <string name="dict_list_new_dict_hint">Jméno nového slovníku</string>
     <string name="dict_list_menu_show_filter">Ukaž filtr</string>
