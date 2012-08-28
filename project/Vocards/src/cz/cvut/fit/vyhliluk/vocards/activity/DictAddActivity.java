@@ -139,9 +139,10 @@ public class DictAddActivity extends AbstractActivity {
 			Toast.makeText(this, res.getString(R.string.add_dict_edited_toast), Toast.LENGTH_SHORT).show();
 		}
 
-		Intent i = new Intent(this, DictListActivity.class);
-		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(i);
+//		Intent i = new Intent(this, DictListActivity.class);
+//		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//		startActivity(i);
+		finish();
 	}
 
 	// ================= GETTERS/SETTERS ========================

@@ -84,6 +84,12 @@ public class WordAddActivity extends AbstractActivity {
 
 	// ================= PRIVATE METHODS ========================
 
+	@Override
+	public void onBackPressed() {
+		this.verifyTranslationEnd();
+		super.onBackPressed();
+	}
+
 	private void init() {
 		this.nativeEdit = (EditText) findViewById(R.id.nativeEdit);
 		this.foreignEdit = (EditText) findViewById(R.id.foreignEdit);
@@ -229,6 +235,12 @@ public class WordAddActivity extends AbstractActivity {
 		}
 		return res;
 	}
+	
+	private void verifyTranslationEnd() {
+		if (this.translateTask != null) {
+			this.translateTask.cancel(true);
+		}
+	}
 
 	// ================= GETTERS/SETTERS ========================
 
@@ -251,8 +263,8 @@ public class WordAddActivity extends AbstractActivity {
 				WordDS.updateCard(db, cardId, natWords, forWords);
 			}
 
-//			DBUtil.dictModif(db, WordAddActivity.this, dictId);
-
+			verifyTranslationEnd();
+			
 			Intent i = new Intent(WordAddActivity.this, WordListActivity.class);
 			i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
@@ -345,6 +357,7 @@ public class WordAddActivity extends AbstractActivity {
 				});
 				alertDialog = builder.create();
 				alertDialog.show();
+				translateTask = null;
 			}
 		}
 
@@ -360,6 +373,13 @@ public class WordAddActivity extends AbstractActivity {
 				this.alertDialog.dismiss();
 				this.alertDialog = null;
 			}
+		}
+
+		@Override
+		protected void onCancelled() {
+			super.onCancelled();
+			
+			translateTask = null;
 		}
 
 	}

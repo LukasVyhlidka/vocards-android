@@ -222,7 +222,6 @@ public class DictListActivity extends AbstractListActivity {
 
 		Intent i = getIntent();
 		i.putExtra(KEY_RESULT_DICT_ID, id);
-
 		setResult(RESULT_OK, i);
 		finish();
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
