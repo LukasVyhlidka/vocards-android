@@ -222,11 +222,11 @@ public class DictListActivity extends AbstractListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-//		Intent i = getIntent();
-//		i.putExtra(KEY_RESULT_DICT_ID, id);
-//		setResult(RESULT_OK, i);
-		
 		this.emptyText.setText("");
+		
+		Intent i = getIntent();
+		i.putExtra(KEY_RESULT_DICT_ID, id);
+		setResult(RESULT_OK, i);
 		
 		finish();
 		overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
