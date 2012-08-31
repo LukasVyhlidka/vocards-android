@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <string-array name="practise_direction_array_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    
     <string-array name="practise_direction_array_names">
         <item>Z rodného jazyka do cizího</item>
         <item>Z cizího jazyka do rodného</item>
@@ -14,6 +20,15 @@
         <item>Podle cizího jazyka (sestupně)</item>
         <item>Podle faktoru naučení (vzestupně)</item>
         <item>Podle faktoru naučení (sestupně)</item>
+    </string-array>
+    
+    <string-array name="word_list_ordering_values">
+        <item>lower(native_word)</item>
+        <item>lower(native_word) desc</item>
+        <item>lower(foreign_word)</item>
+        <item>lower(foreign_word) desc</item>
+        <item>factor</item>
+        <item>factor desc</item>
     </string-array>
 
 </resources>
