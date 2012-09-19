@@ -394,7 +394,7 @@ public class WordListActivity extends AbstractListActivity {
 			holder.natWord.setText(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_NATIVE)));
 			holder.forWord.setText(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_FOREIGN)));
 			
-			int factor = c.getInt(c.getColumnIndex(VocardsDS.CARD_COL_FOREIGN));
+			int factor = c.getInt(c.getColumnIndex(VocardsDS.CARD_COL_FACTOR));
 			holder.factor.setText(CardUtil.cardFactorPercent(factor));
 			
 			holder.checkbox.setTag(id);
