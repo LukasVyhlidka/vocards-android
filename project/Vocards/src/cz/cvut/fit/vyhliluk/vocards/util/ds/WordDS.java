@@ -1,5 +1,6 @@
 package cz.cvut.fit.vyhliluk.vocards.util.ds;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -117,6 +118,8 @@ public class WordDS {
 		cardValues.put(VocardsDS.CARD_COL_NATIVE, CardUtil.implodeWords(natWords));
 		cardValues.put(VocardsDS.CARD_COL_FOREIGN, CardUtil.implodeWords(forWords));
 		long cardId = db.insert(VocardsDS.CARD_TABLE, cardValues);
+		
+		deleteAndCreateWords(db, natWords, forWords, cardId);
 
 		DBUtil.dictModif(db, dictId);
 
@@ -131,6 +134,7 @@ public class WordDS {
 		db.beginTransaction();
 
 		int res = 0;
+		deleteWords(db, cardId);
 		res += db.delete(VocardsDS.CARD_TABLE, cardId);
 
 		db.setTransactionSuccessful();
@@ -171,6 +175,7 @@ public class WordDS {
 		val.put(VocardsDS.CARD_COL_FOREIGN, CardUtil.implodeWords(forWords));
 
 		db.update(VocardsDS.CARD_TABLE, val, VocardsDS.CARD_COL_ID + "=?", new String[] { cardId + "" });
+		deleteAndCreateWords(db, natWords, forWords, cardId);
 
 		// Get card dictionary because of set modified
 		Cursor card = getCardById(db, cardId);
@@ -212,6 +217,40 @@ public class WordDS {
 		int round = ((int) expRand) % (max + 1);
 		Log.d("WordDS - exponential random", expRand + " (" + round + ")");
 		return round;
+	}
+	
+	private static void deleteWords(VocardsDS db, long cardId) {
+		List<String> emptyList = new ArrayList<String>();
+		deleteAndCreateWords(db, emptyList, emptyList, cardId);
+	}
+
+	private static void deleteAndCreateWords(VocardsDS db, List<String> natWords, List<String> forWords, long cardId) {
+		db.beginTransaction();
+		
+		db.delete(
+				VocardsDS.WORD_TABLE,
+				VocardsDS.WORD_COL_CARD_ID + "=?",
+				new String[]{cardId + ""});
+		
+		for (String word : natWords) {
+			createWord(db, cardId, word, VocardsDS.WORD_TYPE_NAT);
+		}
+		
+		for (String word : forWords) {
+			createWord(db, cardId, word, VocardsDS.WORD_TYPE_FOR);
+		}
+		
+		db.setTransactionSuccessful();
+		db.endTransaction();
+	}
+	
+	private static void createWord(VocardsDS db, long cardId, String word, int type) {
+		ContentValues val = new ContentValues();
+		val.put(VocardsDS.WORD_COL_CARD_ID, cardId);
+		val.put(VocardsDS.WORD_COL_TYPE, type);
+		val.put(VocardsDS.WORD_COL_WORD, word);
+		
+		db.insert(VocardsDS.WORD_TABLE, val);
 	}
 
 	// ================= GETTERS/SETTERS ========================
