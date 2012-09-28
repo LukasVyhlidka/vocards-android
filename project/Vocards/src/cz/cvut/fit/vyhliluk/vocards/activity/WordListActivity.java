@@ -62,7 +62,7 @@ public class WordListActivity extends AbstractListActivity {
 
 	private EditText filterEdit = null;
 	private EditText newWordEdit = null;
-	
+
 	private TextView emptyText = null;
 
 	private Button addWordBtn = null;
@@ -150,12 +150,12 @@ public class WordListActivity extends AbstractListActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem moveSel = menu.findItem(MENU_MOVE_SELECTED);
 		moveSel.setVisible(this.getActualAdapter().isMulti());
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -168,8 +168,6 @@ public class WordListActivity extends AbstractListActivity {
 		menu.add(none, CTX_DELETE_WORD, none, R.string.word_list_ctx_delete);
 		menu.add(none, CTX_MOVE_WORD, none, R.string.word_list_ctx_move);
 	}
-
-	
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -201,6 +199,13 @@ public class WordListActivity extends AbstractListActivity {
 		}
 	}
 
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		boolean multi = this.getActualAdapter().multi;
+		Set<Long> selectedIds = this.getActualAdapter().selectedIds;
+		return new RetainConfigurationCrate(multi, selectedIds);
+	}
+
 	// ================= INSTANCE METHODS =======================
 
 	// ================= PRIVATE METHODS ========================
@@ -222,6 +227,12 @@ public class WordListActivity extends AbstractListActivity {
 		this.registerForContextMenu(this.getListView());
 
 		this.addWordBtn.setOnClickListener(this.addWordClickListener);
+		
+		RetainConfigurationCrate crate = (RetainConfigurationCrate) this.getLastNonConfigurationInstance();
+		if (crate != null) {
+			listAdapter.multi = crate.multi;
+			listAdapter.selectedIds = crate.selectedIds;
+		}
 	}
 
 	private void refreshListAdapter() {
@@ -254,7 +265,7 @@ public class WordListActivity extends AbstractListActivity {
 		this.movedWordIds = wordIds;
 
 		Toast.makeText(this, R.string.word_list_select_parent_title, Toast.LENGTH_LONG).show();
-		
+
 		Intent i = new Intent(this, DictListActivity.class);
 		i.putExtra(DictListActivity.EXTRAS_ONLY_DICT_SELECTION, true);
 		i.putExtra(DictListActivity.EXTRAS_MESSAGE, getString(R.string.word_list_select_parent_title));
@@ -354,16 +365,16 @@ public class WordListActivity extends AbstractListActivity {
 			return WordDS.getWordsByDictIdFilter(db, selectedDictId, constraint.toString());
 		}
 	};
-	
+
 	private class WordListAdapter extends CursorAdapter {
-		
+
 		private boolean multi = false;
 		private Set<Long> selectedIds = new HashSet<Long>();
 
 		public WordListAdapter(Context context, Cursor c) {
 			super(context, c);
 		}
-		
+
 		public void changeSelectionMode() {
 			this.multi = !this.multi;
 			this.selectedIds.clear();
@@ -375,11 +386,11 @@ public class WordListActivity extends AbstractListActivity {
 				refreshListAdapter();
 			}
 		}
-		
+
 		public boolean isMulti() {
 			return this.multi;
 		}
-		
+
 		public Collection<Long> getSelectedIds() {
 			return new LinkedList<Long>(this.selectedIds);
 		}
@@ -387,16 +398,16 @@ public class WordListActivity extends AbstractListActivity {
 		@Override
 		public void bindView(View view, Context ctx, Cursor c) {
 			WordListViewHolder holder = (WordListViewHolder) view.getTag();
-			
+
 			long id = c.getLong(c.getColumnIndex(VocardsDS.CARD_COL_ID));
-			
+
 			holder.checkbox.setVisibility(multi ? View.VISIBLE : View.GONE);
 			holder.natWord.setText(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_NATIVE)));
 			holder.forWord.setText(c.getString(c.getColumnIndex(VocardsDS.CARD_COL_FOREIGN)));
-			
+
 			int factor = c.getInt(c.getColumnIndex(VocardsDS.CARD_COL_FACTOR));
 			holder.factor.setText(CardUtil.cardFactorPercent(factor));
-			
+
 			holder.checkbox.setTag(id);
 			holder.checkbox.setChecked(this.selectedIds.contains(id));
 		}
@@ -410,23 +421,23 @@ public class WordListActivity extends AbstractListActivity {
 			holder.natWord = (TextView) view.findViewById(R.id.nativeWord);
 			holder.forWord = (TextView) view.findViewById(R.id.foreignWord);
 			holder.factor = (TextView) view.findViewById(R.id.factor);
-			
+
 			view.setTag(holder);
 			holder.checkbox.setOnCheckedChangeListener(this.checkboxSelChangeListener);
 			holder.checkbox.setOnClickListener(this.checkboxClickListener);
 
 			return view;
 		}
-		
+
 		private class WordListViewHolder {
 			public CheckBox checkbox;
 			public TextView natWord;
 			public TextView forWord;
 			public TextView factor;
 		}
-		
+
 		private OnClickListener checkboxClickListener = new OnClickListener() {
-			
+
 			public void onClick(View v) {
 				CheckBox cb = (CheckBox) v;
 				long id = (Long) cb.getTag();
@@ -437,20 +448,32 @@ public class WordListActivity extends AbstractListActivity {
 				}
 			}
 		};
-		
+
 		private OnCheckedChangeListener checkboxSelChangeListener = new OnCheckedChangeListener() {
-			
+
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//				Log.d("onCheckedChanged", isChecked+"");
-//				long id = (Long) buttonView.getTag();
-//				if (isChecked) {
-//					selectedIds.add(id);
-//				} else {
-//					selectedIds.remove(id);
-//				}
+				// Log.d("onCheckedChanged", isChecked+"");
+				// long id = (Long) buttonView.getTag();
+				// if (isChecked) {
+				// selectedIds.add(id);
+				// } else {
+				// selectedIds.remove(id);
+				// }
 			}
 		};
-		
+
+	}
+
+	private static class RetainConfigurationCrate {
+		public boolean multi;
+		public Set<Long> selectedIds = null;
+
+		public RetainConfigurationCrate(boolean multi, Set<Long> selectedIds) {
+			super();
+			this.multi = multi;
+			this.selectedIds = selectedIds;
+		}
+
 	}
 
 }
