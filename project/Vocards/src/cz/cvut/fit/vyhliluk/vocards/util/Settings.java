@@ -23,6 +23,7 @@ public class Settings {
 	public static final String KEY_TRANSLATION = "translation";
 	public static final String KEY_LAST_BACKUP = "last_backup";
 	public static final String KEY_BACKUP_AGENT_CALLED = "backupAgentCalled";
+	public static final String KEY_WORD_ORDERING = "wordOrdering";
 
 	public static final long UNDEFINED_ACTIVE_DICT_ID = -1;
 
@@ -83,6 +84,14 @@ public class Settings {
 	public static void setBackupAgentCalled(boolean value) {
 		putBool(KEY_BACKUP_AGENT_CALLED, value);
 	}
+	
+	public static String getWordOrdering() {
+		return getString(KEY_WORD_ORDERING, null);
+	}
+	
+	public static void setWordOrdering(String ordering) {
+		putString(KEY_WORD_ORDERING, ordering);
+	}
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -111,6 +120,12 @@ public class Settings {
 	private static void putLong(String key, Long value) {
 		Editor e = getEditor();
 		e.putLong(key, value);
+		e.commit();
+	}
+	
+	private static void putString(String key, String value) {
+		Editor e = getEditor();
+		e.putString(key, value);
 		e.commit();
 	}
 	

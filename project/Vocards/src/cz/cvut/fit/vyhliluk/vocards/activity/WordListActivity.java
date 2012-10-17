@@ -217,6 +217,7 @@ public class WordListActivity extends AbstractListActivity {
 		this.emptyText = (TextView) findViewById(android.R.id.empty);
 
 		this.selectedDictId = Settings.getActiveDictionaryId();
+		this.orderBy = Settings.getWordOrdering();
 
 		WordListAdapter listAdapter = new WordListAdapter(this, null);
 
@@ -304,6 +305,7 @@ public class WordListActivity extends AbstractListActivity {
 				alertDialog = null;
 				String[] values = res.getStringArray(R.array.word_list_ordering_values);
 				orderBy = values[item];
+				Settings.setWordOrdering(orderBy);
 				refreshListAdapter();
 			}
 		});

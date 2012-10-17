@@ -14,6 +14,8 @@
     </string-array>
     
     <string-array name="word_list_ordering_labels">
+        <item>By Add Date (Asc)</item>
+        <item>By Add Date (Desc)</item>
         <item>By Native Words (Asc)</item>
         <item>By Native Words (Desc)</item>
         <item>By Foreign Words (Asc)</item>
@@ -23,6 +25,8 @@
     </string-array>
     
     <string-array name="word_list_ordering_values">
+        <item>_id</item>
+        <item>_id desc</item>
         <item>lower(native_word)</item>
         <item>lower(native_word) desc</item>
         <item>lower(foreign_word)</item>
