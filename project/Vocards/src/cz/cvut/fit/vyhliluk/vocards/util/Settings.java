@@ -24,6 +24,7 @@ public class Settings {
 	public static final String KEY_LAST_BACKUP = "last_backup";
 	public static final String KEY_BACKUP_AGENT_CALLED = "backupAgentCalled";
 	public static final String KEY_WORD_ORDERING = "wordOrdering";
+	public static final String KEY_LEARN_POSITION = "learnPosition";
 
 	public static final long UNDEFINED_ACTIVE_DICT_ID = -1;
 
@@ -92,6 +93,14 @@ public class Settings {
 	public static void setWordOrdering(String ordering) {
 		putString(KEY_WORD_ORDERING, ordering);
 	}
+	
+	public static int getLearnPosition() {
+		return getInt(KEY_LEARN_POSITION, 0);
+	}
+	
+	public static void setLearnPosition(int position) {
+		putInt(KEY_LEARN_POSITION, position);
+	}
 
 	// ================= CONSTRUCTORS ===========================
 
@@ -117,9 +126,15 @@ public class Settings {
 		return getSharedPreferences().getBoolean(key, defVal);
 	}
 
-	private static void putLong(String key, Long value) {
+	private static void putLong(String key, long value) {
 		Editor e = getEditor();
 		e.putLong(key, value);
+		e.commit();
+	}
+	
+	private static void putInt(String key, int value) {
+		Editor e = getEditor();
+		e.putInt(key, value);
 		e.commit();
 	}
 	

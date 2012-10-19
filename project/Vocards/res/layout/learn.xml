@@ -23,10 +23,26 @@
     <TextView
         android:id="@id/position"
         style="@style/card_position_value" />
-
+    
+    <TextView android:id="@+id/positionClickLabel"
+        android:layout_below="@id/position"
+        android:layout_alignRight="@id/position"
+        android:text="@string/learn_position_click_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic" />
+
+    
     <include layout="@layout/inc_word_card" />
     
 
+    <TextView 
+        android:text="@string/learn_ordering_label"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/learnBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    
     <LinearLayout
         android:id="@+id/learnBottom"
         android:layout_width="fill_parent"

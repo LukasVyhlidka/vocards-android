@@ -37,9 +37,17 @@
     <!-- Learn -->
     <string name="learn">Učení</string>
     <string name="learn_factor">Faktor:</string>
+    <string name="learn_position_click_label">Klikni pro nastavení</string>
+    <string name="learn_ordering_label">Pořadí slov je stejné jako v seznamu kariček.</string>
     <string name="learn_position">Pozice:</string>
     <string name="learn_prev_btn">Předchozí</string>
     <string name="learn_next_btn">Následující</string>
+    <string name="learn_chpos_title">Změň pozici na</string>
+    <string name="learn_chpos_notint">Pozice musí být číslo.</string>
+    <string name="learn_chpos_toomuch">Pozice je větší než počet karet.</string>
+    <string name="learn_chpos_underOne">Pozice musí být nejméně 1.</string>
+    <string name="learn_chpos_ok">Přejdi</string>
+    <string name="learn_chpos_cancel">Zruš</string>
     
     <!-- Word List -->
     <string name="word_list">Seznam kartiček</string>

@@ -37,9 +37,17 @@
     <!-- Learn -->
     <string name="learn">Learn</string>
     <string name="learn_factor">Factor:</string>
+    <string name="learn_position_click_label">Click To Set</string>
+    <string name="learn_ordering_label">Word ordering is the same as in Word List.</string>
     <string name="learn_position">Position:</string>
     <string name="learn_prev_btn">Previous</string>
     <string name="learn_next_btn">Next</string>
+    <string name="learn_chpos_title">Change Position To</string>
+    <string name="learn_chpos_notint">Position has to be an integer.</string>
+    <string name="learn_chpos_toomuch">Position is greater than the number of cards.</string>
+    <string name="learn_chpos_underOne">Position can be at least 1.</string>
+    <string name="learn_chpos_ok">Go</string>
+    <string name="learn_chpos_cancel">Cancel</string>
     
     <!-- Word List -->
     <string name="word_list">Word List</string>
