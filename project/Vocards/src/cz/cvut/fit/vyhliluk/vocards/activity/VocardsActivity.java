@@ -82,7 +82,11 @@ public class VocardsActivity extends AbstractActivity {
 		if (requestCode == REQUEST_DICT_ID) {
 			if (resultCode == RESULT_OK) {
 				long id = data.getExtras().getLong(DictListActivity.KEY_RESULT_DICT_ID);
-				Settings.setActiveDictionaryId(id);
+				long oldId = Settings.getActiveDictionaryId();
+				if (id != oldId) {
+					Settings.setActiveDictionaryId(id);
+					Settings.removeLearnPosition();
+				}
 			}
 		}
 	}

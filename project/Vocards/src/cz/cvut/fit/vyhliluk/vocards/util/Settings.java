@@ -101,6 +101,10 @@ public class Settings {
 	public static void setLearnPosition(int position) {
 		putInt(KEY_LEARN_POSITION, position);
 	}
+	
+	public static void removeLearnPosition() {
+		remove(KEY_LEARN_POSITION);
+	}
 
 	// ================= CONSTRUCTORS ===========================
 

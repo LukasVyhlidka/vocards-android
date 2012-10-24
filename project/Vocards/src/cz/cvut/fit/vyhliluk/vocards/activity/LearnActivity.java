@@ -36,7 +36,7 @@ public class LearnActivity extends AbstractActivity {
 	private Cursor wordCursor = null;
 	private long dictId = 0;
 	private int position = 0;
-	
+
 	private String orderBy = Settings.getWordOrdering();
 
 	// ================= CONSTRUCTORS ===========================
@@ -71,6 +71,12 @@ public class LearnActivity extends AbstractActivity {
 		} else {
 			this.wordCursor = WordDS.getWordsByDictId(this.db, this.dictId);
 		}
+
+		int cnt = this.wordCursor.getCount();
+		if (this.position >= cnt) { // User could delete some card
+			this.position = cnt - 1;
+		}
+
 		this.wordCursor.moveToPosition(this.position);
 		this.showCurrentWord();
 	}
@@ -119,10 +125,10 @@ public class LearnActivity extends AbstractActivity {
 
 	private void showCurrentWord() {
 		int cardCount = this.wordCursor.getCount();
-		
 		this.position = this.wordCursor.getPosition();
+
 		Settings.setLearnPosition(this.position);
-		
+
 		String natWord = this.wordCursor.getString(this.wordCursor.getColumnIndex(WordDS.NATIVE_WORD)) + "\u00A0";
 		String forWord = this.wordCursor.getString(this.wordCursor.getColumnIndex(WordDS.FOREIGN_WORD)) + "\u00A0";
 		int factor = this.wordCursor.getInt(this.wordCursor.getColumnIndex(VocardsDS.CARD_COL_FACTOR));
@@ -144,7 +150,7 @@ public class LearnActivity extends AbstractActivity {
 		this.wordCursor.moveToPrevious();
 		this.showCurrentWord();
 	}
-	
+
 	private void setPosition(int pos) {
 		int cnt = this.wordCursor.getCount();
 		if (pos >= cnt) {

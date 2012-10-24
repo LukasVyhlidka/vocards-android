@@ -15,7 +15,7 @@
     
     <string-array name="word_list_ordering_labels">
         <item>Podle datumu přidání (vzestupně)</item>
-        <item>Podle datumu přidání (sesupně)</item>
+        <item>Podle datumu přidání (sestupně)</item>
         <item>Podle rodného jazyka (vzestupně)</item>
         <item>Podle rodného jazyka (sestupně)</item>
         <item>Podle cizího jazyka (vzestupně)</item>
