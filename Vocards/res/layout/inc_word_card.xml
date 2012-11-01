@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <LinearLayout
+        style="@style/card_container"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/card_container_native"
+            android:id="@+id/wordCardNative"
+            android:text="" />
+        
+        <TextView
+            style="@style/card_container_foreign"
+            android:id="@+id/wordCardForeign"
+            android:text=""/>
+    </LinearLayout>
+
+</merge>
