@@ -28,7 +28,7 @@ public class DictionarySerialization {
 	public static final String VOCARDS_MIME = "application/json";
 
 	public static final String EXPORT_FILE_PREFIX = "vocardsExport";
-	public static final String EXPORT_FILE_SUFFIX = ".voc";
+	public static final String EXPORT_FILE_SUFFIX = ".xml";
 
 	public static final String KEY_DICTIONARY_LIST = "dicts";
 
