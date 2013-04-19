@@ -1,8 +1,11 @@
 package cz.cvut.fit.vyhliluk.vocards.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import android.content.Context;
 import android.os.Environment;
@@ -33,6 +36,19 @@ public class StorageUtil {
             contents.append(buffer, 0, read);
             read = in.read(buffer);
         } while (read >= 0);
+        return contents.toString();
+    }
+	
+	public static String readStream(InputStream is) throws IOException {
+		InputStreamReader isr = new InputStreamReader(is);
+        StringBuilder contents = new StringBuilder();
+        char[] buffer = new char[4096];
+        int read = 0;
+        do {
+            contents.append(buffer, 0, read);
+            read = isr.read(buffer);
+        } while (read >= 0);
+        isr.close();
         return contents.toString();
     }
 

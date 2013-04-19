@@ -1,8 +1,5 @@
 package cz.cvut.fit.vyhliluk.vocards.activity.task;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +12,9 @@ import cz.cvut.fit.vyhliluk.vocards.R;
 import cz.cvut.fit.vyhliluk.vocards.activity.ImportActivity;
 import cz.cvut.fit.vyhliluk.vocards.core.VocardsException;
 import cz.cvut.fit.vyhliluk.vocards.persistence.VocardsDS;
-import cz.cvut.fit.vyhliluk.vocards.util.StorageUtil;
 import cz.cvut.fit.vyhliluk.vocards.util.ds.DictionarySerialization;
 
-public class ImportTask extends AsyncTask<File, Integer, Integer> {
+public class ImportTask extends AsyncTask<String, Integer, Integer> {
 
 	// ================= STATIC ATTRIBUTES ======================
 
@@ -46,7 +42,7 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 	// ================= INSTANCE METHODS =======================
 
 	@Override
-	protected Integer doInBackground(File... params) {
+	protected Integer doInBackground(String... params) {
 		VocardsDS db = new VocardsDS(this.ctx);
 		this.pd.setMax(params.length);
 
@@ -55,8 +51,8 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 			db.open();
 			db.beginTransaction();
 			
-			for (File f : params) {
-				String content = StorageUtil.readEntireFile(f);
+			for (String content : params) {
+//				String content = StorageUtil.readEntireFile(f);
 				JSONObject root = new JSONObject(content);
 				JSONArray dicts = root.getJSONArray(DictionarySerialization.KEY_DICTIONARY_LIST);
 				for (int i = 0; i < dicts.length(); i++) {
@@ -65,8 +61,6 @@ public class ImportTask extends AsyncTask<File, Integer, Integer> {
 				}
 			}
 			ok = true;
-		} catch (IOException ex) {
-			ex.printStackTrace();
 		} catch (JSONException ex) {
 			ex.printStackTrace();
 		} catch (VocardsException ex) {
