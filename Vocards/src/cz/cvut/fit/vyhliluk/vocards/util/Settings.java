@@ -59,7 +59,7 @@ public class Settings {
 			remove(KEY_CARD_FONT_SIZE);
 			str = def;
 		}
-		return Integer.parseInt(def);
+		return Integer.parseInt(str);
 	}
 	
 	public static boolean getTranslation() {
